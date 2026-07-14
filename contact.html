@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Contact</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r127/three.min.js"></script>
+    <script type="module" src="./js/contact.js"></script>
+  </head>
+
+  <body>
+    <div id="overlay__menu__mobile"></div>
+
+    <div class="section__contact">
+      <h1 class="h1__contact">NOUS CONTACTER</h1>
+      <span class="span__contact"
+        >Pour toute demande, n'hésitez pas à nous contacter via le formulaire
+        ci-dessous ou par email :
+      </span>
+
+      <div class="div__info__contact">
+        <div class="div__info__contact__item">
+          <span class="span__info__contact__item">LOCALISATION :</span>
+          <span class="span__info__contact__item">Vauban 6e, Marseille</span>
+      </div>
+      <div class="div__info__contact__item">
+          <span class="span__info__contact__item">TELEPHONE :</span>
+          <a href="tel:+33620504263"> 06 20 50 42 63</a>
+      </div>
+      <div class="div__info__contact__item">
+          <span class="span__info__contact__item">MAIL :</span>
+          <a href="mailto:delpino.elisa@gmail.com">delpino.elisa@gmail.com</a>
+      </div>
+    </div>
+
+    <div class="form__contact">
+      <form>
+        <label for="name">NOM :</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="email">EMAIL :</label>
+        <input type="email" id="email" name="_replyto" required />
+
+        <label for="message">MESSAGE :</label>
+        <textarea id="message" name="message" required></textarea>
+
+        <button type="submit">ENVOYER</button>
+      </form>
+  </body>
+</html>

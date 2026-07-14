@@ -1,0 +1,606 @@
+/* ----------------------------------------------------- GENERAL --------------------------------------------------------------- */
+:root {
+    --main-color: lightgrey;
+    --other-color: #a240df;
+    --text-color: rgba(255, 255, 255, 0.7);
+
+    --border: 1px solid var(--main-color);
+    --w-container-size: clamp(320px, 85vw, 1200px);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ------------- Scroll-bar Option */
+
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #373737 #111827;
+    scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+    width: 30px;
+}
+
+::-webkit-scrollbar-track {
+    background: #111827;
+}
+
+/* ------------------ BODY */
+
+body {
+    background: black;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#overlay__menu__mobile {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+}
+
+#overlay__menu__mobile.open {
+    display: block;
+    z-index: 998;
+}
+
+/* ------------------------------------------------------- HOME --------------------------------------------------------------- */
+
+/* ---------------------------DIV ANIMATION */
+
+.section__home {
+    margin: 0 auto;
+    width: var(--w-container-size);
+    height: clamp(300px, 35vw, 400px);
+    background: black;
+    position: relative;
+    border: var(--border);
+    margin-top: 22vh;
+    text-align: left;
+    overflow: hidden;
+}
+
+.section__home::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+/* Container */
+.section__home .diagonal {
+    position: absolute;
+    top: 5%;
+    left: 2%;
+    width: 58%;
+    height: 90%;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Clip-path gauche */
+.section__home .diagonal.left {
+    background-color: #0d1117;
+    clip-path: polygon(50% 0, 0% 0, 0 100%, 20% 100%);
+    z-index: 1;
+    transform: translateX(-100%);
+    transition: transform 1.5s ease;
+}
+
+/* Clip-path droit */
+.section__home .diagonal.right {
+    background-color: #0d1117;
+    clip-path: polygon(100% 0, 52% 0, 22% 100%, 70% 100%);
+    z-index: 2;
+    transform: translateX(-100%);
+    transition: transform 1.5s ease;
+}
+
+.section__home .diagonal.show {
+    transform: translateX(0);
+}
+
+.diagonal {
+    position: relative;
+    overflow: hidden;
+}
+
+/* -----------------------DIV CONTENT TEXT  */
+
+.content-flow {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.content-flow::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+/* Shape Outside (sert à faire couler le texte sur div.right) */
+.shape-flow {
+    float: left;
+    display: block;
+
+    /* identique a .diagonal.right */
+    width: 58%;
+    height: 90%;
+    margin-top: 2%;
+    margin-left: 2%;
+    margin-right: clamp(25px, 2vw, 50px);
+    margin-bottom: 0;
+
+    shape-outside: polygon(100% 0, 52% 0, 22% 100%, 70% 100%);
+    -webkit-shape-outside: polygon(100% 0, 52% 0, 22% 100%, 70% 100%);
+
+    /* debug visuel 
+    clip-path: polygon(100% 0, 52% 0, 22% 100%, 70% 100%);
+    -webkit-clip-path: polygon(100% 0, 52% 0, 22% 100%, 70% 100%);
+    background: rgba(255, 0, 0, 0.12);
+    */
+}
+
+/* wrapper texte dans le flux normal */
+.content-copy {
+    padding-top: clamp(20px, 20vh, 80px);
+    padding-right: clamp(8px, 1.5vw, 16px);
+    color: var(--text-color);
+    font-family: Arial, sans-serif;
+}
+
+.content__text {
+    color: var(--text-color);
+    font-size: clamp(10px, 2.3vw, 25px);
+    font-family: "Arial";
+    font-weight: 200;
+    line-height: 1.2;
+}
+
+.content__text p {
+    margin: 0;
+    line-height: 1.2;
+}
+
+.content__text__line {
+    
+    margin-top: 0.2em;
+    margin-bottom: 0.9em;
+    line-height: 1.2em;
+    font-size: clamp(10px, 2.1vw, 25px);
+    color: var(--text-color);
+}
+
+.text-rotator {
+    display: inline-block;
+    vertical-align: baseline;
+}
+
+.content__text__2 {
+    color: var(--text-color);
+    font-size: clamp(10px, 2.1vw, 25px);
+    font-family: "Arial";
+    font-weight: 200;
+}
+
+.content__text__2 p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ---------------------DIV OTHER__SECTION */
+
+.other-section {
+    margin: clamp(40px, 7vw, 70px) auto;
+    width: var(--w-container-size);
+    height: clamp(100px, 10vw, 120px);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.children__other {
+    background-color: black;
+    border: var(--border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.children__other::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(162, 64, 223, 0.4),
+        transparent
+    );
+    transform: skewX(-20deg);
+}
+
+.children__other:hover::after {
+    animation: scan 1s ease forwards;
+}
+
+@keyframes scan {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 150%;
+    }
+}
+
+.decodeText {
+    color: var(--text-color);
+    font-size: clamp(8px, 2vw, 16px);
+    line-height: 2em;
+    margin: 0;
+    padding: 20px;
+    font-family: "Arial";
+}
+
+
+/* ----------------------------------------------------- PRODUCTS ----------------------------------------------*/
+
+#products {
+    scroll-margin-top: 17vh;
+}
+
+.section__products {
+
+    margin: 0 auto 5vw;
+    width: var(--w-container-size);
+    height: clamp(550px, 55vw, 1000px);
+    background: black;
+    border: var(--border);
+    display: grid;
+    grid-template-columns: 1fr;
+    position: relative;
+
+}
+
+.wrapper__products {
+    display: flex;
+    position: relative;
+    padding: 20px;
+}
+/*
+.wrapper__products:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    bottom : -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 0.5px;
+    background: var(--main-color);
+}*/
+
+.img__products {
+    width: 30%;
+    height: 100%;
+    display: flex;
+}
+
+.img__products img {
+    width: 80%;
+    height: 80%;
+    object-fit: cover;
+    margin: auto auto;
+    transition: all 0.6s ease;
+    opacity: 0;
+}
+
+.img__products.left img{
+    transform: translateX(-100%);
+}
+
+.img__products.rigth img{
+    transform: translateX(100%);
+}
+
+
+
+.div-text__products {
+    width: 70%;
+    height: 80%;
+    margin: auto auto;
+    min-width: 0;
+    
+}
+
+.h1__products {
+    padding: clamp(15px, 2vw, 25px);
+    font-family: "Arial";
+    font-size: clamp(8px, 2vw, 25px);
+    color : var(--text-color);
+    text-decoration : underline;
+    text-underline-offset: clamp(5px, 1vw, 10px);
+    text-decoration-color: var(--other-color);
+}
+
+.text__products {
+    padding : clamp(15px, 2vw, 25px);
+    color: var(--text-color);
+    font-size: clamp(7px, 1.8vw, 20px);
+    line-height: 1.5em;
+    white-space: normal;
+    opacity: 0;
+}
+
+/* ------------------------------------------- DEMO ------------------------------------------------ */
+
+.section__demo {
+    margin: 25vh auto 5vw;
+    width: var(--w-container-size);
+    height: clamp(280px, 45vw, 400px);
+    position: relative;
+    display: flex;
+    gap: clamp(5px, 3vw, 60px);
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.div-title__demo {
+    position: absolute;
+    padding: clamp(8px, 0.8vw, 10px) 0;
+    top : 0;
+    left: 50%;
+    transform: translate(-50%,-50%);
+
+    width : 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: black;
+}
+
+.div-title__demo::before,
+.div-title__demo::after {
+    content: "";
+    flex: 1;
+    height: 1.5px;
+    background: var(--main-color);
+}
+
+.h1__demo {
+    margin: 0 0px;
+    padding: 0 10px;
+
+    color: var(--text-color);
+    font-size: clamp(15px, 4.5vw, 35px);
+}
+
+.div-fakeWeb__demo {
+    flex: 1 1 0;
+    min-width: clamp(130px, 20vw, 250px);
+    max-width: 250px;
+    height: clamp(220px, 35vw, 310px);
+    transition: flex 0.4s ease, transform 0.4s ease, opacity 0.4s ease;
+}
+
+.demo__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.section__demo.animations {
+  width: var(--w-container-size);
+  height: auto;
+  margin: 0 auto;
+  padding: clamp(50px, 6vw, 80px) clamp(10px, 2vw, 25px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2vw, 25px);
+
+  box-sizing: border-box;
+}
+
+.demo-arrow {
+  width: clamp(20px, 3vw, 40px);
+  height: clamp(20px, 3vw, 40px);
+
+  border: 1px solid var(--main-color);
+  background: transparent;
+  color: var(--text-color);
+
+  cursor: pointer;
+  font-size: clamp(18px, 2vw, 40px);
+  flex-shrink: 0;
+}
+
+.demo-carousel__viewport {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.demo-carousel__track {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  gap: clamp(10px, 2vw, 25px);
+
+  transition: transform 0.4s ease;
+}
+
+.demo-carousel__column {
+  flex: 0 0 calc(
+    (100% - (clamp(10px, 2vw, 25px) * 2)) / 3
+  );
+
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 2vw, 25px);
+}
+
+.demo-carousel__item {
+  position: relative;
+
+  width: 100%;
+  height: clamp(120px, 18vw, 180px);
+
+  min-width: 0;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: white;
+  border: 1px solid var(--main-color);
+  transition: flex 0.4s ease, transform 0.4s ease, opacity 0.4s ease;
+
+  cursor: pointer;
+}
+
+@media screen and (max-width: 900px) {
+  .demo-carousel__column {
+    flex-basis: calc(
+      (100% - clamp(10px, 2vw, 25px)) / 2
+    );
+  }
+}
+
+/* ------------------------------------------- CONTACT ------------------------------------------------ */
+
+.section__contact {
+    margin: 0 20%;
+    padding-right: 15%;
+    width: 50%;
+    height: clamp(500px, 35vw, 580px);
+    background: black;
+    position: relative;
+    border: var(--border);
+    margin-top: 22vh;
+    text-align: left; 
+    display: flex;
+    flex-direction: column;
+    gap: clamp(20px, 4vw, 40px);
+    position: relative;
+}
+
+.h1__contact{
+    padding: clamp(20px, 4vw, 40px);
+    padding-bottom: 0;
+    color: var(--text-color);
+    font-family: "monospace";
+    font-size: clamp(20px, 3vw, 30px);
+}
+
+.span__contact{
+    padding: 0 clamp(20px, 4vw, 40px);
+    color: var(--text-color);
+    font-family: "monospace";
+    font-size: clamp(10px, 2.3vw, 25px);
+}
+
+.span__info__contact__item__titre {
+    color: var(--text-color);
+    font-family: "monospace";
+    font-size: clamp(5px, 1.5vw, 15px);
+    padding-left: clamp( 10px, 2vw, 20px); 
+}
+
+.div__info__contact {
+    padding: 5px clamp(20px, 4vw, 40px);
+    color: var(--text-color);
+    font-family: "monospace";
+    font-size: clamp(10px, 2.3vw, 25px);
+    display: flex;
+    flex-direction: column;
+    line-height: 1.5em;
+}
+
+.div__info__contact {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(15px, 2vw, 20px);
+}
+
+.div__info__contact__item {
+    display: flex;
+    flex-direction: column;
+}
+
+.div__info__contact__item a  {
+    color: var(--text-color);
+}
+
+.form__contact{
+    width: 40%;
+    height: 75%;
+    background: black;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%) translateX(+70%);
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-color);
+    border: var(--border);
+
+}
+
+.form__contact form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(5px, 1vw, 10px);
+    padding: clamp(20px, 4vw, 40px);
+    color: var(--text-color);
+    font-family: "monospace";
+    font-size: clamp(10px, 2.2vw, 20px);
+    justify-content: center;
+}
+
+.form__contact form input {
+    height: clamp( 10px, 2.5vw, 30px);
+    font-size: clamp(8px, 2vw, 15px);
+    font-family: "monospace";
+    padding: 10px;
+}
+
+.form__contact form textarea {
+    height: clamp( 50px, 5vw, 100px);
+    font-size: clamp(8px, 2vw, 15px);
+    font-family: "monospace";
+    padding: 10px;
+}
+
+.form__contact form button {
+    height: clamp( 10px, 2.5vw, 30px);
+    font-size: clamp(8px, 2vw, 15px);
+    margin-top: clamp(10px, 2vw, 20px);
+}
+
+
