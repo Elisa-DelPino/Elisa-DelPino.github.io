@@ -2,110 +2,898 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Home</title>
+    <title>Elisa.dev</title>
+
     <link rel="stylesheet" href="./css/styles.css" />
+
+    <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r127/three.min.js"></script>
+
+    <!-- Sélecteur de couleurs utilisé dans les démonstrations -->
+    <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
+
+    <!-- Scripts de la page -->
     <script type="module" src="./js/index.js"></script>
+    <script type="module" src="./js/demo.js"></script>
   </head>
 
   <body>
     <div id="main-content" style="display: none">
+      <!-- Overlay du menu mobile -->
       <div id="overlay__menu__mobile"></div>
 
-      <div class="section__home">
-        <div class="diagonal left"><!-- AutoCode.js --></div>
-        <div class="diagonal right"><!-- UiBuilder.js --></div>
+      <!-- =====================================================
+           HÉROS
+      ====================================================== -->
+
+      <section id="home" class="section__home">
+        <div class="diagonal left">
+          <!-- AutoCode.js -->
+        </div>
+
+        <div class="diagonal right">
+          <!-- UiBuilder.js -->
+        </div>
 
         <div class="content-flow">
+          <!--
+      Cette forme reprend exactement le clip-path de .diagonal.right.
+      Elle permet aux contenus suivants de couler le long de la diagonale.
+    -->
           <div class="shape-flow" aria-hidden="true"></div>
 
           <div class="content-copy">
-            <div class="content__text">
-              <p>
-                Gagnez du temps et développez votre entreprise avec un
+            <div class="hero__flow-text">
+              <span class="hero__eyebrow">
+                <span class="hero__eyebrow-line" aria-hidden="true"></span>
+
+                <span class="hero__eyebrow-text">VOTRE</span>
+
+                <span class="hero__eyebrow-line" aria-hidden="true"></span>
+              </span>
+
+              <br class="hero__flow-break" />
+
+              <span class="hero__main-title">
                 <span class="text-rotator">
                   <span>site web unique</span>
-                  <span>logiciel personalisé</span>
+                  <span>logiciel personnalisé</span>
                   <span>bot d'automatisation</span>
                 </span>
-              </p>
-            </div>
+              </span>
 
-            <div class="content__text__2">
-              <p>
-                <br />
-                Des solutions personalisées pour améliorer votre visibilité et
-                optimiser votre business.
-              </p>
+              <br class="hero__flow-break" />
+
+              <div class="hero__description-space"></div>
+
+              <span class="hero__description">
+                Des solutions sur mesure pensées pour développer votre activité,
+                simplifier votre organisation et vous faire gagner un temps
+                précieux.
+              </span>
+
+              <span class="hero__actions">
+                <a href="#contact" class="hero__button hero__button--contact">
+                  <span>CONTACTEZ-MOI</span>
+
+                  <svg
+                    class="hero__arrow-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 12h13"></path>
+                    <path d="M13 5l7 7-7 7"></path>
+                  </svg>
+                </a>
+
+                <a
+                  href="tel:+33612345678"
+                  class="hero__button hero__button--phone"
+                >
+                  <svg
+                    class="hero__phone-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M22 16.92v3a2 2 0 0 1-2.18 2
+            19.79 19.79 0 0 1-8.63-3.07
+            19.5 19.5 0 0 1-6-6
+            19.79 19.79 0 0 1-3.07-8.67
+            A2 2 0 0 1 4.11 2h3
+            a2 2 0 0 1 2 1.72
+            c.12.9.33 1.78.62 2.63
+            a2 2 0 0 1-.45 2.11
+            L8 9.73a16 16 0 0 0 6 6
+            l1.27-1.27a2 2 0 0 1 2.11-.45
+            c.85.29 1.73.5 2.63.62
+            A2 2 0 0 1 22 16.92z"
+                    ></path>
+                  </svg>
+
+                  <span>06 12 34 56 78</span>
+                </a>
+              </span>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="other-section">
+      <!-- =====================================================
+           INTRODUCTION DES SERVICES
+      ====================================================== -->
+
+      <section class="other-section">
         <div class="children__other">
           <p class="decodeText" data-text="SITE WEB PERFORMANT">
             SITE WEB PERFORMANT
           </p>
         </div>
+
         <div class="children__other">
           <p class="decodeText" data-text="LOGICIEL SUR MESURE">
             LOGICIEL SUR MESURE
           </p>
         </div>
+
         <div class="children__other">
-          <p class="decodeText" data-text="SYSTEME D'AUTOMATISATION">
-            SYSTEME D'AUTOMATISATION
+          <p class="decodeText" data-text="SYSTÈME D'AUTOMATISATION">
+            SYSTÈME D'AUTOMATISATION
           </p>
         </div>
+      </section>
+
+      <!-- =====================================================
+           DÉMONSTRATIONS DE SITES WEB
+      ====================================================== -->
+
+      <section id="demos" class="section__demo section__demo--websites">
+  <div class="div-title__demo">
+    <h1 class="h1__demo">SITES WEB INTERACTIFS</h1>
+  </div>
+
+  <div class="demo-websites__grid">
+    <!-- =====================================================
+         SALON DE COIFFURE
+    ====================================================== -->
+
+    <article
+      class="div-fakeWeb__demo demo-website-card"
+      tabindex="0"
+      aria-label="Voir la démonstration du site de salon de coiffure"
+    >
+      <span class="demo-card__neon-point" aria-hidden="true"></span>
+
+      <div class="demo-card__preview">
+        <img
+          class="demo__img"
+          src="./img/siteCoiffure.png"
+          alt="Démonstration d'un site web pour un salon de coiffure"
+        />
+
+        <div class="demo-card__preview-overlay" aria-hidden="true"></div>
       </div>
 
-      <div id="products" class="section__products">
-      <div  id="wrapper__0"class="wrapper__products">
-        <div class="img__products left">
-          <div id="globe-container"></div>
-        </div>
-        <div class="div-text__products">
-          <h1 class="h1__products">Un site web à votre image</h1>
-          <p class="text__products">
-            Le Lorem Ipsum est simplement du faux texte employé dans la
-            composition et la mise en page avant impression. Le Lorem Ipsum est
-            le faux texte standard de l'imprimerie.
-          </p>
-        </div>
+      <div class="demo-card__content">
+
+        <button
+          class="demo-card__button"
+          type="button"
+          aria-label="Ouvrir la démonstration du salon de coiffure"
+        >
+          <span>VOIR LA DÉMO</span>
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M5 12h13"></path>
+            <path d="m13 5 7 7-7 7"></path>
+          </svg>
+        </button>
       </div>
-      <div  id="wrapper__1" class="wrapper__products">
-        <div class="div-text__products">
-          <h1 class="h1__products">Un logiciel adapté à vos besoins</h1>
-          <p class="text__products">
-            Le Lorem Ipsum est simplement du faux texte employé dans la
-            composition et la mise en page avant impression. Le Lorem Ipsum est
-            le faux texte standard de l'imprimerie.
-          </p>
-        </div>
-        <div class="img__products rigth">
-          <div id="circuit-container"></div>
-        </div>
-      </div>
-      <div  id="wrapper__2" class="wrapper__products">
-        <div class="img__products left">
-          <div id="robot-container"></div>
-        </div>
-        <div class="div-text__products">
-          <h1 class="h1__products">Un bot d'automatisation personalisé</h1>
-          <p class="text__products">
-            Le Lorem Ipsum est simplement du faux texte employé dans la
-            composition et la mise en page avant impression. Le Lorem Ipsum est
-            le faux texte standard de l'imprimerie.
-          </p>
-        </div>
+    </article>
+
+    <!-- =====================================================
+         PÂTISSERIE
+    ====================================================== -->
+
+    <article
+      class="div-fakeWeb__demo demo-website-card"
+      tabindex="0"
+      aria-label="Voir la démonstration du site de pâtisserie"
+    >
+      <span class="demo-card__neon-point" aria-hidden="true"></span>
+
+      <div class="demo-card__preview">
+        <img
+          class="demo__img"
+          src="./img/sitePatisserie.png"
+          alt="Démonstration d'un site web pour une pâtisserie"
+        />
+
+        <div class="demo-card__preview-overlay" aria-hidden="true"></div>
       </div>
 
+      <div class="demo-card__content">
 
+        <button
+          class="demo-card__button"
+          type="button"
+          aria-label="Ouvrir la démonstration de la pâtisserie"
+        >
+          <span>VOIR LA DÉMO</span>
 
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M5 12h13"></path>
+            <path d="m13 5 7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </article>
+
+    <!-- =====================================================
+         BOUTIQUE DE DÉCORATION
+    ====================================================== -->
+
+    <article
+      class="div-fakeWeb__demo demo-website-card"
+      tabindex="0"
+      aria-label="Voir la démonstration de la boutique en ligne"
+    >
+      <span class="demo-card__neon-point" aria-hidden="true"></span>
+
+      <div class="demo-card__preview">
+        <img
+          class="demo__img"
+          src="./img/siteDeco.png"
+          alt="Démonstration d'un site e-commerce de décoration"
+        />
+
+        <div class="demo-card__preview-overlay" aria-hidden="true"></div>
+      </div>
+
+      <div class="demo-card__content">
+
+        <button
+          class="demo-card__button"
+          type="button"
+          aria-label="Ouvrir la démonstration de la boutique en ligne"
+        >
+          <span>VOIR LA DÉMO</span>
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M5 12h13"></path>
+            <path d="m13 5 7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </article>
+  </div>
+</section>
+
+      <!-- =====================================================
+           DÉMONSTRATIONS D'ANIMATIONS
+      ====================================================== -->
+
+      <section class="section__demo animations">
+        <div class="div-title__demo">
+          <h1 class="h1__demo">ANIMATIONS INTERACTIVES</h1>
+        </div>
+
+        <button
+          class="demo-arrow demo-arrow--left"
+          id="prevBtn"
+          type="button"
+          aria-label="Voir les démonstrations précédentes"
+        >
+          &#10094;
+        </button>
+
+        <div class="demo-carousel__viewport">
+          <div class="demo-carousel__track" id="demoTrack"></div>
+        </div>
+
+        <button
+          class="demo-arrow demo-arrow--right"
+          id="nextBtn"
+          type="button"
+          aria-label="Voir les démonstrations suivantes"
+        >
+          &#10095;
+        </button>
+      </section>
+
+      <!-- =====================================================
+           PRÉSENTATION DES SERVICES
+      ====================================================== -->
+
+      <section id="products" class="section__products">
+        <!-- Site web -->
+
+        <div id="wrapper__0" class="wrapper__products">
+          <div class="img__products left">
+            <div id="globe-container"></div>
+          </div>
+
+          <div class="div-text__products">
+            <h1 class="h1__products">Un site qui valorise votre activité</h1>
+
+            <p class="text__products">
+              <strong
+                >Votre entreprise est unique, votre site web doit l'être aussi
+                !</strong
+              >
+              <br />
+              <br />
+
+              L'objectif est simple : offrir à vos visiteurs une expérience
+              fluide, inspirer confiance et vous aider à developper votre
+              présence en ligne avec un site web : <br />
+              <br />
+
+              <strong>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&nbsp;&nbsp; Moderne
+                <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&nbsp;&nbsp; Rapide <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&nbsp;&nbsp; Entièrement
+                sur mesure <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&nbsp;&nbsp; A votre image
+                <br /><br />
+              </strong>
+
+              Nous vous proposons un site personnalisé, pensé pour s'adapter
+              aussi bien aux ordinateurs qu'aux smartphone, sans solution toute
+              faite ni abonnement imposé.
+            </p>
+          </div>
+        </div>
+
+        <!-- Logiciel -->
+
+        <div id="wrapper__1" class="wrapper__products">
+          <div class="div-text__products">
+            <h1 class="h1__products">Un logiciel adapté à vos besoins</h1>
+
+            <p class="text__products">
+              <strong>
+                Les outils standarts ne répondent pas toujours aux besoins
+                spécifiques de votre entreprise.
+              </strong>
+              <br />
+              <br />
+              Je developpe des logiciels sur mesure pour : <br /><br />
+
+              <strong>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&nbsp;&nbsp; Simplifier
+                votre organisation <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&nbsp;&nbsp; Optimiser
+                votre façon de travailler <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&nbsp;&nbsp; Automatiser
+                certaines tâches <br /><br />
+              </strong>
+
+              Gestion de stock, agenda, suivie de clients ou toute autre
+              solution spécifique : <br />
+              Chaque logiciels est conçu en fonction de vos besoins et de vos
+              objectifs. <br /><br />
+
+              <strong>
+                Vous bénéficiez donc d'un outil simple à utiliser, pensé pour
+                évoluer avec votre activité et vous faire gagner un temps
+                précieux.</strong
+              >
+            </p>
+          </div>
+
+          <div class="img__products rigth">
+            <div id="circuit-container"></div>
+          </div>
+        </div>
+
+        <!-- Automatisation -->
+
+        <div id="wrapper__2" class="wrapper__products">
+          <div class="img__products left">
+            <div id="robot-container"></div>
+          </div>
+
+          <div class="div-text__products">
+            <h1 class="h1__products">Un bot d'automatisation personnalisé</h1>
+
+            <p class="text__products">
+              <strong>
+                Passez moins de temps sur les tâches répétitives et
+                concentrez-vous sur l'essentiel !
+              </strong>
+              <br />
+              <br />
+              Je crée des bots d'automatisation capables d'effectuer
+              automatiquement les actions que vous réalisez chaque jour :
+              <br /><br />
+
+              <strong>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&nbsp;&nbsp; Recherche
+                d'informations sur internet <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&nbsp;&nbsp; Mise à jour
+                de données <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&nbsp;&nbsp; Génération de
+                documents <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&nbsp;&nbsp; Envoi
+                d'E-mail <br /><br />
+              </strong>
+
+              Pour chaqune de vos tâches répétitive je developpe une solution
+              sur-mesure pour répondre à vos besoins. <br /><br />
+
+              <strong>
+                Votre activité gagne donc en efficacité, en rapidité et en
+                fiabilité, pour vous permettre de consacrer davantage de temps à
+                ce qui compte vraiment.</strong
+              >
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="contact">
+        <div class="section__contact">
+          <div class="contact__info-panel">
+            <!-- ---------------------------------------------------------
+         PANNEAU PRINCIPAL
+    ---------------------------------------------------------- -->
+
+            <div class="contact__content">
+              <div class="contact__heading">
+                <h1 class="h1__contact">NOUS CONTACTER</h1>
+                <span class="contact__title-line" aria-hidden="true"></span>
+              </div>
+
+              <p class="span__contact">
+                Pour toute demande, n'hésitez pas à nous contacter via le
+                formulaire ci-dessous ou directement par email.
+              </p>
+
+              <div class="div__info__contact">
+                <!-- Localisation -->
+
+                <div class="div__info__contact__item">
+                  <div class="contact__icon-box" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"
+                      ></path>
+                      <circle cx="12" cy="10" r="2.5"></circle>
+                    </svg>
+                  </div>
+
+                  <div class="contact__info-text">
+                    <span class="contact__info-label">LOCALISATION</span>
+                    <span class="span__info__contact__item">
+                      Vauban 6e, Marseille
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Téléphone -->
+
+                <div class="div__info__contact__item">
+                  <div class="contact__icon-box" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="40"
+                      height="40"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="contact-icon"
+                    >
+                      <path
+                        d="M22 16.92v3a2 2 0 0 1-2.18 2
+             19.79 19.79 0 0 1-8.63-3.07
+             19.5 19.5 0 0 1-6-6
+             A19.79 19.79 0 0 1 2.08 4.18
+             2 2 0 0 1 4.06 2h3
+             a2 2 0 0 1 2 1.72
+             c.12.89.33 1.76.63 2.6
+             a2 2 0 0 1-.45 2.11L8.09 9.91
+             a16 16 0 0 0 6 6
+             l1.48-1.15
+             a2 2 0 0 1 2.11-.45
+             c.84.3 1.71.51 2.6.63
+             A2 2 0 0 1 22 16.92z"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="contact__info-text">
+                    <span class="contact__info-label">TÉLÉPHONE</span>
+
+                    <a class="contact__info-link" href="tel:+33620504263">
+                      06 20 50 42 63
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Email -->
+
+                <div class="div__info__contact__item">
+                  <div class="contact__icon-box" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                      <path d="m3 7 9 6 9-6"></path>
+                    </svg>
+                  </div>
+
+                  <div class="contact__info-text">
+                    <span class="contact__info-label">EMAIL</span>
+
+                    <a
+                      class="contact__info-link"
+                      href="mailto:delpino.elisa@gmail.com"
+                    >
+                      delpino.elisa@gmail.com
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Réseaux / GitHub -->
+
+                <!-- Réseaux sociaux -->
+
+                <div
+                  class="div__info__contact__item div__info__contact__item--socials"
+                >
+                  <div class="contact__social-icons">
+                    <!-- Instagram -->
+                    <a
+                      href="#"
+                      class="contact__social-icon"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <circle cx="17.5" cy="6.5" r="1"></circle>
+                      </svg>
+                    </a>
+
+                    <!-- Facebook -->
+                    <a
+                      href="#"
+                      class="contact__social-icon"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Facebook"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M13.7 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.3-1.5 1.6-1.5H17V4.6
+          c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.3H8V14h2.6v8h3.1Z"
+                        ></path>
+                      </svg>
+                    </a>
+
+                    <!-- LinkedIn -->
+                    <a
+                      href="#"
+                      class="contact__social-icon"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="LinkedIn"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M6.5 8.1H3.2V21h3.3V8.1ZM4.8 3A1.9 1.9 0 1 0 4.8 6.8
+          1.9 1.9 0 0 0 4.8 3ZM21 13.6c0-3.9-2.1-5.8-4.9-5.8
+          -2.3 0-3.3 1.3-3.9 2.1V8.1H9V21h3.3v-6.4
+          c0-1.7.3-3.3 2.4-3.3 2.1 0 2.1 1.9 2.1 3.4V21H20v-7.4Z"
+                        ></path>
+                      </svg>
+                    </a>
+                  </div>
+
+                  <div class="contact__info-text">
+                    <span class="contact__info-label">RÉSEAUX</span>
+                    <span class="span__info__contact__item">Elisa.Dev</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ---------------------------------------------------------
+         FORMULAIRE FLOTTANT
+    ---------------------------------------------------------- -->
+
+          <div class="form__contact">
+            <form action="#" method="post">
+              <div class="form__contact__field">
+                <label for="name">NOM</label>
+
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Votre nom"
+                  autocomplete="name"
+                  required
+                />
+              </div>
+
+              <div class="form__contact__field">
+                <label for="email">EMAIL</label>
+
+                <input
+                  type="email"
+                  id="email"
+                  name="_replyto"
+                  placeholder="Votre email"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+
+              <div class="form__contact__field">
+                <label for="message">MESSAGE</label>
+
+                <textarea
+                  id="message"
+                  name="message"
+                  placeholder="Votre message..."
+                  required
+                ></textarea>
+              </div>
+
+              <button type="submit" class="contact__submit">
+                <span>ENVOYER</span>
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="m22 2-7 20-4-9-9-4Z"></path>
+                  <path d="M22 2 11 13"></path>
+                </svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="section__about">
+  <!-- ---------------------------------------------------------
+       PHOTO
+  ---------------------------------------------------------- -->
+
+  <div class="about__visual">
+    <img
+      src="./img/gateaux.png"
+      alt="Portrait professionnel d'Elisa, développeuse web"
+      class="img__about"
+    />
+
+    <div class="about__visual-glow" aria-hidden="true"></div>
+  </div>
+
+  <!-- ---------------------------------------------------------
+       CONTENU
+  ---------------------------------------------------------- -->
+
+  <div class="about__content">
+    <div class="about__heading">
+      <span class="about__eyebrow">À PROPOS</span>
+
+      <h2 class="about__title">Mon parcours</h2>
+
+      <span class="about__title-line" aria-hidden="true"></span>
     </div>
+
+    <p class="about__description">
+      Passionnée par le développement et les nouvelles technologies,
+      j’ai transformé cette passion en métier.
+      <br /><br />
+
+      Spécialisée dans la création de sites web modernes, de logiciels
+      sur mesure et d’outils d’automatisation, j’accompagne les
+      entrepreneurs et les entreprises dans la digitalisation de leurs
+      idées.
+    </p>
+
+    <!-- -------------------------------------------------------
+         COMPÉTENCES
+    -------------------------------------------------------- -->
+
+    <div class="about__skills">
+      <!-- Développement -->
+
+      <article class="about__skill-card">
+        <div class="about__skill-icon" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="m8 9-4 3 4 3"></path>
+            <path d="m16 9 4 3-4 3"></path>
+            <path d="m14 5-4 14"></path>
+          </svg>
+        </div>
+
+        <h3>DÉVELOPPEMENT</h3>
+
+        <p>
+          Sites web, applications et solutions entièrement sur mesure.
+        </p>
+      </article>
+
+      <!-- Automatisation -->
+
+      <article class="about__skill-card">
+        <div class="about__skill-icon" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="5" y="7" width="14" height="11" rx="2"></rect>
+            <path d="M9 7V4h6v3"></path>
+            <path d="M8 12h.01"></path>
+            <path d="M16 12h.01"></path>
+            <path d="M9 18v2"></path>
+            <path d="M15 18v2"></path>
+          </svg>
+        </div>
+
+        <h3>AUTOMATISATION</h3>
+
+        <p>
+          Bots et scripts personnalisés pour vous faire gagner du temps.
+        </p>
+      </article>
+
+      <!-- Design -->
+
+      <article class="about__skill-card">
+        <div class="about__skill-icon" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M15 4V2"></path>
+            <path d="M15 16v-2"></path>
+            <path d="M8 9h2"></path>
+            <path d="M20 9h2"></path>
+            <path d="m17.8 6.2 1.4-1.4"></path>
+            <path d="m10.8 13.2-1.4 1.4"></path>
+            <path d="m17.8 11.8 1.4 1.4"></path>
+            <path d="m10.8 4.8-1.4-1.4"></path>
+            <path d="m3 21 9-9"></path>
+            <path d="M12.2 6.2a4 4 0 1 1 5.6 5.6"></path>
+          </svg>
+        </div>
+
+        <h3>DESIGN & UI/UX</h3>
+
+        <p>
+          Interfaces modernes, fluides et pensées pour l’utilisateur.
+        </p>
+      </article>
+    </div>
+
+    <!-- -------------------------------------------------------
+         PHRASE SIGNATURE
+    -------------------------------------------------------- -->
+
+    <blockquote class="about__quote">
+      <span class="about__quote-mark" aria-hidden="true">“</span>
+
+      <p>
+        Mon objectif : créer des solutions efficaces, élégantes et
+        performantes qui vous font gagner du temps et vous démarquent.
+      </p>
+    </blockquote>
+  </div>
+</section>
   </body>
 </html>

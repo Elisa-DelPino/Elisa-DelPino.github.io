@@ -9,35 +9,40 @@ import { initAnimations } from "./animationProducts.js";
 import { initGlobe } from "./globe3d.js";
 import { initCircuit3D } from "./circuit3d.js";
 import { initRobot3D } from "./robot3d.js";
+import { initHeroButtons } from "./buttonNeon.js";
+import { initContactAnimation } from "./animationContact.js";
+import { initAboutAnimation } from "./animationAbout.js";
 
 function initPageContent() {
   const main = document.getElementById("main-content");
-  if (main) {
-    main.style.display = "block";
 
-    loadHeaderScriptDirect();
+  if (!main) return;
 
-    initFakeVSCode(".diagonal.left");
-    initUiBuilder(".diagonal.right");
-    showDiagonals();
-    addDecodeText();
+  main.style.display = "block";
 
+  loadHeaderScriptDirect();
+
+  initFakeVSCode(".diagonal.left");
+  initUiBuilder(".diagonal.right");
+  showDiagonals();
+  addDecodeText();
+
+  requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        initGlobe();
-        initCircuit3D();
-        initRobot3D();
+      initGlobe();
+      initCircuit3D();
+      initRobot3D();
+      initHeroButtons();
+      initContactAnimation();
+      initAboutAnimation();
 
-        /*
-         * On laisse ensuite à Three.js le temps
-         * de créer le canvas et de calculer ses dimensions.
-         */
-        requestAnimationFrame(() => {
-          initAnimations();
-        });
+      requestAnimationFrame(() => {
+        initAnimations();
+
+        window.dispatchEvent(new CustomEvent("pageContentReady"));
       });
     });
-  }
+  });
 }
 
 export function AddLoader() {
@@ -51,9 +56,9 @@ export function AddLoader() {
 
   // ---------------------------------------------------------------------- INJECT CSS -----------------------------------------------------------------------------
 
-  if (!document.getElementById("cssStyle")) {
+  if (!document.getElementById("loadingPageStyle")) {
     const style = document.createElement("style");
-    style.id = "cssStyle";
+    style.id = "loadingPageStyle";
 
     style.textContent = `
         * {

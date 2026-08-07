@@ -62,85 +62,103 @@ export function initTextRotator(selector, interval = 1500) {
   if (!document.getElementById("textRotatorCSS")) {
     const style = document.createElement("style");
     style.id = "textRotatorCSS";
+
     style.textContent = `
-      .text-rotator {
-        position: relative;
-        display: inline-block;
-        height: 1.2em;
-        overflow: hidden;
-        vertical-align: baseline;
-        margin-left: 0.1em;
-        top: 5px;
-        transition: width 0.25s ease;
-      }
+  .text-rotator {
+    position: relative;
 
-      .text-rotator span {
-        position: absolute;
-        top: 0;
-        left: 0;
-        opacity: 0;
-        transform: translateY(100%);
-        transition: transform 0.5s ease, opacity 0.5s ease;
-        color: var(--other-color);
-        font-weight: 700;
-        font-size: clamp(10px, 2.1vw, 25px);
-        line-height: 1.2;
-        white-space: nowrap;
-      }
+    display: inline-block;
 
-      .text-rotator span.active {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    `;
+    width: clamp(210px, 36vw, 560px);
+    max-width: 100%;
+
+    height: 1em;
+
+    margin: 0;
+
+    overflow: hidden;
+    vertical-align: top;
+  }
+
+  .text-rotator > span {
+    position: absolute;
+    inset: 0 auto auto 0;
+
+    display: block;
+
+    width: max-content;
+    max-width: 100%;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateY(65%);
+
+    transition:
+      transform 0.5s ease,
+      opacity 0.5s ease,
+      visibility 0s linear 0.5s;
+
+    color: var(--other-color);
+
+    font: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+
+    white-space: nowrap;
+  }
+
+  .text-rotator > span.active {
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateY(0);
+
+    transition:
+      transform 0.5s ease,
+      opacity 0.5s ease,
+      visibility 0s;
+  }
+`;
+
     document.head.appendChild(style);
   }
 
   const containers = document.querySelectorAll(selector);
 
   containers.forEach((container) => {
-    const items = container.querySelectorAll("span");
+    /*
+     * Évite deux intervalles sur le même rotateur.
+     */
+    if (container.dataset.rotatorInitialized === "true") {
+      return;
+    }
+
+    const items = [...container.querySelectorAll(":scope > span")];
+
+    if (items.length === 0) {
+      return;
+    }
+
+    container.dataset.rotatorInitialized = "true";
+
     let index = 0;
 
-    if (items.length === 0) return;
-
-    const measure = document.createElement("span");
-    measure.style.position = "absolute";
-    measure.style.visibility = "hidden";
-    measure.style.pointerEvents = "none";
-    measure.style.whiteSpace = "nowrap";
-    document.body.appendChild(measure);
-
-    function copyTextStyles() {
-      const computed = getComputedStyle(container);
-      measure.style.fontFamily = computed.fontFamily;
-      measure.style.fontSize = computed.fontSize;
-      measure.style.fontWeight = "700";
-      measure.style.lineHeight = computed.lineHeight;
-      measure.style.letterSpacing = computed.letterSpacing;
-    }
-
-    function setWidthFromText(text) {
-      copyTextStyles();
-      measure.textContent = text;
-      const width = Math.ceil(measure.getBoundingClientRect().width);
-      container.style.width = `${width + 8}px`;
-    }
-
-    items.forEach((el) => el.classList.remove("active"));
-    items[0].classList.add("active");
-    setWidthFromText(items[0].textContent);
-
-    setInterval(() => {
-      items[index].classList.remove("active");
-      index = (index + 1) % items.length;
-      items[index].classList.add("active");
-      setWidthFromText(items[index].textContent);
-    }, interval);
-
-    window.addEventListener("resize", () => {
-      setWidthFromText(items[index].textContent);
+    items.forEach((item) => {
+      item.classList.remove("active");
     });
+
+    items[index].classList.add("active");
+
+    window.setInterval(() => {
+      items[index].classList.remove("active");
+
+      index = (index + 1) % items.length;
+
+      items[index].classList.add("active");
+    }, interval);
   });
 }
 

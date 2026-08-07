@@ -9,7 +9,7 @@ const SELECTORS = {
   headerNav: ".ui-header__nav",
   item1: ".grid-item-1",
   item2: ".grid-item-2",
-  overlay: ".overlay",
+  overlay: ".ui-builder__overlay",
   button: ".bottom-button",
 };
 
@@ -89,17 +89,6 @@ const UI_BUILDER_CSS = `
     color: rgba(255, 255, 255, 0.7);
   }
 
-  .input-wrapper .icon {
-    position: absolute;
-    right: clamp(6px, 0.7vw, 10px);
-    top: 50%;
-    transform: translateY(-50%);
-    width: clamp(5px, 0.6vw, 6px);
-    height: clamp(5px, 0.6vw, 6px);
-    pointer-events: none;
-    stroke: rgba(255, 255, 255, 0.7);
-  }
-
   .content__pics {
     width: 100%;
     height: 100%;
@@ -124,7 +113,7 @@ const UI_BUILDER_CSS = `
   .grid-item-1,
   .grid-item-2 {
     position: absolute;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: var(--text-color);
     width: clamp(35px, 7vw, 75px);
     height: clamp(35px, 7vw, 75px);
     display: flex;
@@ -140,20 +129,21 @@ const UI_BUILDER_CSS = `
       opacity 0.5s ease;
   }
 
-  .overlay {
-    position: absolute;
-    width: clamp(65px, 12vw, 150px);
-    height: clamp(65px, 12vw, 150px);
-    z-index: 20;
-    display: flex;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-  }
+  .ui-builder__overlay {
+  position: absolute;
+  width: clamp(65px, 12vw, 150px);
+  height: clamp(65px, 12vw, 150px);
+  z-index: 20;
+  display: flex;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
 
   .overlay-content {
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--text-color);
+    opacity : 80%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -161,8 +151,8 @@ const UI_BUILDER_CSS = `
   }
 
   .div-children {
-    width: 95%;
-    height: 95%;
+    width: 98%;
+    height: 98%;
     background: #0d1117;
     display: flex;
     align-items: center;
@@ -237,7 +227,7 @@ const UI_BUILDER_CSS = `
 
   .grid-item-1,
   .grid-item-2,
-  .overlay,
+  .ui-builder__overlay,
   .bottom-button {
     display: none;
   }
@@ -527,10 +517,6 @@ function createHeader() {
         <li><a href="#">Pics</a></li>
         <div class="input-wrapper">
           <input>
-          <svg class="icon" viewBox="0 0 24 24">
-            <circle cx="11" cy="11" r="7" stroke="white" fill="none"/>
-            <line x1="16" y1="16" x2="22" y2="22" stroke="white"/>
-          </svg>
         </div>
       </ul>
     </nav>
@@ -551,12 +537,12 @@ function createGridItem(className, imagePath, alt) {
 
 function createOverlay() {
   const overlay = document.createElement("div");
-  overlay.className = "overlay";
+  overlay.className = "ui-builder__overlay";
   overlay.innerHTML = `
     <div class="anim-layer">
       <div class="overlay-content">
         <div class="div-children">
-          <img src="./img/img3.png" alt="img3">
+          <img src="./img/imageUiBuilder2.png" alt="img3">
         </div>
       </div>
     </div>
@@ -579,10 +565,10 @@ function createContentArea() {
   gridContainer.className = "grid-container";
 
   gridContainer.appendChild(
-    createGridItem("grid-item-1", "./img/img1.png", "img1"),
+    createGridItem("grid-item-1", "./img/imageUiBuilder1.png", "img1"),
   );
   gridContainer.appendChild(
-    createGridItem("grid-item-2", "./img/img2.png", "img2"),
+    createGridItem("grid-item-2", "./img/imageUiBuilder3.png", "img2"),
   );
 
   contentPics.appendChild(gridContainer);

@@ -45,29 +45,14 @@ function injectProductsAnimationCSS() {
 
     /* Animation du texte */
 
-    .reveal-line-wrap {
-      display: block;
-      width: 100%;
-    }
+    .reveal-letter {
+  opacity: 0;
+  transition: opacity 80ms linear;
+}
 
-    .reveal-line {
-      display: inline;
-
-      color: transparent;
-      -webkit-text-fill-color: transparent;
-
-      background-repeat: no-repeat;
-      background-size: 0% 100%;
-      background-position: left center;
-
-      -webkit-background-clip: text;
-      background-clip: text;
-    }
-
-    .temp-word {
-      display: inline-block;
-      white-space: pre;
-    }
+.reveal-letter.is-visible {
+  opacity: 1;
+}
   `;
 
   document.head.appendChild(style);
@@ -139,12 +124,83 @@ function waitElementVisible(element) {
         }
       },
       {
-        threshold: 0.3,
-        rootMargin: `-${headerHeight}px 0px 0px 0px`,
+        threshold: 0.18,
+        rootMargin: `-${headerHeight}px 0px -6% 0px`,
       },
     );
 
     observer.observe(element);
+  });
+}
+
+// -----------------------------------------------------------------------------
+// APPARITION DE LA CARTE PRODUIT COMPLÈTE
+// -----------------------------------------------------------------------------
+
+function revealProductCard(wrapper, duration = 900) {
+  return new Promise((resolve) => {
+    if (!wrapper) {
+      resolve();
+      return;
+    }
+
+    /*
+     * Empêche de rejouer l'animation
+     * si la carte a déjà été affichée.
+     */
+    if (wrapper.classList.contains("is-card-visible")) {
+      resolve();
+      return;
+    }
+
+    /*
+     * Si l'utilisateur est arrivé directement plus bas dans la page,
+     * on affiche immédiatement la carte sans bloquer la séquence.
+     */
+    if (isPassed(wrapper)) {
+      wrapper.classList.add("is-card-visible");
+      resolve();
+      return;
+    }
+
+    let finished = false;
+    let timeoutId = null;
+
+    function finish() {
+      if (finished) return;
+
+      finished = true;
+
+      clearTimeout(timeoutId);
+
+      wrapper.removeEventListener("transitionend", handleTransitionEnd);
+
+      resolve();
+    }
+
+    function handleTransitionEnd(event) {
+      if (event.target === wrapper && event.propertyName === "transform") {
+        finish();
+      }
+    }
+
+    wrapper.addEventListener("transitionend", handleTransitionEnd);
+
+    /*
+     * Le double requestAnimationFrame garantit que le navigateur
+     * a bien enregistré l'état invisible avant d'appliquer
+     * la classe visible.
+     */
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        wrapper.classList.add("is-card-visible");
+      });
+    });
+
+    /*
+     * Sécurité si transitionend n'est pas déclenché.
+     */
+    timeoutId = setTimeout(finish, duration + 150);
   });
 }
 
@@ -231,8 +287,8 @@ function revealVisual(element, duration = 800) {
 
 export function revealTextLines(
   element,
-  duration = 500,
-  delayBetweenLines = 100,
+  duration = 20,
+  delayBetweenLetters = 0.5,
 ) {
   return new Promise((resolve) => {
     if (!element) {
@@ -241,15 +297,19 @@ export function revealTextLines(
     }
 
     const originalHTML = element.innerHTML;
-    const originalText = element.textContent.trim();
-    const originalColor = getComputedStyle(element).color;
 
     const wrapper = element.closest(".wrapper__products") || element;
 
-    /*
-     * Si le wrapper est déjà derrière le header,
-     * le texte est affiché directement.
-     */
+    let finished = false;
+    let animationRunning = false;
+    let isResizing = false;
+
+    let letterTimeout = null;
+    let resizeTimeout = null;
+
+    let currentIndex = 0;
+    let currentAnimationId = 0;
+
     if (isPassed(wrapper)) {
       element.innerHTML = originalHTML;
       element.style.opacity = "1";
@@ -257,98 +317,80 @@ export function revealTextLines(
       return;
     }
 
-    let revealLines = [];
-    let index = 0;
-
-    let lineTimeout = null;
-    let resizeTimeout = null;
-
-    let finished = false;
-
     element.style.opacity = "1";
 
-    function buildLines() {
-      const words = originalText.split(/\s+/);
+    // -------------------------------------------------------------------------
+    // TRANSFORME LE TEXTE EN LETTRES ANIMABLES
+    // -------------------------------------------------------------------------
 
-      /*
-       * On place provisoirement chaque mot dans un span
-       * pour déterminer sur quelle ligne il se trouve.
-       */
-      element.innerHTML = words
-        .map((word) => {
-          return `<span class="temp-word">${word}&nbsp;</span>`;
-        })
-        .join("");
+    function wrapTextNodesByLetter() {
+      const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
 
-      const tempWords = [...element.querySelectorAll(".temp-word")];
+      const textNodes = [];
 
-      if (tempWords.length === 0) {
-        revealLines = [];
-        return;
+      while (walker.nextNode()) {
+        textNodes.push(walker.currentNode);
       }
 
-      const lines = [];
+      textNodes.forEach((textNode) => {
+        const text = textNode.nodeValue;
 
-      let currentTop = tempWords[0].offsetTop;
-      let currentLine = [];
-
-      for (const word of tempWords) {
-        if (word.offsetTop !== currentTop) {
-          lines.push(currentLine);
-
-          currentLine = [];
-          currentTop = word.offsetTop;
+        if (!text) {
+          return;
         }
 
-        currentLine.push(word.textContent);
-      }
+        const fragment = document.createDocumentFragment();
 
-      if (currentLine.length > 0) {
-        lines.push(currentLine);
-      }
+        [...text].forEach((character) => {
+          if (
+            character === " " ||
+            character === "\n" ||
+            character === "\t" ||
+            character === "\u00A0"
+          ) {
+            fragment.appendChild(document.createTextNode(character));
 
-      /*
-       * On recrée ensuite le texte, ligne par ligne,
-       * avec le gradient qui servira à révéler les lettres.
-       */
-      element.innerHTML = lines
-        .map((line) => {
-          const text = line.join("").trimEnd();
+            return;
+          }
 
-          return `
-            <span class="reveal-line-wrap">
-              <span
-                class="reveal-line"
-                style="
-                  background-image:
-                    linear-gradient(
-                      to right,
-                      ${originalColor},
-                      ${originalColor}
-                    );
-                "
-              >
-                ${text}
-              </span>
-            </span>
-          `;
-        })
-        .join("");
+          const span = document.createElement("span");
 
-      revealLines = [...element.querySelectorAll(".reveal-line")];
+          span.className = "reveal-letter";
+          span.textContent = character;
 
-      /*
-       * En cas de redimensionnement pendant l'animation,
-       * les lignes déjà affichées restent visibles.
-       */
-      for (let i = 0; i < index && i < revealLines.length; i++) {
-        revealLines[i].style.backgroundSize = "100% 100%";
-      }
+          fragment.appendChild(span);
+        });
+
+        textNode.replaceWith(fragment);
+      });
     }
 
+    // -------------------------------------------------------------------------
+    // ARRÊTE UNIQUEMENT LE TIMER ACTUEL
+    // -------------------------------------------------------------------------
+
+    function pauseCurrentAnimation() {
+      clearTimeout(letterTimeout);
+      letterTimeout = null;
+
+      animationRunning = false;
+
+      /*
+       * Invalide les anciens requestAnimationFrame
+       * et callbacks encore programmés.
+       */
+      currentAnimationId += 1;
+    }
+
+    // -------------------------------------------------------------------------
+    // NETTOYAGE FINAL
+    // -------------------------------------------------------------------------
+
     function cleanup() {
-      clearTimeout(lineTimeout);
+      pauseCurrentAnimation();
+
       clearTimeout(resizeTimeout);
+      resizeTimeout = null;
 
       window.removeEventListener("resize", handleResize);
     }
@@ -362,73 +404,146 @@ export function revealTextLines(
 
       cleanup();
 
-      /*
-       * On restaure le HTML initial pour ne pas conserver
-       * les spans utilisés uniquement pour l'animation.
-       */
       element.innerHTML = originalHTML;
       element.style.opacity = "1";
 
       resolve();
     }
 
-    function animateNextLine() {
-      if (finished) {
+    // -------------------------------------------------------------------------
+    // RÉVÉLATION LETTRE PAR LETTRE
+    // -------------------------------------------------------------------------
+
+    function revealNextLetter(letters, animationId) {
+      if (
+        finished ||
+        isResizing ||
+        !animationRunning ||
+        animationId !== currentAnimationId
+      ) {
         return;
       }
 
-      /*
-       * Si le wrapper passe sous le header pendant
-       * l'animation, on affiche immédiatement le texte.
-       */
       if (isPassed(wrapper)) {
         finish();
         return;
       }
 
-      if (index >= revealLines.length) {
+      if (currentIndex >= letters.length) {
         finish();
         return;
       }
 
-      const line = revealLines[index];
+      const letter = letters[currentIndex];
 
-      line.style.transition = `background-size ${duration}ms ease-out`;
+      letter.style.transitionDuration = `${duration}ms`;
+      letter.classList.add("is-visible");
+
+      currentIndex += 1;
+
+      letterTimeout = setTimeout(() => {
+        revealNextLetter(letters, animationId);
+      }, delayBetweenLetters);
+    }
+
+    // -------------------------------------------------------------------------
+    // RECONSTRUIT LE TEXTE ET REPREND AU BON ENDROIT
+    // -------------------------------------------------------------------------
+
+    function resumeAnimation() {
+      if (finished) {
+        return;
+      }
+
+      pauseCurrentAnimation();
+
+      /*
+       * Empêche l’affichage du texte complet durant
+       * les quelques millisecondes de reconstruction.
+       */
+      element.style.visibility = "hidden";
+      element.innerHTML = originalHTML;
+      element.style.opacity = "1";
+
+      wrapTextNodesByLetter();
+
+      const animationId = currentAnimationId;
 
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          line.style.backgroundSize = "100% 100%";
+          if (finished || isResizing || animationId !== currentAnimationId) {
+            return;
+          }
+
+          const letters = [...element.querySelectorAll(".reveal-letter")];
+
+          /*
+           * Réaffiche immédiatement les lettres qui étaient
+           * déjà visibles avant le redimensionnement.
+           */
+          for (let i = 0; i < currentIndex && i < letters.length; i++) {
+            letters[i].style.transition = "none";
+            letters[i].classList.add("is-visible");
+          }
+
+          /*
+           * Force l’application de l’état actuel
+           * avant de réactiver les transitions.
+           */
+          void element.offsetWidth;
+
+          for (let i = 0; i < currentIndex && i < letters.length; i++) {
+            letters[i].style.transition = "";
+          }
+
+          /*
+           * Le paragraphe ne redevient visible qu’une fois
+           * sa structure correctement reconstruite.
+           */
+          element.style.visibility = "visible";
+
+          animationRunning = true;
+
+          revealNextLetter(letters, animationId);
         });
       });
-
-      lineTimeout = setTimeout(() => {
-        index += 1;
-
-        lineTimeout = setTimeout(() => {
-          animateNextLine();
-        }, delayBetweenLines);
-      }, duration);
     }
+
+    // -------------------------------------------------------------------------
+    // GESTION DU RESIZE
+    // -------------------------------------------------------------------------
 
     function handleResize() {
       if (finished) {
         return;
       }
 
-      clearTimeout(lineTimeout);
+      isResizing = true;
+
+      /*
+       * On arrête uniquement la progression de l’écriture.
+       * On ne touche pas au HTML actuel :
+       * les lettres déjà visibles restent visibles,
+       * les autres restent cachées.
+       */
+      pauseCurrentAnimation();
+
       clearTimeout(resizeTimeout);
 
+      /*
+       * Le délai est relancé à chaque événement resize.
+       * La reconstruction n’a lieu qu’une fois
+       * le redimensionnement réellement terminé.
+       */
       resizeTimeout = setTimeout(() => {
-        buildLines();
-        animateNextLine();
-      }, 120);
+        isResizing = false;
+        resumeAnimation();
+      }, 250);
     }
-
-    buildLines();
 
     window.addEventListener("resize", handleResize);
 
-    animateNextLine();
+    resumeAnimation();
   });
 }
 
@@ -437,7 +552,7 @@ export function revealTextLines(
 // -----------------------------------------------------------------------------
 
 async function runAnimation() {
-  const wrappers = document.querySelectorAll(".wrapper__products");
+  const wrappers = [...document.querySelectorAll(".wrapper__products")];
 
   for (const wrapper of wrappers) {
     const first = wrapper.firstElementChild;
@@ -447,33 +562,52 @@ async function runAnimation() {
       continue;
     }
 
+    /*
+     * Étape 1 :
+     * on attend que cette carte entre dans le viewport.
+     */
     await waitElementVisible(wrapper);
 
     /*
-     * On reconnaît maintenant :
-     * - les images classiques ;
-     * - le canvas Three.js ;
-     * - le conteneur #globe-container ;
-     * - les blocs .img__products.
+     * Étape 2 :
+     * la carte complète remonte depuis le bas.
      */
+    await revealProductCard(wrapper);
+
+    /*
+     * Petite pause permettant de distinguer clairement
+     * l'apparition de la carte de ses animations internes.
+     */
+    await new Promise((resolve) => {
+      setTimeout(resolve, 180);
+    });
+
     const firstContainsVisual =
       first.matches(".img__products") ||
       first.querySelector("img") ||
       first.querySelector("#globe-container") ||
+      first.querySelector("#circuit-container") ||
+      first.querySelector("#robot-container") ||
       first.querySelector("canvas");
 
     if (firstContainsVisual) {
       /*
-       * Le visuel est à gauche :
-       * arrivée du visuel, puis écriture du texte.
+       * Produit 1 et produit 3 :
+       *
+       * carte
+       * → visuel venant de gauche
+       * → écriture du texte
        */
       await revealVisual(first);
 
       await revealTextLines(last.querySelector(".text__products"));
     } else {
       /*
-       * Le texte est à gauche :
-       * écriture du texte, puis arrivée du visuel.
+       * Produit 2 :
+       *
+       * carte
+       * → écriture du texte
+       * → visuel venant de droite
        */
       await revealTextLines(first.querySelector(".text__products"));
 

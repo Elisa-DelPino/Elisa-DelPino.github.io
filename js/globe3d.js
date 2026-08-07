@@ -23,32 +23,6 @@ export function initGlobe() {
     return;
   }
 
-  // ------------------------------------------------ CSS
-
-  if (!document.getElementById("globe3d-style")) {
-    const style = document.createElement("style");
-    style.id = "globe3d-style";
-
-    style.textContent = `
-      #globe-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        min-width: 0;
-        min-height: 180px;
-        overflow: hidden;
-      }
-
-      #globe-container canvas {
-        display: block;
-        width: 100% !important;
-        height: 100% !important;
-      }
-    `;
-
-    document.head.appendChild(style);
-  }
-
   // ------------------------------------------------ SCÈNE
 
   const scene = new THREE.Scene();
@@ -325,6 +299,7 @@ export function initGlobe() {
   }
 
   resizeObserver = new ResizeObserver(() => {
+    console.count("resize globe");
     resizeGlobe();
   });
 

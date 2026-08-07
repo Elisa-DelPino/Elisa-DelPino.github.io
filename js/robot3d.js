@@ -17,35 +17,12 @@ export function initRobot3D() {
     return;
   }
 
-  // Évite de créer plusieurs canvas.
+  /*
+   * Empêche la création de plusieurs scènes
+   * ou de plusieurs canvas dans le même conteneur.
+   */
   if (container.querySelector("canvas")) {
     return;
-  }
-
-  // ---------------------------------------------------------------- CSS
-
-  if (!document.getElementById("robot3d-style")) {
-    const style = document.createElement("style");
-    style.id = "robot3d-style";
-
-    style.textContent = `
-      #robot-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        min-width: 0;
-        min-height: 180px;
-        overflow: hidden;
-      }
-
-      #robot-container canvas {
-        display: block;
-        width: 100% !important;
-        height: 100% !important;
-      }
-    `;
-
-    document.head.appendChild(style);
   }
 
   // ---------------------------------------------------------------- SCÈNE
@@ -79,7 +56,6 @@ export function initRobot3D() {
 
   const purple = 0xa240df;
   const brightPurple = 0xc45cff;
-  const neonCorePurple = 0xd98cff;
 
   // ---------------------------------------------------------------- OUTILS DE DESSIN
 
@@ -91,15 +67,13 @@ export function initRobot3D() {
     opacity,
     blending = THREE.AdditiveBlending,
   ) {
-    const material = new THREE.LineBasicMaterial({
+    return new THREE.LineBasicMaterial({
       color,
       transparent: true,
       opacity,
       blending,
       depthWrite: false,
     });
-
-    return material;
   }
 
   function createNeonLine(points, closed = false) {
@@ -111,7 +85,7 @@ export function initRobot3D() {
 
     const geometry = new THREE.BufferGeometry().setFromPoints(vectors);
 
-    // Halo extérieur très large.
+    // Halo extérieur.
     const outerGlowMaterial = createLineMaterial(purple, 0.22);
 
     const outerGlow = new THREE.Line(geometry.clone(), outerGlowMaterial);
@@ -145,7 +119,7 @@ export function initRobot3D() {
 
     robotGroup.add(neonLine);
 
-    // Petit cœur presque blanc pour renforcer l’effet néon.
+    // Cœur presque blanc.
     const coreMaterial = createLineMaterial(
       0xffffff,
       0.28,
@@ -202,7 +176,7 @@ export function initRobot3D() {
     true,
   );
 
-  // ---------------------------------------------------------------- BASE DE L’ANTENNE
+  // ---------------------------------------------------------------- ANTENNE
 
   createNeonLine(
     [
@@ -214,13 +188,11 @@ export function initRobot3D() {
     true,
   );
 
-  // Tige de l’antenne.
   createNeonLine([
     [0, 2.45],
     [0, 3.15],
   ]);
 
-  // Carré en haut de l’antenne.
   createNeonLine(
     [
       [-0.28, 3.15],
@@ -276,6 +248,7 @@ export function initRobot3D() {
     }
 
     const aspect = width / height;
+
     const viewHeight = 7.4;
     const viewWidth = viewHeight * aspect;
 
@@ -290,6 +263,7 @@ export function initRobot3D() {
   }
 
   robotResizeObserver = new ResizeObserver(() => {
+    console.count("resize robot");
     resizeRobot();
   });
 
@@ -310,7 +284,6 @@ export function initRobot3D() {
 
     /*
      * Respiration lente du néon.
-     * La lumière reste stable et lumineuse la majorité du temps.
      */
     const breathing = 1 + Math.sin(elapsed * 0.35) * 0.18;
 
@@ -327,8 +300,7 @@ export function initRobot3D() {
     });
 
     /*
-     * Déclenchement d'une séquence de grésillement.
-     * Elle dure entre 0,35 et 0,60 seconde.
+     * Déclenchement du grésillement.
      */
     if (!isFlickering && elapsed >= nextFlickerTime) {
       isFlickering = true;
@@ -337,12 +309,6 @@ export function initRobot3D() {
     }
 
     if (isFlickering) {
-      /*
-       * Ratés électriques irréguliers :
-       * le néon est parfois presque éteint,
-       * parfois légèrement affaibli,
-       * parfois complètement allumé.
-       */
       const randomValue = Math.random();
 
       let flicker = 1;
@@ -364,17 +330,13 @@ export function initRobot3D() {
       });
 
       /*
-       * Si tu as ajouté robotLight,
-       * sa luminosité grésille aussi.
+       * Conservé uniquement si robotLight existe
+       * dans une autre version du script.
        */
       if (typeof robotLight !== "undefined") {
         robotLight.intensity *= flicker;
       }
 
-      /*
-       * Fin de la séquence de grésillement.
-       * La prochaine arrive entre 1 et 2 secondes plus tard.
-       */
       if (elapsed >= flickerEndTime) {
         isFlickering = false;
 
@@ -385,13 +347,13 @@ export function initRobot3D() {
     robotRenderer.render(scene, camera);
   }
 
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      resizeRobot();
-      animate();
-    });
-  });
-
+  /*
+   * Un seul lancement de la boucle.
+   *
+   * Il y avait auparavant deux blocs identiques,
+   * ce qui créait deux boucles requestAnimationFrame
+   * permanentes pour le même robot.
+   */
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       resizeRobot();
@@ -403,6 +365,7 @@ export function initRobot3D() {
 export function destroyRobot3D() {
   if (robotAnimationFrameId !== null) {
     cancelAnimationFrame(robotAnimationFrameId);
+
     robotAnimationFrameId = null;
   }
 

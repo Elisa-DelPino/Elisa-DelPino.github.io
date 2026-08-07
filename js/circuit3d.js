@@ -24,32 +24,6 @@ export function initCircuit3D() {
     return;
   }
 
-  // ---------------------------------------------------------------- CSS
-
-  if (!document.getElementById("circuit3d-style")) {
-    const style = document.createElement("style");
-    style.id = "circuit3d-style";
-
-    style.textContent = `
-      #circuit-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        min-width: 0;
-        min-height: 180px;
-        overflow: hidden;
-      }
-
-      #circuit-container canvas {
-        display: block;
-        width: 100% !important;
-        height: 100% !important;
-      }
-    `;
-
-    document.head.appendChild(style);
-  }
-
   // ---------------------------------------------------------------- SCÈNE
 
   const scene = new THREE.Scene();
@@ -559,6 +533,7 @@ export function initCircuit3D() {
   }
 
   circuitResizeObserver = new ResizeObserver(() => {
+    console.count("resize circuit");
     resizeCircuit();
   });
 
