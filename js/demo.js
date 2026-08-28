@@ -9,6 +9,7 @@ let resizeTimeout = null;
 let carouselIsSliding = false;
 let lightboxScrollFrame = null;
 const lightboxScrollTimeouts = new Set();
+let lightboxAutoScrollCancelled = false;
 
 const carouselAnimationIntervals = new Set();
 const managedCarouselVideos = new Set();
@@ -535,6 +536,7 @@ if (!document.getElementById("cssStyle")) {
     border-color 300ms ease,
     box-shadow 300ms ease,
     background 300ms ease;
+    border: var(--border);
 }
 
 .section__demo.animations .demo-carousel__item.little {
@@ -552,6 +554,7 @@ if (!document.getElementById("cssStyle")) {
   filter: none;
 
   transform: translateY(-7px);
+  border: var(--border);
 }
 
   .scrollIndicator{
@@ -1183,6 +1186,381 @@ display: none !important;
 display: none !important;
 }
 
+.div-fakeWeb__demo.web-demo-card {
+  position: relative;
+
+  width: 100%;
+  height: 100% !important;
+
+  display: grid;
+
+  grid-template-rows:
+    auto
+    auto
+    auto
+    auto;
+
+  align-content: start;
+  justify-items: center;
+
+  padding: clamp(12px, 1.5vw, 22px);
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(162, 64, 223, 0.07),
+      transparent 30%
+    ),
+    #050608;
+
+  border: 1px solid var(--other-color);
+  border-radius: 8px;
+
+  box-sizing: border-box;
+
+  cursor: pointer;
+
+  transition:
+    transform 300ms ease,
+    opacity 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease;
+}
+
+.web-demo-card__preview {
+  width: 100%;
+
+  aspect-ratio: 10 / 10;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  justify-self: center;
+
+  overflow: hidden;
+
+  border-radius: 4px;
+
+  background: black;
+}
+
+.web-demo-card__preview img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  margin: 0 auto;
+
+  padding: 10px 0;
+
+  object-fit: contain;
+  object-position: top center;
+}
+
+.web-demo-card__identity {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 16px 8px 10px;
+}
+
+.web-demo-card__title {
+  width: 100%;
+
+  margin: 0;
+
+  color: rgba(255, 245, 238, 0.88);
+
+  font-family:
+    "Cormorant Garamond",
+    Georgia,
+    serif;
+
+  font-size: clamp(16px, 1.45vw, 24px);
+  font-weight: 400;
+
+  line-height: 1.15;
+
+  text-align: center;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.web-demo-card__features {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 14px 8px 8px;
+}
+
+.web-demo-card__features-title {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  margin-bottom: 15px;
+
+  color: rgba(193, 129, 234, 0.9);
+
+  font-family:
+    "Montserrat",
+    Arial,
+    sans-serif;
+
+  font-size: clamp(8px, 0.8vw, 11px);
+  font-weight: 400;
+
+  letter-spacing: 3px;
+
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.web-demo-card__features-title::before,
+.web-demo-card__features-title::after {
+  content: "";
+
+  width: clamp(26px, 4vw, 60px);
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(162, 64, 223, 0.5)
+    );
+}
+
+.web-demo-card__features-title::after {
+  transform: scaleX(-1);
+}
+
+.web-demo-card__features-list {
+  width: min(100%, 400px);
+
+  min-height: 35px;
+
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.web-demo-card__feature {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  gap: 8px;
+
+  padding: 0 10px;
+
+  color: rgba(255, 255, 255, 0.85);
+
+  text-align: center;
+}
+
+.web-demo-card__feature + .web-demo-card__feature {
+  border-left: 1px solid rgba(162, 64, 223, 0.24);
+}
+
+.web-demo-card__icon {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(182, 108, 240, 0.72);
+  border-radius: 50%;
+
+  color: #bd7ce7;
+
+  box-shadow:
+    0 0 10px rgba(162, 64, 223, 0.08);
+}
+
+.web-demo-card__icon svg {
+  width: 35%;
+  height: 35%;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.5;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.web-demo-card__feature-name {
+  min-height: 20px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  color: rgba(255, 255, 255, 0.88);
+
+  font-family:
+    "Montserrat",
+    Arial,
+    sans-serif;
+
+  font-size: clamp(9px, 0.95vw, 11px);
+  font-weight: 400;
+
+  line-height: 1.25;
+
+  text-align: center;
+}
+
+.web-demo-card__button {
+  width: calc(100% - 24px);
+  max-width: 430px;
+
+  min-height: 40px;
+
+  justify-self: center;
+
+  margin:
+    5px
+    auto;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    auto
+    1fr;
+
+  align-items: center;
+
+  padding: 0 18px;
+
+  border: 1px solid rgba(182, 108, 240, 0.6);
+  border-radius: 4px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(162, 64, 223, 0.025),
+      rgba(162, 64, 223, 0.09),
+      rgba(162, 64, 223, 0.025)
+    );
+
+  color: rgba(255, 255, 255, 0.92);
+
+  font-family:
+    "Montserrat",
+    Arial,
+    sans-serif;
+
+  font-size: clamp(9px, 0.95vw, 13px);
+  font-weight: 400;
+
+  letter-spacing: 3px;
+
+  text-transform: uppercase;
+
+  pointer-events: none;
+
+  box-shadow:
+    0 0 12px rgba(162, 64, 223, 0.06);
+
+  transition:
+    background 250ms ease,
+    border-color 250ms ease,
+    box-shadow 250ms ease;
+}
+
+.web-demo-card__button-text {
+  grid-column: 2;
+
+  justify-self: center;
+}
+
+.web-demo-card__button-arrow {
+  grid-column: 3;
+
+  justify-self: end;
+
+  font-size: 20px;
+  font-weight: 200;
+
+  line-height: 1;
+}
+
+.web-demo-card:hover .web-demo-card__button {
+  border-color: rgba(182, 108, 240, 0.95);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(162, 64, 223, 0.035),
+      rgba(162, 64, 223, 0.15),
+      rgba(162, 64, 223, 0.035)
+    );
+
+  box-shadow:
+    0 0 16px rgba(162, 64, 223, 0.14);
+}
+
+@media screen and (max-width: 650px) {
+
+  .web-demo-card__title {
+    font-size: 19px;
+  }
+
+  .web-demo-card__features-title {
+    font-size: 10px;
+    letter-spacing: 2.2px;
+  }
+
+  .web-demo-card__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .web-demo-card__icon svg {
+    width: 42%;
+    height: 42%;
+  }
+
+  .web-demo-card__feature-name {
+    font-size: 11px;
+  }
+
+  .web-demo-card__button {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  .web-demo-card__button-arrow {
+    font-size: 20px;
+  }
+}
+
 /* ---------------------------------------------------------
    TABLETTE
 ---------------------------------------------------------- */
@@ -1340,6 +1718,332 @@ const fakeWeb = document.querySelectorAll(".div-fakeWeb__demo");
 const track = document.getElementById("demoTrack");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
+
+/* =========================================================
+   CONTENU DES CARTES DE DÉMOS WEB
+========================================================= */
+
+/*
+ * Ici tu définis uniquement les informations
+ * propres à chaque démo.
+ *
+ * L'ordre doit correspondre à l'ordre de tes
+ * .div-fakeWeb__demo dans ton HTML.
+ */
+
+const webDemoCardsData = [
+  /* =======================================================
+     1 — SALON DE COIFFURE
+  ======================================================= */
+
+  {
+    title: "Salon de coiffure",
+    features: [
+      {
+        name: "Prise de rendez-vous",
+        icon: "calendar",
+      },
+      {
+        name: "Prestations",
+        icon: "scissors",
+      },
+    ],
+  },
+
+  /* =======================================================
+     2 — PÂTISSERIE
+     
+     Tu pourras modifier les deux fonctionnalités
+     comme tu veux.
+  ======================================================= */
+
+  {
+    title: "Pâtisserie",
+    features: [
+      {
+        name: "Galerie des créations",
+        icon: "gallery",
+      },
+      {
+        name: "Animation",
+        icon: "animation",
+      },
+    ],
+  },
+
+  /* =======================================================
+     3 — E-COMMERCE DÉCO
+  ======================================================= */
+
+  {
+    title: "E-commerce décoration",
+    features: [
+      {
+        name: "Catalogue produits",
+        icon: "gallery",
+      },
+      {
+        name: "Panier",
+        icon: "cart",
+      },
+    ],
+  },
+];
+
+/* =========================================================
+   ICÔNES
+========================================================= */
+
+function getWebDemoFeatureIcon(icon) {
+  if (icon === "calendar") {
+    return `
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <rect
+          x="3"
+          y="5"
+          width="18"
+          height="16"
+          rx="2"
+        ></rect>
+
+        <path d="M16 3v4"></path>
+        <path d="M8 3v4"></path>
+        <path d="M3 10h18"></path>
+
+        <path d="M8 14h.01"></path>
+        <path d="M12 14h.01"></path>
+        <path d="M16 14h.01"></path>
+
+        <path d="M8 17h.01"></path>
+        <path d="M12 17h.01"></path>
+      </svg>
+    `;
+  }
+
+  if (icon === "scissors") {
+    return `
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <circle cx="6" cy="7" r="3"></circle>
+        <circle cx="6" cy="17" r="3"></circle>
+
+        <path d="m8.7 8.4 11.3 7.1"></path>
+        <path d="M8.7 15.6 20 8.5"></path>
+      </svg>
+    `;
+  }
+
+  if (icon === "gallery") {
+    return `
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <rect
+          x="3"
+          y="4"
+          width="18"
+          height="16"
+          rx="2"
+        ></rect>
+
+        <circle cx="9" cy="9" r="1.5"></circle>
+
+        <path d="m4 17 5-5 4 4 2-2 5 5"></path>
+      </svg>
+    `;
+  }
+
+  if (icon === "cart") {
+    return `
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path d="M3 4h2l2.3 10.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.5L21 7H6"></path>
+
+        <circle cx="10" cy="20" r="1"></circle>
+        <circle cx="18" cy="20" r="1"></circle>
+      </svg>
+    `;
+  }
+
+  if (icon === "animation") {
+    return `
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M4 12h4"></path>
+      <path d="M16 12h4"></path>
+      <path d="M12 4v4"></path>
+      <path d="M12 16v4"></path>
+
+      <circle cx="12" cy="12" r="3"></circle>
+
+      <path d="M6.5 6.5l2.2 2.2"></path>
+      <path d="M15.3 15.3l2.2 2.2"></path>
+      <path d="M17.5 6.5l-2.2 2.2"></path>
+      <path d="M8.7 15.3l-2.2 2.2"></path>
+    </svg>
+  `;
+  }
+
+  return "";
+}
+
+/* =========================================================
+   CONSTRUCTION DES CARTES
+========================================================= */
+
+function createWebDemoCards() {
+  fakeWeb.forEach((item, index) => {
+    const data = webDemoCardsData[index];
+
+    if (!data) return;
+
+    /*
+     * IMPORTANT :
+     *
+     * On récupère l'image que ta carte possède DÉJÀ.
+     * Donc tu n'as pas besoin de changer le chemin
+     * de tes captures de sites.
+     */
+    const currentImage = item.querySelector("img");
+
+    const previewSrc = currentImage?.getAttribute("src") || "";
+
+    const previewAlt =
+      currentImage?.getAttribute("alt") || `Aperçu ${data.title}`;
+
+    /*
+     * Nouvelle classe.
+     */
+    item.classList.add("web-demo-card");
+
+    /*
+     * On garde ton tabindex actuel.
+     *
+     * Sécurité au cas où il manquerait.
+     */
+    if (!item.hasAttribute("tabindex")) {
+      item.setAttribute("tabindex", "0");
+    }
+
+    /*
+     * On recrée uniquement L'INTÉRIEUR
+     * de ta carte.
+     *
+     * La div-fakeWeb__demo elle-même
+     * n'est jamais supprimée.
+     *
+     * Donc ton système de lightbox actuel
+     * continue de fonctionner.
+     */
+    item.innerHTML = `
+
+      <!-- ===============================
+           IMAGE DU SITE
+      ================================ -->
+
+      <div class="web-demo-card__preview">
+
+        ${
+          previewSrc
+            ? `
+              <img
+                src="${previewSrc}"
+                alt="${previewAlt}"
+                loading="lazy"
+              >
+            `
+            : ""
+        }
+
+      </div>
+
+
+      <!-- ===============================
+           TITRE + LOGO
+      ================================ -->
+
+      <div class="web-demo-card__identity">
+
+        <h3 class="web-demo-card__title">
+          ${data.title}
+        </h3>
+
+      </div>
+
+
+      <!-- ===============================
+           FONCTIONNALITÉS
+      ================================ -->
+
+      <div class="web-demo-card__features">
+
+        <div class="web-demo-card__features-title">
+          Fonctionnalités
+        </div>
+
+
+        <div class="web-demo-card__features-list">
+
+          ${data.features
+            .map(
+              (feature) => `
+                <div class="web-demo-card__feature">
+
+                  <div class="web-demo-card__icon">
+                    ${getWebDemoFeatureIcon(feature.icon)}
+                  </div>
+
+                  <span class="web-demo-card__feature-name">
+                    ${feature.name}
+                  </span>
+
+                </div>
+              `,
+            )
+            .join("")}
+
+        </div>
+
+      </div>
+
+
+      <!-- ===============================
+           BOUTON
+      ================================ -->
+
+      <div
+        class="web-demo-card__button"
+        aria-hidden="true"
+      >
+
+        <span class="web-demo-card__button-text">
+          Tester la démo
+        </span>
+
+        <span class="web-demo-card__button-arrow">
+          →
+        </span>
+
+      </div>
+
+    `;
+  });
+}
+
+/*
+ * Construction au chargement.
+ */
+createWebDemoCards();
 
 // -----------------------------------------------------------------------------
 // GESTION OPTIMISÉE DES VIDÉOS
@@ -1548,6 +2252,8 @@ function hoverFakeWeb(elements) {
 // -----------------------------------------------------------------------------
 
 function clearLightboxScrollAnimation() {
+  lightboxAutoScrollCancelled = true;
+
   if (lightboxScrollFrame !== null) {
     cancelAnimationFrame(lightboxScrollFrame);
     lightboxScrollFrame = null;
@@ -1560,9 +2266,41 @@ function clearLightboxScrollAnimation() {
   lightboxScrollTimeouts.clear();
 }
 
+function stopLightboxAutoScrollOnUserInteraction(overlay) {
+  if (!overlay) return;
+
+  const scrollContainer = overlay.querySelector(".divImg");
+
+  const stopAutoScroll = () => {
+    lightboxAutoScrollCancelled = true;
+    clearLightboxScrollAnimation();
+  };
+
+  // Molette / trackpad
+  scrollContainer?.addEventListener("wheel", stopAutoScroll, {
+    passive: true,
+    capture: true,
+  });
+
+  // Téléphone / tablette
+  scrollContainer?.addEventListener("touchstart", stopAutoScroll, {
+    passive: true,
+    capture: true,
+  });
+
+  // Clic / pression souris
+  scrollContainer?.addEventListener("pointerdown", stopAutoScroll, {
+    passive: true,
+    capture: true,
+  });
+}
+
 function lightboxTimeout(callback, delay) {
   const timeoutId = window.setTimeout(() => {
     lightboxScrollTimeouts.delete(timeoutId);
+
+    if (lightboxAutoScrollCancelled) return;
+
     callback();
   }, delay);
 
@@ -1579,8 +2317,8 @@ function easeInOutCubic(progress) {
 
 function animateLightboxScroll(element, target, duration) {
   return new Promise((resolve) => {
-    if (!element) {
-      resolve();
+    if (!element || lightboxAutoScrollCancelled) {
+      resolve(false);
       return;
     }
 
@@ -1594,6 +2332,14 @@ function animateLightboxScroll(element, target, duration) {
     const startTime = performance.now();
 
     function step(now) {
+      // IMPORTANT :
+      // on vérifie l'annulation À CHAQUE FRAME
+      if (lightboxAutoScrollCancelled) {
+        lightboxScrollFrame = null;
+        resolve(false);
+        return;
+      }
+
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const easedProgress = easeInOutCubic(progress);
@@ -1606,7 +2352,7 @@ function animateLightboxScroll(element, target, duration) {
       }
 
       lightboxScrollFrame = null;
-      resolve();
+      resolve(true);
     }
 
     lightboxScrollFrame = requestAnimationFrame(step);
@@ -1614,9 +2360,13 @@ function animateLightboxScroll(element, target, duration) {
 }
 
 function launchWebPreviewNudge(scrollContainer) {
+  // On nettoie l'ancienne animation
   clearLightboxScrollAnimation();
 
   if (!scrollContainer) return;
+
+  // Nouvelle animation autorisée
+  lightboxAutoScrollCancelled = false;
 
   scrollContainer.scrollTop = 0;
 
@@ -1627,6 +2377,8 @@ function launchWebPreviewNudge(scrollContainer) {
   if (reducedMotion) return;
 
   lightboxTimeout(async () => {
+    if (lightboxAutoScrollCancelled) return;
+
     const maximumScroll =
       scrollContainer.scrollHeight - scrollContainer.clientHeight;
 
@@ -1634,9 +2386,23 @@ function launchWebPreviewNudge(scrollContainer) {
 
     if (targetScroll <= 0) return;
 
-    await animateLightboxScroll(scrollContainer, targetScroll, 1600);
+    // DESCENTE
+    const completed = await animateLightboxScroll(
+      scrollContainer,
+      targetScroll,
+      1600,
+    );
 
+    // L'utilisateur a repris la main :
+    // on arrête TOUT ici.
+    if (!completed || lightboxAutoScrollCancelled) {
+      return;
+    }
+
+    // RETOUR EN HAUT
     lightboxTimeout(async () => {
+      if (lightboxAutoScrollCancelled) return;
+
       await animateLightboxScroll(scrollContainer, 0, 2100);
     }, 550);
   }, 900);
@@ -1806,6 +2572,12 @@ function addLigthBox(item, index) {
   `;
 
   document.body.appendChild(overlay);
+
+  // Si c'est une démo de site,
+  // toute interaction utilisateur annule le scroll automatique.
+  if (isWebPreview) {
+    stopLightboxAutoScrollOnUserInteraction(overlay);
+  }
 
   addDataLigthBox(item, currentIndex);
 
@@ -2293,7 +3065,7 @@ const items = getDataAnim().map((item, index) => ({
 }));
 
 function getVisibleColumnCount() {
-  if (window.innerWidth <= 900) {
+  if (window.innerWidth <= 600) {
     return 2;
   }
 
@@ -2357,6 +3129,28 @@ function createColumnElement(columnData) {
   const columnDiv = document.createElement("div");
 
   columnDiv.className = "demo-carousel__column";
+
+  /*
+   * LARGEUR DES COLONNES
+   *
+   * + de 600px :
+   * 3 colonnes visibles
+   * = 6 animations
+   *
+   * 600px et moins :
+   * 2 colonnes visibles
+   * = 4 animations
+   */
+  if (window.innerWidth <= 600) {
+    columnDiv.style.flex = "0 0 calc((100% - 10px) / 2)";
+  } else if (window.innerWidth <= 900) {
+    columnDiv.style.flex =
+      "0 0 calc((100% - (clamp(10px, 1.5vw, 17px) * 2)) / 3)";
+  } else {
+    columnDiv.style.flex =
+      "0 0 calc((100% - (clamp(12px, 1.8vw, 24px) * 2)) / 3)";
+  }
+
   columnDiv._carouselIntervalIds = [];
 
   columnData.forEach((item) => {
@@ -2367,8 +3161,15 @@ function createColumnElement(columnData) {
     const itemDiv = document.createElement("article");
 
     itemDiv.className = "demo-carousel__item demo-animation-card";
+
+    if (window.innerWidth <= 600) {
+      itemDiv.style.height = "clamp(250px, 30vw, 300px)";
+    }
+
     itemDiv.dataset.index = String(item.originalIndex);
+
     itemDiv.tabIndex = 0;
+
     itemDiv.setAttribute("aria-label", "Voir cette animation interactive");
 
     // -----------------------------------------------------------------------
@@ -2385,6 +3186,7 @@ function createColumnElement(columnData) {
     const shine = document.createElement("span");
 
     shine.className = "demo-animation-card__shine";
+
     shine.setAttribute("aria-hidden", "true");
 
     mediaContainer.appendChild(shine);
@@ -2410,14 +3212,21 @@ function createColumnElement(columnData) {
       video.controls = false;
 
       video.setAttribute("muted", "");
+
       video.setAttribute("loop", "");
+
       video.setAttribute("autoplay", "");
+
       video.setAttribute("playsinline", "");
+
       video.setAttribute("preload", "metadata");
+
       video.setAttribute("aria-hidden", "true");
+
       video.setAttribute("tabindex", "-1");
 
       video.disablePictureInPicture = true;
+
       video.src = item.video;
 
       /*
@@ -2448,6 +3257,7 @@ function createColumnElement(columnData) {
         }
 
         previewText = document.createElement("h2");
+
         previewText.className = "demo-carousel__previewText";
 
         previewText.textContent =
@@ -2461,6 +3271,7 @@ function createColumnElement(columnData) {
 
       function launchPreviewAnimation() {
         createFreshPreview();
+
         item.anim(previewText);
       }
 
@@ -2489,6 +3300,7 @@ function createColumnElement(columnData) {
       }, 5000);
 
       carouselAnimationIntervals.add(intervalId);
+
       columnDiv._carouselIntervalIds.push(intervalId);
     }
 
@@ -2506,7 +3318,9 @@ function createColumnElement(columnData) {
     const actionButton = document.createElement("button");
 
     actionButton.className = "demo-animation-card__button";
+
     actionButton.type = "button";
+
     actionButton.setAttribute("aria-label", "Ouvrir cette animation");
 
     actionButton.innerHTML = `
@@ -2527,7 +3341,10 @@ function createColumnElement(columnData) {
       </svg>
     `;
 
+    actionButton.style.border = "var(--border)";
+
     itemDiv.appendChild(mediaContainer);
+
     itemDiv.appendChild(actionButton);
 
     columnDiv.appendChild(itemDiv);
@@ -2746,5 +3563,3 @@ bindClickInteractions(fakeWeb);
 // -----------------------------------------------------------------------------
 
 initCarousel();
-
-// -------------------------------- FIN DU FICHIER --------------------------------

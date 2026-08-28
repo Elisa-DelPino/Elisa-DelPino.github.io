@@ -409,20 +409,40 @@ export function loadHeaderScriptDirect() {
           font-size: clamp(18px, 2vw, 25px);
         }
 
-        .header__nav__close {
-    display:none;
+  .header__nav__close {
+    display: none;
 
-    align-items:center;
-    justify-content:center;
+    align-items: center;
+    justify-content: center;
 
-    width:clamp(45px,5vw,80px);
-    height:clamp(45px,5vw,80px);
+    width: clamp(45px, 5vw, 80px);
+    height: clamp(45px, 5vw, 80px);
 
-    cursor:pointer;
+    cursor: pointer;
 
-    position:relative;
-    z-index:5;
-    flex-shrink:0;
+    position: relative;
+    z-index: 5;
+    flex-shrink: 0;
+
+    transition:
+        transform 220ms ease,
+        color 220ms ease;
+}
+
+
+/* Rotation de la croix */
+
+.header__nav__close.is-rotating {
+    transform: rotate(90deg);
+}
+
+
+/* Même effet au survol sur ordinateur */
+
+@media (hover: hover) and (pointer: fine) {
+    .header__nav__close:hover {
+        transform: rotate(90deg);
+    }
 }
 
         .header__nav__close svg {

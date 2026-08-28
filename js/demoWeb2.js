@@ -1,694 +1,986 @@
-// INJECT FONT
+import { startCakeAnimation, stopCakeAnimation } from "./cakeAnimation.js";
+import { startCakeCarousel, stopCakeCarousel } from "./cakeCarousel.js";
+import { demo2Cakes } from "./dataDemo2.js";
+
+/* =====================================================
+   POLICES
+===================================================== */
 
 if (!document.getElementById("demo2Font")) {
   const font = document.createElement("link");
+
   font.id = "demo2Font";
   font.rel = "stylesheet";
   font.href =
-    "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&display=swap";
-  ("https://fonts.googleapis.com/css2?family=Marcellus&display=swap");
+    "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Marcellus&display=swap";
 
   document.head.appendChild(font);
 }
 
-// INJECT CSS
+/* =====================================================
+   ARRÊT DES COMPOSANTS
+===================================================== */
 
-const style = document.createElement("style");
+function stopDemo2Components(element) {
+  stopCakeAnimation();
 
-style.innerHTML = `
+  const carousel = element?.querySelector(".cake-carousel");
 
-.demo2__site,
-.demo2__site * {
-  font-family: "Cormorant Garamond", serif;
-}
-
-.header__demo2 {
-  position: sticky;
-  top: 0;
-  z-index: 9999;
-}
-
-.header__nav__demo2 {
-  width: 100%;
-  height: clamp(40px, 5vw, 60px);
-  display: flex;
-  list-style: none;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(5px, 2vw, 20px);
-  background: #ffe5ec;
-}
-
-.header__nav__demo2__logo {
-  width: clamp(60px, 8vw, 150px);    
-  height: clamp(60px, 8vw, 150px);
-  background: #ffe5ec;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
-  border-radius: 50%;
-  transform: translateY(20%);
-  z-index: 999;
-}
-
-.header__nav__demo2__logo img {
-  width: 80%;
-  height: 80%;
-  object-fit: cover;
-}
-
-.header__nav__demo2__link {
-  font-size: clamp(13px, 1.7vw, 23px);
-  cursor: pointer;
-  color: black;
-
-  font-family: "Marcellus", serif;
-letter-spacing: 1px;
-font-weight: 600;
+  if (carousel) {
+    stopCakeCarousel(carousel);
+  }
 }
 
 /* =====================================================
-   HERO PÂTISSERIE
+   HEADER
 ===================================================== */
 
-.demo2__content {
-  position: relative;
+function createHeaderHTML() {
+  return `
 
-  width: 100%;
-  height: clamp(280px, 35vw, 520px);
+    <nav class="header__demo2">
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+      <ul class="header__nav__demo2">
 
-  background: #fff;
 
-  overflow: hidden;
+        <li class="header__nav__demo2__link">
+
+          <button
+            type="button"
+            class="header__nav__demo2__button"
+            data-page="home"
+          >
+            ACCUEIL
+          </button>
+
+        </li>
+
+
+        <li
+          class="header__nav__demo2__logo"
+          data-page="home-top"
+          role="button"
+          tabindex="0"
+          aria-label="Retour en haut de l'accueil"
+        >
+
+          <img
+            src="./img/logoPatisserie.svg"
+            alt="Logo"
+          >
+
+        </li>
+
+
+        <li class="header__nav__demo2__link">
+
+          <button
+            type="button"
+            class="header__nav__demo2__button"
+            data-page="gallery"
+          >
+            GALERIE
+          </button>
+
+        </li>
+
+
+      </ul>
+
+    </nav>
+
+  `;
 }
-
-.demo2__content__img {
-  position: absolute;
-  inset: 0;
-
-  width: 100%;
-  height: 100%;
-
-  display: block;
-
-  object-fit: cover;
-  object-position: center bottom;
-}
-
-/* Texte superposé au centre */
-
-.demo2__heroText {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-
-  z-index: 2;
-
-  width: min(50%, 650px);
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  gap: clamp(10px, 1.5vw, 20px);
-
-  padding-top: clamp(35px, 6.5vw, 120px);
-
-  text-align: center;
-}
-
-.demo2__heroSubtitle {
-  width: 100%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: clamp(15px, 2.5vw, 35px);
-
-  color: #c7936e;
-
-  font-family: Arial, sans-serif;
-  font-size: clamp(8px, 0.85vw, 13px);
-  font-weight: 500;
-
-  letter-spacing: clamp(2px, 0.4vw, 5px);
-}
-
-.demo2__heroSubtitle::before,
-.demo2__heroSubtitle::after {
-  content: "";
-
-  flex: 1;
-
-  max-width: 150px;
-  height: 1px;
-
-  background: rgba(199, 147, 110, 0.7);
-}
-
-.demo2__heroTitle {
-  max-width: 800px;
-
-  margin: 0;
-
-  color: #3c2c28;
-
-  font-size: clamp(25px, 3vw, 50px);
-  font-weight: 400;
-
-  line-height: 0.98;
-
-  text-align: center;
-}
-
 
 /* =====================================================
-   TITRE SOUS LE HERO
+   CONNEXION HEADER
 ===================================================== */
 
-.demo2__text {
-  width: 100%;
-  min-height: clamp(180px, 20vw, 290px);
+function connectHeaderNavigation(element) {
+  const homeButton = element.querySelector('[data-page="home"]');
+  const galleryButton = element.querySelector('[data-page="gallery"]');
+  const logoButton = element.querySelector('[data-page="home-top"]');
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  homeButton?.addEventListener("click", () => {
+    createHomeHTML(element);
+  });
 
-  gap: clamp(13px, 1.8vw, 24px);
+  galleryButton?.addEventListener("click", () => {
+    createGalleryHTML(element);
+  });
 
-  padding:
-    clamp(15px, 2vw, 20px)
-    clamp(20px, 8vw, 130px);
+  function goHomeTop() {
+    const homeIsAlreadyOpen = Boolean(element.querySelector(".demo2__hero"));
 
-  background: #fff;
+    if (!homeIsAlreadyOpen) {
+      createHomeHTML(element);
+    }
 
-  text-align: center;
-  box-sizing: border-box;
+    requestAnimationFrame(() => {
+      if (typeof element.scrollTo === "function") {
+        element.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      } else {
+        element.scrollTop = 0;
+      }
+    });
+  }
+
+  logoButton?.addEventListener("click", goHomeTop);
+
+  logoButton?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      goHomeTop();
+    }
+  });
 }
-
-.demo2__text__subtitle {
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: min(100%, 620px);
-
-  gap: clamp(15px, 3vw, 42px);
-
-  color: #c7936e;
-
-  font-family: Arial, sans-serif;
-  font-size: clamp(8px, 0.9vw, 13px);
-  font-weight: 500;
-
-  letter-spacing: clamp(2px, 0.4vw, 5px);
-}
-
-.demo2__text__subtitle::before,
-.demo2__text__subtitle::after {
-  content: "";
-
-  flex: 1;
-
-  max-width: 170px;
-  height: 1px;
-
-  background: rgba(199, 147, 110, 0.65);
-}
-
-.demo2__text__title {
-  max-width: 850px;
-
-  margin: 0;
-
-  color: #3c2c28;
-
-  font-size: clamp(31px, 4.2vw, 67px);
-  font-weight: 400;
-
-  line-height: 0.98;
-
-  text-align: center;
-}
-
 
 /* =====================================================
-   BANDEAU ROSE : TEXTE + BOUTON
+   DÉMARRAGE DÉMO
 ===================================================== */
-
-.demo2__intro {
-  position: relative;
-
-  width: 100%;
-  min-height: clamp(260px, 23vw, 360px);
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  gap: clamp(30px, 3vw, 45px);
-
-  padding:
-    clamp(50px,5vw,70px)
-    clamp(30px,8vw,140px);
-
-  overflow: hidden;
-
-  background:
-      #ffe5ec
-      url("./img/macarons.png")
-      center
-      center
-      /cover
-      no-repeat;
-
-  text-align:center;
-}
-
-.demo2__intro__paragraph{
-
-    width:min(850px,100%);
-    padding:0 clamp(5px, 18vw, 100px);
-
-    color:black;
-
-    font-size:clamp(16px,1.45vw,22px);
-
-    line-height:1.8;
-
-    margin:0;
-
-    font-weight:300;
-
-    z-index:2;
-}
-
-.demo2__intro__separator{
-
-    display:flex;
-    align-items:center;
-    gap:20px;
-
-    z-index:2;
-}
-
-.demo2__intro__separator::before,
-.demo2__intro__separator::after{
-
-    content:"";
-
-    width:90px;
-    height:1px;
-
-    background:#d8aab7;
-}
-
-.demo2__intro__separator span{
-
-    width:7px;
-    height:7px;
-
-    background:#d8aab7;
-
-    border-radius:50%;
-}
-
-.demo2__intro__button{
-
-    padding:18px 55px;
-
-    border:none;
-
-    background:white;
-
-    color:black;
-
-    cursor:pointer;
-
-    letter-spacing:4px;
-
-    font-size:13px;
-
-    transition:.35s;
-
-    box-shadow:
-        0 15px 30px rgba(207,135,159,.18);
-
-    z-index:2;
-}
-
-.demo2__intro__button:hover{
-
-    transform:translateY(-4px);
-
-    background:#bc6f89;
-    color: white;
-
-    box-shadow:
-        0 20px 35px rgba(207,135,159,.28);
-}
-
-/* ---------------- CAROUSSEL ---------------- */
-
-.demo2__caroussel {
-  width: 100%;      
-  height: clamp(120px, 20vw, 300px);
-  overflow: hidden;
-  padding: 2px;
-}
-
-.demo2__caroussel__track {
-  width: 300%;
-  height: 100%;
-  display: flex;
-  animation: demo2Carousel 18s linear infinite;
-}
-
-.demo2__caroussel__item {
-  flex: 0 0 calc(100% / 12);
-  height: 100%;
-  background: white;
-  padding: 1px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.demo2__caroussel__item img {
-  width: 80%;
-  height: 80%;
-  object-fit: cover;
-}
-
-@keyframes demo2Carousel {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%);
-  }
-}
-  
-.demo2__favorite {
-  width: 100%;
-  background: #ffe5ec;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.demo2__favorite__text {
-  width: 100%;  
-  height: clamp(50px, 8vw, 100px);
-  background: #ffe5ec;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-} 
-  
-.demo2__favorite__img {
-  width: 100%;  
-  height: clamp(80px, 15vw, 200px); 
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(5px, 2vw, 20px);
-}
-
-.demo2__favorite__img img {
-  width: clamp(60px, 12vw, 150px);
-  height: clamp(60px, 12vw, 150px);
-  object-fit: cover;
-}
-
-/* ---------------- GALERIE ---------------- */
-
-.demo2__galerie {
-  width: 100%;
-  padding: clamp(20px, 10vw, 80px) clamp(20px, 8vw, 50px);
-}
-
-.demo2__galerie__item {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: clamp(5px, 2vw, 20px);
-}
-
-.demo2__imgWrapper {
-  width: clamp(100px, 15vw, 180px);
-  height: clamp(100px, 15vw, 180px);
-  overflow: hidden;
-}
-
-.demo2__imgWrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.demo2__imgWrapper:hover img {
-  transform: scale(1.15);
-}
-
-@media screen and (max-width: 650px) {
-
-  .demo2__content {
-    height: clamp(170px, 53vw, 300px);
-  }
-
-  .demo2__content__img {
-    object-position: center;
-  }
-
-  .demo2__text {
-    min-height: 190px;
-
-    padding:
-      35px
-      20px;
-
-    gap: 17px;
-  }
-
-  .demo2__text__subtitle {
-    width: 100%;
-
-    gap: 12px;
-
-    font-size: 9px;
-    letter-spacing: 2.5px;
-  }
-
-  .demo2__text__subtitle::before,
-  .demo2__text__subtitle::after {
-    max-width: 55px;
-  }
-
-  .demo2__text__title {
-    font-size: clamp(32px, 10vw, 48px);
-    line-height: 0.98;
-  }
-
-  .demo2__intro {
-    min-height: 230px;
-
-    padding:
-      38px
-      25px;
-
-    gap: 27px;
-  }
-
-  .demo2__intro__paragraph {
-    font-size: clamp(14px, 4vw, 17px);
-    line-height: 1.55;
-  }
-
-  .demo2__intro__button {
-    width: min(100%, 310px);
-    min-width: 0;
-
-    padding:
-      14px
-      20px;
-  }
-
-.demo2__intro {
-  background: #ffe5ec;
-}
-  
-
-.demo2__intro__paragraph{
-  padding:0 clamp(10px, 5vw, 20px);
-}
-}    
-
-`;
-
-document.head.appendChild(style);
 
 export function addDemoWeb2(element) {
   if (!element) return;
 
-  createHomeHTML(element);
+  element.style.background = "#fffdfa";
 
-  element.style.background = "white";
+  createHomeHTML(element);
 }
 
+/* =====================================================
+   PAGE ACCUEIL
+===================================================== */
+
 function createHomeHTML(element) {
-  element.innerHTML = ` 
-  <div class="demo2__site">
+  stopDemo2Components(element);
 
-    <nav class="header__demo2">
-      <ul class="header__nav__demo2">
-        <li class="header__nav__demo2__link">
-          <span data-page="home">ACCUEIL</span>
-        </li>
+  element.innerHTML = `
 
-        <div class="header__nav__demo2__logo">
-          <img src="./img/logoPatisserie.png" alt="Logo">
-        </div>
+    <div class="demo2__site">
 
-        <li class="header__nav__demo2__link">
-          <span data-page="prestation">GALERIE</span>
-        </li>
-      </ul>
-    </nav>
 
-    <div class="wrapper__demo2"> 
+      ${createHeaderHTML()}
 
-   <div class="demo2__content">
 
-  <img
-    class="demo2__content__img"
-    src="./img/heroPatisserie.png"
-    alt="Créations de pâtisserie et pièces montées"
-  >
+      <main class="wrapper__demo2">
 
-  <div class="demo2__heroText">
 
-    <span class="demo2__heroSubtitle">
-      L’ART DU GOÛT
-    </span>
+        <!-- ==================================================
+             HERO
+        =================================================== -->
 
-    <h1 class="demo2__heroTitle">
-      L’Élégance au Service<br>
-      de la Gourmandise
-    </h1>
+        <section class="demo2__hero">
 
-  </div>
 
-</div>
+          <div class="demo2__heroContent">
 
-<div class="demo2__intro">
 
-    <p class="demo2__intro__paragraph">
-        Notre savoir-faire artisanal donne naissance à des créations raffinées
-        conçues pour sublimer vos réceptions. <br> Nos pièces montées majestueuses,
-        assortiments de mignardises et desserts d'exception s'accordent à vos envies.
-    </p>
+            <h1 class="demo2__heroTitle">
 
-    <div class="demo2__intro__separator">
-        <span></span>
+              DES CRÉATIONS
+
+              <br>
+
+              QUI ÉVEILLENT
+
+
+              <span class="demo2__heroTitleItalic">
+
+                vos sens
+
+              </span>
+
+
+            </h1>
+
+
+          </div>
+
+
+          <div class="demo2__heroVisual">
+
+            <img
+              src="./img/heroPatisserie.png"
+              alt="Création pâtissière artisanale"
+            >
+
+          </div>
+
+
+        </section>
+
+
+        <!-- ==================================================
+             AVANTAGES
+        =================================================== -->
+
+        <section class="demo2__benefits">
+
+
+          <div class="demo2__benefit">
+
+            <span class="demo2__benefitIcon">
+              ♧
+            </span>
+
+
+            <div class="demo2__benefitText">
+
+              <span class="demo2__benefitTitle">
+                INGRÉDIENTS
+              </span>
+
+              <span class="demo2__benefitSub">
+                sélectionnés
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="demo2__benefit">
+
+            <span class="demo2__benefitIcon">
+              ♢
+            </span>
+
+
+            <div class="demo2__benefitText">
+
+              <span class="demo2__benefitTitle">
+                FAIT MAISON
+              </span>
+
+              <span class="demo2__benefitSub">
+                avec passion
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="demo2__benefit">
+
+            <span class="demo2__benefitIcon">
+              ♧
+            </span>
+
+
+            <div class="demo2__benefitText">
+
+              <span class="demo2__benefitTitle">
+                LIVRAISON
+              </span>
+
+              <span class="demo2__benefitSub">
+                rapide & soignée
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="demo2__benefit">
+
+            <span class="demo2__benefitIcon">
+              ♢
+            </span>
+
+
+            <div class="demo2__benefitText">
+
+              <span class="demo2__benefitTitle">
+                PAIEMENT
+              </span>
+
+              <span class="demo2__benefitSub">
+                sécurisé
+              </span>
+
+            </div>
+
+          </div>
+
+
+        </section>
+
+
+        <!-- ==================================================
+             CARROUSEL
+        =================================================== -->
+
+        <section class="demo2__creations">
+
+
+          <div class="demo2__sectionHeading">
+
+
+            <h2 class="demo2__sectionTitle">
+
+              NOS CRÉATIONS GOURMANDES
+
+            </h2>
+
+
+            <div
+              class="demo2__smallOrnament"
+              aria-hidden="true"
+            >
+
+              <span></span>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="demo2__carouselArea">
+
+            <div class="cake-carousel"></div>
+
+          </div>
+
+
+        </section>
+
+
+        <!-- ==================================================
+             SAVOIR-FAIRE
+        =================================================== -->
+
+        <section class="demo2__craft">
+
+
+          <div class="demo2__craftContent">
+
+
+            <p class="demo2__craftEyebrow">
+
+              NOTRE SAVOIR-FAIRE
+
+            </p>
+
+
+            <h2 class="demo2__craftTitle">
+
+              L'EXCELLENCE
+
+              <br>
+
+              À CHAQUE DÉTAIL
+
+            </h2>
+
+
+            <div class="demo2__craftSeparator"></div>
+
+
+            <p class="demo2__craftParagraph">
+
+              Chaque création est pensée comme une œuvre
+              unique, pour transformer vos moments
+              en souvenirs inoubliables.
+
+            </p>
+
+
+          </div>
+
+
+          <div class="demo2__cakeArea">
+
+            <div
+              class="cake-animation demo2__cakeStage"
+            ></div>
+
+          </div>
+
+
+        </section>
+
+
+        <!-- ==================================================
+             COLLECTIONS
+        =================================================== -->
+
+        <section class="demo2__universes">
+
+
+          <div class="demo2__sectionHeading">
+
+
+            <h2 class="demo2__sectionTitle">
+
+              NOS COLLECTIONS
+
+            </h2>
+
+
+            <div
+              class="demo2__smallOrnament"
+              aria-hidden="true"
+            >
+
+              <span></span>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="demo2__universeGrid">
+
+
+            <!-- GÂTEAUX -->
+
+            <article class="demo2__universe">
+
+              <div
+                class="demo2__universeImage"
+                data-gallery-link
+                role="button"
+                tabindex="0"
+                aria-label="Voir la galerie de gâteaux"
+              >
+
+                <img
+                  src="./img/gateaux1.png"
+                  alt="Gâteaux"
+                >
+
+              </div>
+
+
+              <h3 class="demo2__universeTitle">
+                GÂTEAUX
+              </h3>
+
+
+              <span class="demo2__universeLink">
+                DÉCOUVRIR
+              </span>
+
+            </article>
+
+
+            <!-- PÂTISSERIE -->
+
+            <article class="demo2__universe">
+
+              <div
+                class="demo2__universeImage"
+                data-gallery-link
+                role="button"
+                tabindex="0"
+                aria-label="Voir la galerie de pâtisseries"
+              >
+
+                <img
+                  src="./img/gateaux4.png"
+                  alt="Pâtisserie"
+                >
+
+              </div>
+
+
+              <h3 class="demo2__universeTitle">
+                PÂTISSERIE
+              </h3>
+
+
+              <span class="demo2__universeLink">
+                DÉCOUVRIR
+              </span>
+
+            </article>
+
+
+            <!-- MACARONS -->
+
+            <article class="demo2__universe">
+
+              <div
+                class="demo2__universeImage"
+                data-gallery-link
+                role="button"
+                tabindex="0"
+                aria-label="Voir la galerie de macarons"
+              >
+
+                <img
+                  src="./img/gateaux14.png"
+                  alt="Macarons"
+                >
+
+              </div>
+
+
+              <h3 class="demo2__universeTitle">
+                MACARONS
+              </h3>
+
+
+              <span class="demo2__universeLink">
+                DÉCOUVRIR
+              </span>
+
+            </article>
+
+
+            <!-- CUPCAKES -->
+
+            <article class="demo2__universe">
+
+              <div
+                class="demo2__universeImage"
+                data-gallery-link
+                role="button"
+                tabindex="0"
+                aria-label="Voir la galerie de cupcakes"
+              >
+
+                <img
+                  src="./img/gateaux5.png"
+                  alt="Cupcakes"
+                >
+
+              </div>
+
+
+              <h3 class="demo2__universeTitle">
+                CUPCAKES
+              </h3>
+
+
+              <span class="demo2__universeLink">
+                DÉCOUVRIR
+              </span>
+
+            </article>
+
+
+          </div>
+
+
+        </section>
+
+
+      </main>
+
+
     </div>
 
-    <button
-        type="button"
-        class="demo2__intro__button">
-        DÉCOUVRIR NOS CRÉATIONS
-    </button>
-
-</div>
-
-      <div class="demo2__caroussel"> 
-        <div class="demo2__caroussel__track">
-
-          <div class="demo2__caroussel__item"><img src="./img/gateaux1.png" alt=""></div>
-          <div class="demo2__caroussel__item"><img src="./img/gateaux2.png" alt=""></div>
-          <div class="demo2__caroussel__item"><img src="./img/gateaux14.png" alt=""></div>
-          <div class="demo2__caroussel__item"><img src="./img/gateaux4.png" alt=""></div>
-          <div class="demo2__caroussel__item"><img src="./img/gateaux5.png" alt=""></div>
-          <div class="demo2__caroussel__item"><img src="./img/gateaux6.png" alt=""></div>
-
-          <div class="demo2__caroussel__item"><img src="./img/gateaux1.png" alt=""></div>
-          <div class="demo2__caroussel__item"><img src="./img/gateaux2.png" alt=""></div>
-          <div class="demo2__caroussel__item"><img src="./img/gateaux14.png" alt=""></div>
-          <div class="demo2__caroussel__item"><img src="./img/gateaux4.png" alt=""></div>
-          <div class="demo2__caroussel__item"><img src="./img/gateaux5.png" alt=""></div>
-          <div class="demo2__caroussel__item"><img src="./img/gateaux6.png" alt=""></div>
-
-        </div>
-      </div>
-    </div>
-
-  </div>
   `;
 
-  const buttonMenu = element.querySelectorAll(".header__nav__demo2__link span");
+  /* =====================================================
+     HEADER
+  ===================================================== */
 
-  buttonMenu.forEach((button) => {
-    const page = button.dataset.page;
+  connectHeaderNavigation(element);
 
-    button.addEventListener("click", () => {
-      if (page === "home") {
-        createHomeHTML(element);
-      } else {
-        createGalerieHTML(element);
+  /* =====================================================
+     COLLECTIONS → GALERIE
+  ===================================================== */
+
+  const collectionGalleryLinks = element.querySelectorAll(
+    "[data-gallery-link]",
+  );
+
+  collectionGalleryLinks.forEach((link) => {
+    function openGallery() {
+      createGalleryHTML(element);
+    }
+
+    link.addEventListener("click", openGallery);
+
+    link.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openGallery();
       }
     });
   });
 
-  const galleryButton = element.querySelector(".demo2__intro__button");
+  /* =====================================================
+     CARROUSEL
+  ===================================================== */
 
-  galleryButton?.addEventListener("click", () => {
-    createGalerieHTML(element);
+  const carouselContainer = element.querySelector(".cake-carousel");
+
+  startCakeCarousel(carouselContainer);
+
+  /* =====================================================
+     CLIC CARROUSEL
+     → GALERIE
+  ===================================================== */
+
+  carouselContainer?.addEventListener("click", (event) => {
+    const item = event.target.closest(".cake-carousel__item");
+
+    if (!item) return;
+
+    createGalleryHTML(element);
   });
+
+  /* =====================================================
+     GÂTEAU THREE.JS
+  ===================================================== */
+
+  const cakeContainer = element.querySelector(".cake-animation");
+
+  startCakeAnimation(cakeContainer);
 }
 
-function createGalerieHTML(element) {
-  const wrapper = element.querySelector(".wrapper__demo2");
+/* =====================================================
+   PAGE GALERIE
+===================================================== */
 
-  wrapper.innerHTML = `
-    <div class="demo2__galerie">
-      <div class="demo2__galerie__item">
+function createGalleryHTML(element) {
+  stopDemo2Components(element);
 
-        <div class="demo2__imgWrapper"><img src="./img/gateaux1.png" alt="Logo"></div>
-        <div class="demo2__imgWrapper"><img src="./img/gateaux2.png" alt="Logo"></div>
-        <div class="demo2__imgWrapper"><img src="./img/gateaux4.png" alt="Logo"></div>
+  element.innerHTML = `
 
-        <div class="demo2__imgWrapper"><img src="./img/gateaux5.png" alt="Logo"></div>
-        <div class="demo2__imgWrapper"><img src="./img/gateaux6.png" alt="Logo"></div>
-        <div class="demo2__imgWrapper"><img src="./img/gateaux8.png" alt="Logo"></div>
-        <div class="demo2__imgWrapper"><img src="./img/gateaux7.png" alt="Logo"></div>
+    <div class="demo2__site">
 
-        <div class="demo2__imgWrapper"><img src="./img/gateaux9.png" alt="Logo"></div>
-        <div class="demo2__imgWrapper"><img src="./img/gateaux10.png" alt="Logo"></div>
-        <div class="demo2__imgWrapper"><img src="./img/gateaux11.png" alt="Logo"></div>
-        <div class="demo2__imgWrapper"><img src="./img/gateaux12.png" alt="Logo"></div>
 
-        <div class="demo2__imgWrapper"><img src="./img/gateaux13.png" alt="Logo"></div>
-        <div class="demo2__imgWrapper"><img src="./img/gateaux14.png" alt="Logo"></div>
-        <div class="demo2__imgWrapper"><img src="./img/gateaux15.png" alt="Logo"></div>
-        <div class="demo2__imgWrapper"><img src="./img/gateaux16.png" alt="Logo"></div>
+      ${createHeaderHTML()}
 
-      </div>
+
+      <main class="wrapper__demo2">
+
+
+        <section class="demo2__galleryPage">
+
+
+          <!-- ==================================================
+               TITRE
+          =================================================== -->
+
+          <div class="demo2__galleryHeader">
+
+
+            <h1 class="demo2__galleryTitle">
+
+              NOS CRÉATIONS
+
+            </h1>
+
+
+            <div
+              class="demo2__smallOrnament"
+              aria-hidden="true"
+            >
+
+              <span></span>
+
+            </div>
+
+
+          </div>
+
+
+          <!-- ==================================================
+               GALERIE
+          =================================================== -->
+
+          <div class="demo2__galerie">
+
+
+            <div class="demo2__galerie__item">
+
+
+              ${demo2Cakes
+                .map(
+                  (cake, index) => `
+
+                    <article
+                      class="demo2__imgWrapper"
+                      data-cake-index="${index}"
+                    >
+
+
+                      <button
+                        type="button"
+                        class="demo2__galleryTrigger"
+                        aria-label="Voir les informations sur ${cake.name}"
+                        aria-expanded="false"
+                      >
+
+                        <img
+                          src="${cake.img}"
+                          alt="${cake.name}"
+                        >
+
+                      </button>
+
+
+                      <div
+                        class="demo2__cakeInfo"
+                      >
+
+
+                        <span class="demo2__cakeInfoLabel">
+
+                          CRÉATION SIGNATURE
+
+                        </span>
+
+
+                        <h2 class="demo2__cakeInfoTitle">
+
+                          ${cake.name}
+
+                        </h2>
+
+
+                        <div
+                          class="demo2__cakeInfoSeparator"
+                          aria-hidden="true"
+                        ></div>
+
+
+                        <p class="demo2__cakeInfoDescription">
+
+                          ${cake.description}
+
+                        </p>
+
+
+                      </div>
+
+
+                    </article>
+
+                  `,
+                )
+                .join("")}
+
+
+            </div>
+
+
+          </div>
+
+
+        </section>
+
+
+      </main>
+
+
     </div>
+
   `;
+
+  /* =====================================================
+     HEADER
+  ===================================================== */
+
+  connectHeaderNavigation(element);
+
+  /* =====================================================
+     CARTES GALERIE
+  ===================================================== */
+
+  const cakeItems = element.querySelectorAll(".demo2__imgWrapper");
+
+  /* =====================================================
+     FERMER UNE CARTE
+  ===================================================== */
+
+  function closeCakeCard(item) {
+    if (!item) return;
+
+    item.classList.remove("is-open");
+
+    const trigger = item.querySelector(".demo2__galleryTrigger");
+
+    trigger?.setAttribute("aria-expanded", "false");
+  }
+
+  /* =====================================================
+     FERMER TOUTES LES CARTES
+  ===================================================== */
+
+  function closeAllCakeCards(exceptItem = null) {
+    cakeItems.forEach((item) => {
+      if (item === exceptItem) {
+        return;
+      }
+
+      closeCakeCard(item);
+    });
+  }
+
+  /* =====================================================
+     OUVRIR UNE CARTE
+
+     IMPORTANT :
+     avant chaque ouverture,
+     toutes les autres sont fermées.
+  ===================================================== */
+
+  function openCakeCard(item) {
+    if (!item) return;
+
+    closeAllCakeCards(item);
+
+    item.classList.add("is-open");
+
+    const trigger = item.querySelector(".demo2__galleryTrigger");
+
+    trigger?.setAttribute("aria-expanded", "true");
+  }
+
+  /* =====================================================
+     TOGGLE D'UNE CARTE
+  ===================================================== */
+
+  function toggleCakeCard(item) {
+    if (!item) return;
+
+    const wasOpen = item.classList.contains("is-open");
+
+    /*
+     * Toujours tout fermer avant.
+     */
+
+    closeAllCakeCards();
+
+    /*
+     * Si elle était fermée,
+     * on la rouvre.
+     *
+     * Si elle était ouverte,
+     * elle reste fermée.
+     */
+
+    if (!wasOpen) {
+      openCakeCard(item);
+    }
+  }
+
+  /* =====================================================
+     ÉVÉNEMENTS
+  ===================================================== */
+
+  cakeItems.forEach((item) => {
+    const trigger = item.querySelector(".demo2__galleryTrigger");
+
+    if (!trigger) return;
+
+    /* =================================================
+         SURVOL
+
+         Fonctionne :
+         - ordinateur
+         - smartphone avec souris
+         - tablette avec souris
+         - stylet prenant en charge le hover
+
+         Le tactile pur n'a pas de vrai hover.
+      ================================================= */
+
+    item.addEventListener("pointerenter", (event) => {
+      /*
+       * On ignore le doigt.
+       *
+       * Sinon pointerenter serait déclenché
+       * pendant un tap et entrerait en conflit
+       * avec le clic.
+       */
+
+      if (event.pointerType === "touch") {
+        return;
+      }
+
+      openCakeCard(item);
+    });
+
+    /* =================================================
+         FIN DU SURVOL
+      ================================================= */
+
+    item.addEventListener("pointerleave", (event) => {
+      if (event.pointerType === "touch") {
+        return;
+      }
+
+      closeCakeCard(item);
+    });
+
+    /* =================================================
+         TAP SMARTPHONE / TABLETTE
+
+         pointerup permet de connaître
+         précisément le type de pointeur.
+      ================================================= */
+
+    trigger.addEventListener("pointerup", (event) => {
+      /*
+       * Seul le doigt utilise ce toggle.
+       *
+       * Souris et stylet sont déjà
+       * gérés par le hover.
+       */
+
+      if (event.pointerType !== "touch") {
+        return;
+      }
+
+      toggleCakeCard(item);
+    });
+
+    /* =================================================
+         CLAVIER
+
+         Enter / espace sur le bouton.
+      ================================================= */
+
+    trigger.addEventListener("click", (event) => {
+      /*
+       * event.detail === 0
+       * correspond à une activation clavier.
+       *
+       * Cela évite un deuxième toggle
+       * après le pointerup tactile.
+       */
+
+      if (event.detail !== 0) {
+        return;
+      }
+
+      toggleCakeCard(item);
+    });
+  });
+
+  /* =====================================================
+     CLIC / TAP EN DEHORS
+     → FERME TOUTES LES CARTES
+  ===================================================== */
+
+  const gallery = element.querySelector(".demo2__galleryPage");
+
+  gallery?.addEventListener("pointerup", (event) => {
+    /*
+     * Si on a touché un gâteau,
+     * son propre événement s'en charge.
+     */
+
+    const clickedCake = event.target.closest(".demo2__imgWrapper");
+
+    if (clickedCake) {
+      return;
+    }
+
+    closeAllCakeCards();
+  });
 }

@@ -259,3 +259,652 @@ AddButton();
 
   type();
 }
+
+export function initSkillsFakeVSCode(parentSelector) {
+  const parent = document.querySelector(parentSelector);
+
+  if (!parent) return;
+
+  const section = parent.closest(".section__code-skills");
+
+  if (!section) return;
+
+  const namespace = "skillsFakeCode";
+
+  /* ============================================================
+     CSS DU MINI VS CODE
+  ============================================================ */
+
+  if (!document.getElementById("skillsFakeCodeCSS")) {
+    const style = document.createElement("style");
+
+    style.id = "skillsFakeCodeCSS";
+
+    style.innerHTML = `
+
+      .${namespace}-container {
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+
+      display: flex;
+      flex-direction: column;
+
+      font-family: "Consolas", monospace;
+      color: #c9d1d9;
+
+      overflow: hidden;
+  }
+
+  .${namespace}-editor {
+      width: 100%;
+      height: 100%;
+
+      min-width: 0;
+      min-height: 0;
+
+      display: flex;
+      flex: 1 1 auto;
+
+      overflow: hidden;
+  }
+
+  .${namespace}-lines {
+      flex: 0 0 auto;
+
+      height: 100%;
+
+      line-height: 1.6;
+
+      background: #161b22;
+      padding: clamp(3px,1vw,10px);
+
+      text-align: right;
+      user-select: none;
+
+      color: #6e7681;
+      font-size: clamp(4.5px,1vw,10px);
+
+      overflow-y: auto;
+overflow-x: hidden;
+
+scrollbar-width: none;
+-ms-overflow-style: none;
+  }
+
+  .${namespace}-lines::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+}
+
+  .${namespace}-code {
+      flex: 1 1 auto;
+
+      width: 0;
+      height: 100%;
+
+      min-width: 0;
+      min-height: 0;
+
+      padding: clamp(3px, 1vw, 10px);
+
+      white-space: pre;
+
+      /* LE SCROLL RESTE ACTIF */
+      overflow-x: auto;
+      overflow-y: auto;
+
+      /* FIREFOX */
+      scrollbar-width: none;
+
+      /* IE / ancien EDGE */
+      -ms-overflow-style: none;
+
+      font-size: clamp(4.5px, 1vw, 10px);
+      line-height: 1.6;
+    }
+
+      .${namespace}-lines span {
+        display: block;
+      }
+
+      .${namespace}-code::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.${namespace}-code::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+.${namespace}-code::-webkit-scrollbar-thumb {
+    background: transparent !important;
+    border: none !important;
+}
+
+
+      .${namespace}-cursor {
+        display: inline-block;
+
+        width: 6px;
+        height: 1em;
+
+        margin-left: 2px;
+
+        vertical-align: middle;
+
+        background: #c9d1d9;
+
+        animation:
+          skillsFakeBlink
+          1s
+          steps(1)
+          infinite;
+      }
+
+
+      @keyframes skillsFakeBlink {
+
+        50% {
+          opacity: 0;
+        }
+
+      }
+
+
+      .${namespace}-keyword {
+        color: #ff7b72;
+      }
+
+
+      .${namespace}-string {
+        color: #a5d6ff;
+      }
+
+
+      .${namespace}-function {
+        color: #d2a8ff;
+      }
+
+
+      .${namespace}-comment {
+        color: #6A9955;
+
+        font-style: italic;
+      }
+
+
+      .${namespace}-number {
+        color: #ffb86c;
+      }
+
+
+      @media screen and (max-width: 600px) {
+
+        .${namespace}-lines {
+          min-width: 18px;
+
+          padding:
+            5px
+            3px;
+
+          font-size:
+            clamp(4px, 1.4vw, 6px);
+        }
+
+
+        .${namespace}-code {
+          padding: 5px;
+
+          font-size:
+            clamp(4px, 1.45vw, 6px);
+
+          line-height: 1.5;
+        }
+
+      }
+
+    `;
+
+    document.head.appendChild(style);
+  }
+
+  /* ============================================================
+     CONSTRUCTION ÉDITEUR
+  ============================================================ */
+
+  parent.innerHTML = "";
+
+  const container = document.createElement("div");
+
+  container.className = `${namespace}-container`;
+
+  parent.appendChild(container);
+
+  const editor = document.createElement("div");
+
+  editor.className = `${namespace}-editor`;
+
+  container.appendChild(editor);
+
+  const linesElement = document.createElement("div");
+
+  linesElement.className = `${namespace}-lines`;
+
+  editor.appendChild(linesElement);
+
+  const codeElement = document.createElement("div");
+
+  codeElement.className = `${namespace}-code`;
+
+  editor.appendChild(codeElement);
+
+  /* SYNCHRONISE LES NUMÉROS AVEC LE CODE */
+  codeElement.addEventListener("scroll", () => {
+    linesElement.scrollTop = codeElement.scrollTop;
+  });
+
+  /* ============================================================
+     CODE AFFICHÉ
+  ============================================================ */
+
+  const rawCode = `
+// CREATE CARDS STRUCTURE
+AddBorders(cards);
+
+// ADD ICONS
+AddIcons(cards);
+
+// ADD TITLES
+AddTitles(cards);
+
+// ADD DESCRIPTIONS
+AddDescriptions(cards);
+
+// INTERFACE READY
+Render(cards);
+`;
+
+  const lines = rawCode.split("\n");
+
+  let lineIndex = 0;
+
+  let charIndex = 0;
+
+  /* ============================================================
+     INDEX DES LIGNES DÉCLENCHEUSES
+  ============================================================ */
+
+  const triggerIndexes = {
+    borders: lines.findIndex((line) => line.includes("AddBorders(cards)")),
+
+    icons: lines.findIndex((line) => line.includes("AddIcons(cards)")),
+
+    titles: lines.findIndex((line) => line.includes("AddTitles(cards)")),
+
+    texts: lines.findIndex((line) => line.includes("AddDescriptions(cards)")),
+  };
+
+  /* ============================================================
+   CARROUSEL RESPONSIVE
+============================================================ */
+
+  const preview = section.querySelector(".code-skills__preview");
+
+  let secondPairVisible = false;
+
+  const carouselDuration = 850;
+
+  function showFirstPair() {
+    if (!preview) return;
+
+    preview.classList.add("no-carousel-transition");
+
+    preview.classList.remove("show-second-pair");
+
+    secondPairVisible = false;
+
+    /*
+     * Force le navigateur à remettre le track
+     * immédiatement au début.
+     */
+    preview.offsetHeight;
+
+    requestAnimationFrame(() => {
+      preview.classList.remove("no-carousel-transition");
+    });
+  }
+
+  function showSecondPair() {
+    if (!preview) return;
+
+    preview.classList.add("show-second-pair");
+
+    secondPairVisible = true;
+  }
+
+  function rotateSkillsCarousel(callback) {
+    if (window.innerWidth > 900 || !preview) {
+      if (callback) callback();
+
+      return;
+    }
+
+    showSecondPair();
+
+    setTimeout(() => {
+      if (callback) callback();
+    }, carouselDuration);
+  }
+
+  /* ============================================================
+     ÉCHAPPEMENT HTML
+  ============================================================ */
+
+  function escapeHtml(text) {
+    return text
+
+      .replace(/&/g, "&amp;")
+
+      .replace(/</g, "&lt;")
+
+      .replace(/>/g, "&gt;");
+  }
+
+  /* ============================================================
+     COLORISATION
+  ============================================================ */
+
+  function colorizeFragment(text) {
+    const comments = [];
+
+    let code = text.replace(/(\/\/.*)/g, (match) => {
+      comments.push(match);
+
+      return `___COMMENT_` + `${comments.length - 1}` + `___`;
+    });
+
+    code = escapeHtml(code);
+
+    code = code
+
+      .replace(/(".*?"|'.*?')/g, `<span class="${namespace}-string">$1</span>`)
+
+      .replace(
+        /\b(const|let|var|function|return|if|else)\b/g,
+        `<span class="${namespace}-keyword">$1</span>`,
+      )
+
+      .replace(
+        /\b(CreateCards|AddBorders|AddIcons|AddTitles|AddDescriptions|Render)\b/g,
+        `<span class="${namespace}-function">$1</span>`,
+      )
+
+      .replace(/\b(\d+)\b/g, `<span class="${namespace}-number">$1</span>`);
+
+    code = code.replace(
+      /___COMMENT_(\d+)___/g,
+
+      (_, index) =>
+        `<span class="${namespace}-comment">` +
+        `${escapeHtml(comments[index])}` +
+        `</span>`,
+    );
+
+    return code;
+  }
+
+  /* ============================================================
+     NUMÉROS DE LIGNES
+  ============================================================ */
+
+  lines.forEach((_, index) => {
+    const line = document.createElement("span");
+
+    line.textContent = index + 1;
+
+    linesElement.appendChild(line);
+  });
+
+  /* ============================================================
+     UNE LIGNE EST-ELLE ENTIÈREMENT PRÉSENTE ?
+  ============================================================ */
+
+  function lineIsComplete(index) {
+    if (index < 0) {
+      return false;
+    }
+
+    /*
+     * On se trouve déjà après la ligne.
+     */
+    if (lineIndex > index) {
+      return true;
+    }
+
+    /*
+     * On est exactement dessus :
+     * elle doit être complètement écrite.
+     */
+    if (lineIndex === index && charIndex >= lines[index].length) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /* ============================================================
+     SYNCHRONISATION INTERFACE ↔ CODE
+  ============================================================ */
+
+  function syncInterface() {
+    section.classList.toggle(
+      "show-borders",
+      lineIsComplete(triggerIndexes.borders),
+    );
+
+    section.classList.toggle(
+      "show-icons",
+      lineIsComplete(triggerIndexes.icons),
+    );
+
+    section.classList.toggle(
+      "show-titles",
+      lineIsComplete(triggerIndexes.titles),
+    );
+
+    section.classList.toggle(
+      "show-texts",
+      lineIsComplete(triggerIndexes.texts),
+    );
+  }
+
+  /* ============================================================
+     RENDU DU TEXTE
+  ============================================================ */
+
+  function renderCode() {
+    let html = "";
+
+    for (let i = 0; i < lineIndex; i++) {
+      html += colorizeFragment(lines[i]) + "<br>";
+    }
+
+    if (lineIndex < lines.length) {
+      html += colorizeFragment(lines[lineIndex].slice(0, charIndex));
+    }
+
+    codeElement.innerHTML = html + `<span class="${namespace}-cursor"></span>`;
+
+    codeElement.scrollTop = codeElement.scrollHeight;
+    linesElement.scrollTop = codeElement.scrollTop;
+  }
+
+  /* ============================================================
+     ÉCRITURE
+  ============================================================ */
+
+  function type() {
+    const currentLine = lines[lineIndex] ?? "";
+
+    /*
+     * Une lettre supplémentaire.
+     */
+
+    if (charIndex < currentLine.length) {
+      charIndex++;
+
+      renderCode();
+
+      syncInterface();
+
+      setTimeout(type, 10 + Math.random() * 18);
+
+      return;
+    }
+
+    /*
+     * Ligne terminée.
+     */
+
+    syncInterface();
+
+    lineIndex++;
+
+    charIndex = 0;
+
+    renderCode();
+
+    if (lineIndex < lines.length) {
+      setTimeout(type, 115);
+    } else {
+      /*
+       * Le code vient d'être entièrement écrit.
+       * Toutes les cartes sont donc construites.
+       */
+
+      setTimeout(() => {
+        /*
+         * PC :
+         * aucune rotation → suppression normale.
+         */
+
+        if (window.innerWidth > 900) {
+          deleteCode();
+
+          return;
+        }
+
+        /*
+         * TABLETTE / MOBILE :
+         *
+         * cartes 1 + 2 visibles
+         *
+         * ↓
+         *
+         * rotation
+         *
+         * ↓
+         *
+         * cartes 3 + 4 visibles
+         *
+         * ↓
+         *
+         * ensuite seulement on efface le code.
+         */
+
+        rotateSkillsCarousel(() => {
+          /*
+           * Petite pause pour voir
+           * les cartes 3 + 4 terminées.
+           */
+
+          setTimeout(deleteCode, 900);
+        });
+      }, 1000);
+    }
+  }
+
+  /* ============================================================
+     SUPPRESSION
+  ============================================================ */
+
+  function deleteCode() {
+    /*
+     * Fin complète de suppression.
+     */
+
+    if (lineIndex <= 0 && charIndex <= 0) {
+      lineIndex = 0;
+      charIndex = 0;
+
+      section.classList.remove(
+        "show-borders",
+        "show-icons",
+        "show-titles",
+        "show-texts",
+      );
+
+      /*
+       * À ce moment précis les éléments sont invisibles.
+       *
+       * On peut donc remettre secrètement
+       * les cartes 1 + 2 en position initiale.
+       */
+
+      showFirstPair();
+
+      renderCode();
+
+      /*
+       * Nouveau cycle
+       */
+
+      setTimeout(type, 1300);
+
+      return;
+    }
+
+    /*
+     * Si l'on est au-delà du tableau,
+     * on rentre sur la dernière ligne.
+     */
+
+    if (lineIndex >= lines.length) {
+      lineIndex = lines.length - 1;
+
+      charIndex = lines[lineIndex].length;
+    }
+
+    /*
+     * Supprime un caractère.
+     */
+
+    if (charIndex > 0) {
+      charIndex--;
+    } else {
+      lineIndex--;
+
+      if (lineIndex >= 0) {
+        charIndex = lines[lineIndex].length;
+      }
+    }
+
+    syncInterface();
+
+    renderCode();
+
+    setTimeout(deleteCode, 7 + Math.random() * 10);
+  }
+
+  /* ============================================================
+     DÉMARRAGE
+  ============================================================ */
+
+  renderCode();
+
+  syncInterface();
+
+  type();
+}

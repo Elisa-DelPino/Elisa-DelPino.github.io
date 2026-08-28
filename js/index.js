@@ -1,8 +1,8 @@
 // index.js
 
-import { startImprimedCircuit } from "./imprimedCircuit.js";
 import { AddLoader } from "./loadingPage.js";
 import { initTextRotator } from "./animationHome.js";
+import { initSkillsFakeVSCode } from "./codeAuto.js";
 
 // -----------------------------------------------------------------------------
 // NAVIGATION VERS LES PRESTATIONS
@@ -50,12 +50,6 @@ function initProductsNavigation() {
 }
 
 // -----------------------------------------------------------------------------
-// FOND CIRCUIT IMPRIMÉ
-// -----------------------------------------------------------------------------
-
-startImprimedCircuit(window.imprimedCircuitConfig);
-
-// -----------------------------------------------------------------------------
 // LOADER ET INITIALISATION DU CONTENU
 // -----------------------------------------------------------------------------
 
@@ -72,3 +66,5 @@ initTextRotator(".text-rotator", 2500);
 // -----------------------------------------------------------------------------
 
 initProductsNavigation();
+
+initSkillsFakeVSCode("#skills-code-editor");

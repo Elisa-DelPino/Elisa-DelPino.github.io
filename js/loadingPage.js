@@ -22,8 +22,8 @@ function initPageContent() {
 
   loadHeaderScriptDirect();
 
-  initFakeVSCode(".diagonal.left");
-  initUiBuilder(".diagonal.right");
+  //initFakeVSCode(".diagonal.left");
+  // initUiBuilder(".diagonal.right");
   showDiagonals();
   addDecodeText();
 

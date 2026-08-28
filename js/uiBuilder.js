@@ -542,7 +542,7 @@ function createOverlay() {
     <div class="anim-layer">
       <div class="overlay-content">
         <div class="div-children">
-          <img src="./img/imageUiBuilder2.png" alt="img3">
+          <img src="./img/siteCoiffure.png" alt="img3">
         </div>
       </div>
     </div>
@@ -565,10 +565,10 @@ function createContentArea() {
   gridContainer.className = "grid-container";
 
   gridContainer.appendChild(
-    createGridItem("grid-item-1", "./img/imageUiBuilder1.png", "img1"),
+    createGridItem("grid-item-1", "./img/sitePatisserie.png", "img1"),
   );
   gridContainer.appendChild(
-    createGridItem("grid-item-2", "./img/imageUiBuilder3.png", "img2"),
+    createGridItem("grid-item-2", "./img/siteDeco.png", "img2"),
   );
 
   contentPics.appendChild(gridContainer);

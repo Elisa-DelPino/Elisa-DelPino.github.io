@@ -10,6 +10,9 @@
     <title>Elisa.dev</title>
 
     <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="./css/demo1.css" />
+    <link rel="stylesheet" href="./css/demo2.css" />
+    <link rel="stylesheet" href="./css/demo3.css" />
 
     <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r127/three.min.js"></script>
@@ -32,21 +35,45 @@
       ====================================================== -->
 
       <section id="home" class="section__home">
+        
         <div class="diagonal left">
-          <!-- AutoCode.js -->
+
+        <div class="hero-slider">
+
+            <div class="hero-slider__track">
+
+                <img
+                    class="hero-slider__img"
+                    src="./img/siteCoiffure1.png"
+                    alt=""
+                />
+
+                <img
+                    class="hero-slider__img"
+                    src="./img/sitePatisserie1.png"
+                    alt=""
+                />
+
+                <img
+                    class="hero-slider__img"
+                    src="./img/siteDeco1.png"
+                    alt=""
+                />
+
+                <!-- copie de la première -->
+                <img
+                    class="hero-slider__img"
+                    src="./img/siteCoiffure1.png"
+                    alt=""
+                />
+
+            </div>
+
         </div>
 
-        <div class="diagonal right">
-          <!-- UiBuilder.js -->
-        </div>
+    </div>
 
         <div class="content-flow">
-          <!--
-      Cette forme reprend exactement le clip-path de .diagonal.right.
-      Elle permet aux contenus suivants de couler le long de la diagonale.
-    -->
-          <div class="shape-flow" aria-hidden="true"></div>
-
           <div class="content-copy">
             <div class="hero__flow-text">
               <span class="hero__eyebrow">
@@ -57,8 +84,6 @@
                 <span class="hero__eyebrow-line" aria-hidden="true"></span>
               </span>
 
-              <br class="hero__flow-break" />
-
               <span class="hero__main-title">
                 <span class="text-rotator">
                   <span>site web unique</span>
@@ -67,14 +92,10 @@
                 </span>
               </span>
 
-              <br class="hero__flow-break" />
-
-              <div class="hero__description-space"></div>
-
               <span class="hero__description">
-                Des solutions sur mesure pensées pour développer votre activité,
-                simplifier votre organisation et vous faire gagner un temps
-                précieux.
+     
+                <strong>Un style unique pour chaque projet.</strong><br>
+                Élégant, moderne, créatif ou immersif : chaque site est conçu sur mesure pour s’adapter à votre univers et refléter votre image.
               </span>
 
               <span class="hero__actions">
@@ -748,6 +769,151 @@
         </div>
       </section>
 
+      <!-- =====================================================
+     CODE INTERACTIF / COMPÉTENCES
+====================================================== -->
+
+<section class="section__code-skills">
+
+  <!-- =========================
+       FAUX ÉDITEUR DE CODE
+  ========================== -->
+
+  <div class="code-skills__editor">
+    <div id="skills-code-editor"></div>
+  </div>
+
+
+  <!-- =========================
+       INTERFACE CONSTRUITE
+  ========================== -->
+
+  <div class="code-skills__preview">
+    <div class="code-skills__track">
+
+    <!-- DÉVELOPPEMENT -->
+
+    <article class="code-skill-card">
+
+      <div class="code-skill-card__icon" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m8 9-4 3 4 3"></path>
+          <path d="m16 9 4 3-4 3"></path>
+          <path d="m14 5-4 14"></path>
+        </svg>
+      </div>
+
+      <h3>DÉVELOPPEMENT</h3>
+
+      <p>
+        Sites web, applications et solutions entièrement sur mesure.
+      </p>
+
+    </article>
+
+
+    <!-- AUTOMATISATION -->
+
+    <article class="code-skill-card">
+
+      <div class="code-skill-card__icon" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="5" y="6" width="14" height="12" rx="3"></rect>
+          <path d="M9 10h.01"></path>
+          <path d="M15 10h.01"></path>
+          <path d="M9 14h6"></path>
+          <path d="M12 2v4"></path>
+        </svg>
+      </div>
+
+      <h3>AUTOMATISATION</h3>
+
+      <p>
+        Bots et scripts personnalisés pour automatiser vos tâches répétitives.
+      </p>
+
+    </article>
+
+
+    <!-- DESIGN -->
+
+    <article class="code-skill-card">
+
+      <div class="code-skill-card__icon" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m14.5 4.5 5 5"></path>
+          <path d="M12 7 4 15l-1 5 5-1 8-8"></path>
+          <path d="m16 3 5 5"></path>
+        </svg>
+      </div>
+
+      <h3>DESIGN & UI/UX</h3>
+
+      <p>
+        Des interfaces modernes, fluides et pensées pour l'utilisateur.
+      </p>
+
+    </article>
+
+
+    <!-- SUR MESURE -->
+
+    <article class="code-skill-card">
+
+      <div class="code-skill-card__icon" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 2v4"></path>
+          <path d="M12 18v4"></path>
+          <path d="M4.93 4.93l2.83 2.83"></path>
+          <path d="M16.24 16.24l2.83 2.83"></path>
+          <path d="M2 12h4"></path>
+          <path d="M18 12h4"></path>
+          <circle cx="12" cy="12" r="5"></circle>
+        </svg>
+      </div>
+
+      <h3>SUR MESURE</h3>
+
+      <p>
+        Chaque projet est conçu autour de votre activité et de vos objectifs.
+      </p>
+
+    </article>
+
+    </div>
+
+  </div>
+
+</section>
+
       <section id="about" class="section__about">
   <!-- ---------------------------------------------------------
        PHOTO
@@ -786,113 +952,6 @@
       entrepreneurs et les entreprises dans la digitalisation de leurs
       idées.
     </p>
-
-    <!-- -------------------------------------------------------
-         COMPÉTENCES
-    -------------------------------------------------------- -->
-
-    <div class="about__skills">
-      <!-- Développement -->
-
-      <article class="about__skill-card">
-        <div class="about__skill-icon" aria-hidden="true">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="m8 9-4 3 4 3"></path>
-            <path d="m16 9 4 3-4 3"></path>
-            <path d="m14 5-4 14"></path>
-          </svg>
-        </div>
-
-        <h3>DÉVELOPPEMENT</h3>
-
-        <p>
-          Sites web, applications et solutions entièrement sur mesure.
-        </p>
-      </article>
-
-      <!-- Automatisation -->
-
-      <article class="about__skill-card">
-        <div class="about__skill-icon" aria-hidden="true">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <rect x="5" y="7" width="14" height="11" rx="2"></rect>
-            <path d="M9 7V4h6v3"></path>
-            <path d="M8 12h.01"></path>
-            <path d="M16 12h.01"></path>
-            <path d="M9 18v2"></path>
-            <path d="M15 18v2"></path>
-          </svg>
-        </div>
-
-        <h3>AUTOMATISATION</h3>
-
-        <p>
-          Bots et scripts personnalisés pour vous faire gagner du temps.
-        </p>
-      </article>
-
-      <!-- Design -->
-
-      <article class="about__skill-card">
-        <div class="about__skill-icon" aria-hidden="true">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M15 4V2"></path>
-            <path d="M15 16v-2"></path>
-            <path d="M8 9h2"></path>
-            <path d="M20 9h2"></path>
-            <path d="m17.8 6.2 1.4-1.4"></path>
-            <path d="m10.8 13.2-1.4 1.4"></path>
-            <path d="m17.8 11.8 1.4 1.4"></path>
-            <path d="m10.8 4.8-1.4-1.4"></path>
-            <path d="m3 21 9-9"></path>
-            <path d="M12.2 6.2a4 4 0 1 1 5.6 5.6"></path>
-          </svg>
-        </div>
-
-        <h3>DESIGN & UI/UX</h3>
-
-        <p>
-          Interfaces modernes, fluides et pensées pour l’utilisateur.
-        </p>
-      </article>
-    </div>
-
-    <!-- -------------------------------------------------------
-         PHRASE SIGNATURE
-    -------------------------------------------------------- -->
-
-    <blockquote class="about__quote">
-      <span class="about__quote-mark" aria-hidden="true">“</span>
-
-      <p>
-        Mon objectif : créer des solutions efficaces, élégantes et
-        performantes qui vous font gagner du temps et vous démarquent.
-      </p>
-    </blockquote>
   </div>
 </section>
   </body>

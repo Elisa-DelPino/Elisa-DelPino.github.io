@@ -362,3 +362,134 @@ document.addEventListener("visibilitychange", () => {
     addDecodeText();
   }
 });
+
+const heroSliderTrack = document.querySelector(".hero-slider__track");
+
+if (heroSliderTrack) {
+  const heroSlides = heroSliderTrack.querySelectorAll(".hero-slider__img");
+
+  let heroSlideIndex = 0;
+
+  const slideDuration = 700;
+  const pauseDuration = 3000;
+
+  function nextHeroSlide() {
+    heroSlideIndex++;
+
+    heroSliderTrack.style.transition = `transform ${slideDuration}ms ease-in-out`;
+
+    heroSliderTrack.style.transform = `translateX(${heroSlideIndex * 100}%)`;
+
+    if (heroSlideIndex === heroSlides.length - 1) {
+      setTimeout(() => {
+        heroSliderTrack.style.transition = "none";
+
+        heroSlideIndex = 0;
+
+        heroSliderTrack.style.transform = "translateX(0)";
+      }, slideDuration);
+    }
+  }
+
+  setInterval(nextHeroSlide, pauseDuration + slideDuration);
+}
+
+export function initSkillsCarousel() {
+  const preview = document.querySelector(".code-skills__preview");
+
+  if (!preview) return;
+
+  const cards = preview.querySelectorAll(".code-skill-card");
+
+  if (cards.length < 4) return;
+
+  let secondPairVisible = false;
+
+  let running = false;
+
+  let timeout = null;
+
+  const pauseDuration = 2000;
+  const rotationDuration = 850;
+
+  function showFirstPair() {
+    if (!preview) return;
+
+    /*
+     * On coupe la transition.
+     * Les cartes sont invisibles à ce moment-là.
+     */
+
+    preview.classList.add("no-carousel-transition");
+
+    preview.classList.remove("show-second-pair");
+
+    secondPairVisible = false;
+
+    /*
+     * Force le navigateur à appliquer
+     * immédiatement la position.
+     */
+
+    preview.offsetHeight;
+
+    /*
+     * On réactive la transition
+     * pour le prochain passage.
+     */
+
+    requestAnimationFrame(() => {
+      preview.classList.remove("no-carousel-transition");
+    });
+  }
+
+  function showSecondPair() {
+    preview.classList.add("show-second-pair");
+  }
+
+  function rotateCarousel() {
+    if (window.innerWidth > 900 || running) {
+      return;
+    }
+
+    running = true;
+
+    secondPairVisible = !secondPairVisible;
+
+    if (secondPairVisible) {
+      showSecondPair();
+    } else {
+      showFirstPair();
+    }
+
+    /*
+     * On attend la fin réelle
+     * de la rotation.
+     */
+    timeout = setTimeout(() => {
+      running = false;
+
+      /*
+       * Pause une fois les cartes
+       * parfaitement face caméra.
+       */
+      timeout = setTimeout(rotateCarousel, pauseDuration);
+    }, rotationDuration);
+  }
+
+  function start() {
+    clearTimeout(timeout);
+
+    if (window.innerWidth <= 900) {
+      timeout = setTimeout(rotateCarousel, pauseDuration);
+    } else {
+      secondPairVisible = false;
+
+      showFirstPair();
+    }
+  }
+
+  start();
+
+  window.addEventListener("resize", start);
+}
