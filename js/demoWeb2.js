@@ -18,6 +18,144 @@ if (!document.getElementById("demo2Font")) {
 }
 
 /* =====================================================
+   GALERIE MOBILE — AGRANDISSEMENT D'UN GÂTEAU
+===================================================== */
+
+function injectGalleryMobileExpansionCSS() {
+  if (document.getElementById("demo2GalleryMobileExpansionStyle")) {
+    return;
+  }
+
+  const style = document.createElement("style");
+
+  style.id = "demo2GalleryMobileExpansionStyle";
+
+  style.textContent = `
+    @media screen and (max-width: 600px) {
+      /*
+       * La galerie reste sur 2 colonnes.
+       * Une carte ouverte prend toute la largeur.
+       *
+       * Comme la carte reste carrée, elle devient
+       * environ 2 fois plus large et 2 fois plus haute :
+       * elle occupe donc visuellement la surface
+       * de 4 petites cartes.
+       */
+      .demo2__galleryPage .demo2__galerie__item {
+        grid-auto-flow: row;
+        align-items: start;
+      }
+
+      .demo2__galleryPage .demo2__imgWrapper {
+        width: 100%;
+        min-width: 0;
+        aspect-ratio: 1 / 1;
+      }
+
+      .demo2__galleryPage .demo2__imgWrapper.is-open {
+        grid-column: 1 / -1;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        z-index: 80;
+      }
+
+      .demo2__galleryPage .demo2__imgWrapper.is-open .demo2__galleryTrigger {
+        width: 100%;
+        height: 100%;
+      }
+
+      /*
+       * On écrase les positions desktop / tablette
+       * lorsque la carte est ouverte sur smartphone.
+       */
+      .demo2__galleryPage .demo2__imgWrapper.is-open .demo2__cakeInfo,
+      .demo2__galleryPage .demo2__imgWrapper:nth-child(3n).is-open .demo2__cakeInfo,
+      .demo2__galleryPage .demo2__imgWrapper:nth-child(4n).is-open .demo2__cakeInfo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        right: auto;
+        bottom: auto;
+
+        width: 84%;
+        height: auto;
+        min-height: 70%;
+        max-height: 84%;
+
+        padding: clamp(16px, 5vw, 24px);
+
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+
+        opacity: 1;
+        visibility: visible;
+        pointer-events: none;
+
+        transform: translate(-50%, -50%) scale(1);
+
+        overflow: hidden;
+      }
+
+      .demo2__galleryPage .demo2__imgWrapper.is-open .demo2__cakeInfoLabel {
+        margin-bottom: clamp(5px, 1.7vw, 8px);
+
+        font-size: clamp(7px, 2.2vw, 10px);
+        letter-spacing: 0.11em;
+      }
+
+      .demo2__galleryPage .demo2__imgWrapper.is-open .demo2__cakeInfoTitle {
+        margin-bottom: clamp(8px, 2.5vw, 13px);
+
+        font-size: clamp(21px, 7vw, 30px);
+        line-height: 1.05;
+      }
+
+      .demo2__galleryPage .demo2__imgWrapper.is-open .demo2__cakeInfoSeparator {
+        width: clamp(38px, 12vw, 55px);
+
+        margin-bottom: clamp(9px, 2.8vw, 14px);
+      }
+
+      .demo2__galleryPage .demo2__imgWrapper.is-open .demo2__cakeInfoDescription {
+        font-size: clamp(11px, 3.4vw, 15px);
+        line-height: 1.4;
+      }
+    }
+
+    @media screen and (max-width: 380px) {
+      .demo2__galleryPage .demo2__imgWrapper.is-open .demo2__cakeInfo,
+      .demo2__galleryPage .demo2__imgWrapper:nth-child(3n).is-open .demo2__cakeInfo,
+      .demo2__galleryPage .demo2__imgWrapper:nth-child(4n).is-open .demo2__cakeInfo {
+        width: 86%;
+        min-height: 72%;
+        max-height: 88%;
+
+        padding: 14px;
+      }
+
+      .demo2__galleryPage .demo2__imgWrapper.is-open .demo2__cakeInfoTitle {
+        font-size: clamp(19px, 7vw, 25px);
+      }
+
+      .demo2__galleryPage .demo2__imgWrapper.is-open .demo2__cakeInfoDescription {
+        font-size: clamp(10px, 3.5vw, 13px);
+        line-height: 1.35;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+injectGalleryMobileExpansionCSS();
+
+function isGallerySmartphone() {
+  return window.matchMedia("(max-width: 600px)").matches;
+}
+
+/* =====================================================
    ARRÊT DES COMPOSANTS
 ===================================================== */
 
@@ -133,6 +271,7 @@ function connectHeaderNavigation(element) {
   logoButton?.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
+
       goHomeTop();
     }
   });
@@ -143,7 +282,9 @@ function connectHeaderNavigation(element) {
 ===================================================== */
 
 export function addDemoWeb2(element) {
-  if (!element) return;
+  if (!element) {
+    return;
+  }
 
   element.style.background = "#fffdfa";
 
@@ -604,6 +745,7 @@ function createHomeHTML(element) {
     link.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
+
         openGallery();
       }
     });
@@ -625,7 +767,9 @@ function createHomeHTML(element) {
   carouselContainer?.addEventListener("click", (event) => {
     const item = event.target.closest(".cake-carousel__item");
 
-    if (!item) return;
+    if (!item) {
+      return;
+    }
 
     createGalleryHTML(element);
   });
@@ -792,18 +936,136 @@ function createGalleryHTML(element) {
 
   const cakeItems = element.querySelectorAll(".demo2__imgWrapper");
 
+  /*
+   * Sur smartphone, une carte située dans la colonne de droite
+   * doit être déplacée temporairement au début de sa rangée
+   * avant de pouvoir prendre les deux colonnes sans laisser de trou.
+   *
+   * On garde un marqueur invisible à sa position d'origine
+   * afin de pouvoir la remettre exactement à sa place
+   * lorsqu'elle se referme.
+   */
+  const mobileCakePositions = new WeakMap();
+
+  /* =====================================================
+     SMARTPHONE
+     DÉPLACER UN GÂTEAU DE DROITE À GAUCHE
+  ===================================================== */
+
+  function moveCakeToRowStart(item) {
+    if (!item || !isGallerySmartphone()) {
+      return;
+    }
+
+    const cakeIndex = Number(item.dataset.cakeIndex);
+
+    /*
+     * Index d'origine :
+     *
+     * 0 = gauche
+     * 1 = droite
+     * 2 = gauche
+     * 3 = droite
+     * etc.
+     */
+    const isRightColumn = cakeIndex % 2 === 1;
+
+    if (!isRightColumn) {
+      return;
+    }
+
+    /*
+     * Si la carte a déjà été déplacée,
+     * on ne la déplace pas une deuxième fois.
+     */
+    if (mobileCakePositions.has(item)) {
+      return;
+    }
+
+    const parent = item.parentElement;
+
+    const leftCake = item.previousElementSibling;
+
+    if (!parent || !leftCake) {
+      return;
+    }
+
+    /*
+     * Marqueur invisible placé exactement
+     * à l'ancienne position de la carte.
+     */
+    const placeholder = document.createComment(`position-cake-${cakeIndex}`);
+
+    parent.insertBefore(placeholder, item);
+
+    mobileCakePositions.set(item, placeholder);
+
+    /*
+     * La carte de droite passe juste avant
+     * la carte qui était à sa gauche.
+     *
+     * Elle devient donc le premier élément
+     * de cette rangée et peut ensuite prendre
+     * les deux colonnes sans créer de trou.
+     */
+    parent.insertBefore(item, leftCake);
+  }
+
+  /* =====================================================
+     SMARTPHONE
+     REMETTRE LE GÂTEAU À SA POSITION D'ORIGINE
+  ===================================================== */
+
+  function restoreCakePosition(item) {
+    if (!item) {
+      return;
+    }
+
+    const placeholder = mobileCakePositions.get(item);
+
+    if (!placeholder) {
+      return;
+    }
+
+    const parent = placeholder.parentNode;
+
+    if (!parent) {
+      mobileCakePositions.delete(item);
+
+      return;
+    }
+
+    /*
+     * On replace la carte exactement
+     * à l'endroit mémorisé.
+     */
+    parent.insertBefore(item, placeholder);
+
+    placeholder.remove();
+
+    mobileCakePositions.delete(item);
+  }
+
   /* =====================================================
      FERMER UNE CARTE
   ===================================================== */
 
   function closeCakeCard(item) {
-    if (!item) return;
+    if (!item) {
+      return;
+    }
 
     item.classList.remove("is-open");
 
     const trigger = item.querySelector(".demo2__galleryTrigger");
 
     trigger?.setAttribute("aria-expanded", "false");
+
+    /*
+     * Si la carte avait été déplacée depuis la colonne de droite,
+     * elle reprend maintenant sa position d'origine.
+     */
+    restoreCakePosition(item);
   }
 
   /* =====================================================
@@ -829,10 +1091,28 @@ function createGalleryHTML(element) {
   ===================================================== */
 
   function openCakeCard(item) {
-    if (!item) return;
+    if (!item) {
+      return;
+    }
 
+    /*
+     * Ferme d'abord la carte éventuellement ouverte.
+     * Si elle avait été déplacée sur smartphone,
+     * elle est également remise à sa place d'origine.
+     */
     closeAllCakeCards(item);
 
+    /*
+     * Sur smartphone, si cette carte appartient
+     * à la colonne de droite dans l'ordre d'origine,
+     * on la déplace temporairement au début de sa rangée.
+     */
+    moveCakeToRowStart(item);
+
+    /*
+     * Elle peut maintenant prendre les deux colonnes
+     * sans laisser de case vide.
+     */
     item.classList.add("is-open");
 
     const trigger = item.querySelector(".demo2__galleryTrigger");
@@ -845,7 +1125,9 @@ function createGalleryHTML(element) {
   ===================================================== */
 
   function toggleCakeCard(item) {
-    if (!item) return;
+    if (!item) {
+      return;
+    }
 
     const wasOpen = item.classList.contains("is-open");
 
@@ -875,30 +1157,30 @@ function createGalleryHTML(element) {
   cakeItems.forEach((item) => {
     const trigger = item.querySelector(".demo2__galleryTrigger");
 
-    if (!trigger) return;
+    if (!trigger) {
+      return;
+    }
 
     /* =================================================
          SURVOL
 
-         Fonctionne :
-         - ordinateur
-         - smartphone avec souris
-         - tablette avec souris
-         - stylet prenant en charge le hover
+         Sur ordinateur / tablette :
+         le survol continue d'ouvrir la fiche.
 
-         Le tactile pur n'a pas de vrai hover.
+         Sur smartphone :
+         on désactive volontairement le survol
+         pour réserver l'ouverture au tap.
       ================================================= */
 
     item.addEventListener("pointerenter", (event) => {
       /*
-       * On ignore le doigt.
+       * Sur smartphone, l'ouverture se fait uniquement
+       * au tap / clic afin de déclencher l'agrandissement.
        *
-       * Sinon pointerenter serait déclenché
-       * pendant un tap et entrerait en conflit
-       * avec le clic.
+       * Sur les écrans plus grands, on garde le survol.
        */
 
-      if (event.pointerType === "touch") {
+      if (isGallerySmartphone() || event.pointerType === "touch") {
         return;
       }
 
@@ -910,7 +1192,12 @@ function createGalleryHTML(element) {
       ================================================= */
 
     item.addEventListener("pointerleave", (event) => {
-      if (event.pointerType === "touch") {
+      /*
+       * Sur smartphone, on ne ferme pas au déplacement
+       * du pointeur : seul un nouveau tap referme la carte.
+       */
+
+      if (isGallerySmartphone() || event.pointerType === "touch") {
         return;
       }
 

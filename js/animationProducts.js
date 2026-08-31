@@ -18,41 +18,49 @@ function injectProductsAnimationCSS() {
     /* Les images et le globe sont cachés avant leur animation */
 
     .img__products {
-  opacity: 0;
+      opacity: 0;
+      transition: opacity 800ms ease, transform 800ms ease;
+      will-change: opacity, transform;
+    }
 
-  transition:
-    opacity 800ms ease,
-    transform 800ms ease;
+    .img__products.left {
+      transform: translateX(-100%);
+    }
 
-  will-change: opacity, transform;
-}
+    .img__products.right,
+    .img__products.rigth {
+      transform: translateX(100%);
+    }
 
-.img__products.left {
-  transform: translateX(-100%);
-}
+    .img__products img,
+    .img__products #globe-container,
+    .img__products canvas {
+      opacity: 1;
+      transform: none;
+    }
 
-.img__products.right,
-.img__products.rigth {
-  transform: translateX(100%);
-}
+    /* Animation du texte ligne par ligne */
 
-.img__products img,
-.img__products #globe-container,
-.img__products canvas {
-  opacity: 1;
-  transform: none;
-}
+    .reveal-line-word {
+      display: inline-block;
+      opacity: 0;
+      will-change: opacity, transform;
+      transition-property: opacity, transform;
+      transition-timing-function: ease, cubic-bezier(0.22, 1, 0.36, 1);
+    }
 
-    /* Animation du texte */
+    .reveal-line-word.from-left {
+      transform: translateX(-45px);
+    }
 
-    .reveal-letter {
-  opacity: 0;
-  transition: opacity 80ms linear;
-}
+    .reveal-line-word.from-right {
+      transform: translateX(45px);
+    }
 
-.reveal-letter.is-visible {
-  opacity: 1;
-}
+    .reveal-line-word.is-visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
   `;
 
   document.head.appendChild(style);
@@ -90,6 +98,10 @@ function isReallyVisible(element) {
   const headerHeight = getHeaderHeight();
 
   return rect.bottom > headerHeight && rect.top < window.innerHeight;
+}
+
+function isSmartphone() {
+  return window.matchMedia("(max-width: 600px)").matches;
 }
 
 // -----------------------------------------------------------------------------
@@ -167,7 +179,9 @@ function revealProductCard(wrapper, duration = 900) {
     let timeoutId = null;
 
     function finish() {
-      if (finished) return;
+      if (finished) {
+        return;
+      }
 
       finished = true;
 
@@ -232,11 +246,13 @@ function revealVisual(element, duration = 800) {
     if (isPassed(wrapper)) {
       visualContainer.style.opacity = "1";
       visualContainer.style.transform = "translateX(0)";
+
       resolve();
       return;
     }
 
     visualContainer.style.opacity = "0";
+
     visualContainer.style.transform = comesFromRight
       ? "translateX(100%)"
       : "translateX(-100%)";
@@ -251,7 +267,9 @@ function revealVisual(element, duration = 800) {
     let intervalId = null;
 
     function finish() {
-      if (finished) return;
+      if (finished) {
+        return;
+      }
 
       finished = true;
 
@@ -282,13 +300,13 @@ function revealVisual(element, duration = 800) {
 }
 
 // -----------------------------------------------------------------------------
-// ANIMATION D'ÉCRITURE DU TEXTE LIGNE PAR LIGNE
+// ANIMATION DU TEXTE LIGNE PAR LIGNE
 // -----------------------------------------------------------------------------
 
 export function revealTextLines(
   element,
-  duration = 20,
-  delayBetweenLetters = 0.5,
+  duration = 520,
+  delayBetweenLines = 140,
 ) {
   return new Promise((resolve) => {
     if (!element) {
@@ -304,15 +322,21 @@ export function revealTextLines(
     let animationRunning = false;
     let isResizing = false;
 
-    let letterTimeout = null;
+    let lineTimeout = null;
     let resizeTimeout = null;
 
-    let currentIndex = 0;
+    let currentLineIndex = 0;
     let currentAnimationId = 0;
 
+    /*
+     * Si l'utilisateur est déjà passé sous cette carte,
+     * on affiche immédiatement le texte.
+     */
     if (isPassed(wrapper)) {
       element.innerHTML = originalHTML;
       element.style.opacity = "1";
+      element.style.visibility = "visible";
+
       resolve();
       return;
     }
@@ -320,10 +344,31 @@ export function revealTextLines(
     element.style.opacity = "1";
 
     // -------------------------------------------------------------------------
-    // TRANSFORME LE TEXTE EN LETTRES ANIMABLES
+    // DÉTERMINE LE CÔTÉ DEPUIS LEQUEL LE TEXTE DOIT ARRIVER
     // -------------------------------------------------------------------------
 
-    function wrapTextNodesByLetter() {
+    function getRevealDirection() {
+      const rect = element.getBoundingClientRect();
+
+      const elementCenter = rect.left + rect.width / 2;
+
+      const viewportCenter = window.innerWidth / 2;
+
+      /*
+       * Texte situé dans la moitié gauche :
+       * arrivée depuis la gauche.
+       *
+       * Texte situé dans la moitié droite :
+       * arrivée depuis la droite.
+       */
+      return elementCenter <= viewportCenter ? "from-left" : "from-right";
+    }
+
+    // -------------------------------------------------------------------------
+    // TRANSFORME UNIQUEMENT LES MOTS EN ÉLÉMENTS MESURABLES
+    // -------------------------------------------------------------------------
+
+    function wrapTextNodesByWord() {
       const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
 
       const textNodes = [];
@@ -335,28 +380,37 @@ export function revealTextLines(
       textNodes.forEach((textNode) => {
         const text = textNode.nodeValue;
 
-        if (!text) {
+        /*
+         * On laisse tranquilles les nœuds qui ne contiennent
+         * que des espaces ou des retours à la ligne HTML.
+         */
+        if (!text || !text.trim()) {
           return;
         }
 
         const fragment = document.createDocumentFragment();
 
-        [...text].forEach((character) => {
-          if (
-            character === " " ||
-            character === "\n" ||
-            character === "\t" ||
-            character === "\u00A0"
-          ) {
-            fragment.appendChild(document.createTextNode(character));
+        /*
+         * Chaque mot devient un span.
+         * Les espaces restent de vrais espaces.
+         *
+         * C'est beaucoup plus léger que de créer
+         * un span pour chaque caractère.
+         */
+        const parts = text.match(/\s+|[^\s]+/g) || [];
+
+        parts.forEach((part) => {
+          if (/^\s+$/.test(part)) {
+            fragment.appendChild(document.createTextNode(part));
 
             return;
           }
 
           const span = document.createElement("span");
 
-          span.className = "reveal-letter";
-          span.textContent = character;
+          span.className = "reveal-line-word";
+
+          span.textContent = part;
 
           fragment.appendChild(span);
         });
@@ -366,12 +420,80 @@ export function revealTextLines(
     }
 
     // -------------------------------------------------------------------------
-    // ARRÊTE UNIQUEMENT LE TIMER ACTUEL
+    // CALCULE LES VRAIES LIGNES CRÉÉES PAR LE NAVIGATEUR
+    // -------------------------------------------------------------------------
+
+    function getRenderedLines() {
+      const words = [...element.querySelectorAll(".reveal-line-word")];
+
+      const lines = [];
+
+      /*
+       * Quelques pixels de tolérance permettent d'éviter
+       * qu'une différence minuscule soit prise
+       * pour une nouvelle ligne.
+       */
+      const topTolerance = 3;
+
+      words.forEach((word) => {
+        const top = word.getBoundingClientRect().top;
+
+        let line = lines.find((currentLine) => {
+          return Math.abs(currentLine.top - top) <= topTolerance;
+        });
+
+        /*
+         * Aucun mot précédent n'est sur cette hauteur :
+         * le navigateur a donc créé une nouvelle ligne.
+         */
+        if (!line) {
+          line = {
+            top,
+            words: [],
+          };
+
+          lines.push(line);
+        }
+
+        line.words.push(word);
+      });
+
+      /*
+       * On remet les lignes dans leur ordre vertical réel.
+       */
+      lines.sort((lineA, lineB) => {
+        return lineA.top - lineB.top;
+      });
+
+      return lines;
+    }
+
+    // -------------------------------------------------------------------------
+    // PRÉPARE CHAQUE LIGNE AVEC LA BONNE DIRECTION
+    // -------------------------------------------------------------------------
+
+    function prepareLines(lines) {
+      const direction = getRevealDirection();
+
+      lines.forEach((line) => {
+        line.words.forEach((word) => {
+          word.classList.remove("from-left", "from-right", "is-visible");
+
+          word.classList.add(direction);
+
+          word.style.transitionDuration = `${duration}ms`;
+        });
+      });
+    }
+
+    // -------------------------------------------------------------------------
+    // ARRÊTE UNIQUEMENT L'ANIMATION ACTUELLE
     // -------------------------------------------------------------------------
 
     function pauseCurrentAnimation() {
-      clearTimeout(letterTimeout);
-      letterTimeout = null;
+      clearTimeout(lineTimeout);
+
+      lineTimeout = null;
 
       animationRunning = false;
 
@@ -390,6 +512,7 @@ export function revealTextLines(
       pauseCurrentAnimation();
 
       clearTimeout(resizeTimeout);
+
       resizeTimeout = null;
 
       window.removeEventListener("resize", handleResize);
@@ -404,17 +527,57 @@ export function revealTextLines(
 
       cleanup();
 
+      /*
+       * Une fois l'animation terminée,
+       * on remet exactement le HTML original.
+       *
+       * Il ne reste donc aucun span artificiel
+       * autour des mots.
+       */
       element.innerHTML = originalHTML;
       element.style.opacity = "1";
+      element.style.visibility = "visible";
 
       resolve();
     }
 
     // -------------------------------------------------------------------------
-    // RÉVÉLATION LETTRE PAR LETTRE
+    // RÉAFFICHE LES LIGNES DÉJÀ ANIMÉES APRÈS UN RESIZE
     // -------------------------------------------------------------------------
 
-    function revealNextLetter(letters, animationId) {
+    function restoreVisibleLines(lines) {
+      const visibleCount = Math.min(currentLineIndex, lines.length);
+
+      for (let index = 0; index < visibleCount; index++) {
+        lines[index].words.forEach((word) => {
+          word.style.transition = "none";
+
+          word.classList.add("is-visible");
+        });
+      }
+
+      /*
+       * Force le navigateur à appliquer l'état
+       * avant de remettre les transitions.
+       */
+      void element.offsetWidth;
+
+      for (let index = 0; index < visibleCount; index++) {
+        lines[index].words.forEach((word) => {
+          word.style.transition = "";
+
+          word.style.transitionDuration = `${duration}ms`;
+        });
+      }
+
+      currentLineIndex = visibleCount;
+    }
+
+    // -------------------------------------------------------------------------
+    // RÉVÈLE UNE LIGNE ENTIÈRE À LA FOIS
+    // -------------------------------------------------------------------------
+
+    function revealNextLine(lines, animationId) {
       if (
         finished ||
         isResizing ||
@@ -424,30 +587,61 @@ export function revealTextLines(
         return;
       }
 
+      /*
+       * Si pendant l'animation l'utilisateur
+       * a déjà fait défiler la carte derrière le header,
+       * on termine immédiatement.
+       */
       if (isPassed(wrapper)) {
         finish();
         return;
       }
 
-      if (currentIndex >= letters.length) {
-        finish();
+      /*
+       * Toutes les lignes sont affichées.
+       */
+      if (currentLineIndex >= lines.length) {
+        lineTimeout = setTimeout(finish, duration);
+
         return;
       }
 
-      const letter = letters[currentIndex];
+      const line = lines[currentLineIndex];
 
-      letter.style.transitionDuration = `${duration}ms`;
-      letter.classList.add("is-visible");
+      /*
+       * Tous les mots de la même ligne
+       * deviennent visibles exactement au même moment.
+       *
+       * Visuellement, c'est donc bien
+       * la ligne entière qui entre.
+       */
+      line.words.forEach((word) => {
+        word.classList.add("is-visible");
+      });
 
-      currentIndex += 1;
+      currentLineIndex += 1;
 
-      letterTimeout = setTimeout(() => {
-        revealNextLetter(letters, animationId);
-      }, delayBetweenLetters);
+      /*
+       * Lorsque la dernière ligne vient d'être lancée,
+       * on attend simplement la fin de sa transition.
+       */
+      if (currentLineIndex >= lines.length) {
+        lineTimeout = setTimeout(finish, duration);
+
+        return;
+      }
+
+      /*
+       * Puis on lance la ligne suivante
+       * après un petit décalage.
+       */
+      lineTimeout = setTimeout(() => {
+        revealNextLine(lines, animationId);
+      }, delayBetweenLines);
     }
 
     // -------------------------------------------------------------------------
-    // RECONSTRUIT LE TEXTE ET REPREND AU BON ENDROIT
+    // RECONSTRUIT LE TEXTE SELON LES VRAIES LIGNES DE L'ÉCRAN
     // -------------------------------------------------------------------------
 
     function resumeAnimation() {
@@ -458,14 +652,22 @@ export function revealTextLines(
       pauseCurrentAnimation();
 
       /*
-       * Empêche l’affichage du texte complet durant
-       * les quelques millisecondes de reconstruction.
+       * On cache brièvement le texte pendant
+       * qu'on calcule ses vraies lignes.
+       *
+       * visibility:hidden conserve toutes
+       * les dimensions nécessaires aux mesures.
        */
       element.style.visibility = "hidden";
+
       element.innerHTML = originalHTML;
+
       element.style.opacity = "1";
 
-      wrapTextNodesByLetter();
+      /*
+       * On crée seulement un span par mot.
+       */
+      wrapTextNodesByWord();
 
       const animationId = currentAnimationId;
 
@@ -475,36 +677,42 @@ export function revealTextLines(
             return;
           }
 
-          const letters = [...element.querySelectorAll(".reveal-letter")];
-
           /*
-           * Réaffiche immédiatement les lettres qui étaient
-           * déjà visibles avant le redimensionnement.
+           * Le navigateur a désormais fait
+           * ses vrais retours à la ligne.
+           *
+           * On récupère donc le nombre exact
+           * de lignes correspondant à CET écran.
            */
-          for (let i = 0; i < currentIndex && i < letters.length; i++) {
-            letters[i].style.transition = "none";
-            letters[i].classList.add("is-visible");
+          const lines = getRenderedLines();
+
+          if (lines.length === 0) {
+            finish();
+            return;
           }
 
           /*
-           * Force l’application de l’état actuel
-           * avant de réactiver les transitions.
+           * Toutes les lignes sont placées
+           * dans leur état de départ.
            */
-          void element.offsetWidth;
-
-          for (let i = 0; i < currentIndex && i < letters.length; i++) {
-            letters[i].style.transition = "";
-          }
+          prepareLines(lines);
 
           /*
-           * Le paragraphe ne redevient visible qu’une fois
-           * sa structure correctement reconstruite.
+           * Si un resize s'est produit pendant
+           * l'animation, on conserve les lignes
+           * déjà affichées.
+           */
+          restoreVisibleLines(lines);
+
+          /*
+           * Tout est prêt :
+           * le texte peut maintenant être visible.
            */
           element.style.visibility = "visible";
 
           animationRunning = true;
 
-          revealNextLetter(letters, animationId);
+          revealNextLine(lines, animationId);
         });
       });
     }
@@ -520,30 +728,44 @@ export function revealTextLines(
 
       isResizing = true;
 
-      /*
-       * On arrête uniquement la progression de l’écriture.
-       * On ne touche pas au HTML actuel :
-       * les lettres déjà visibles restent visibles,
-       * les autres restent cachées.
-       */
       pauseCurrentAnimation();
 
       clearTimeout(resizeTimeout);
 
       /*
-       * Le délai est relancé à chaque événement resize.
-       * La reconstruction n’a lieu qu’une fois
-       * le redimensionnement réellement terminé.
+       * Lorsqu'on change la largeur de l'écran,
+       * le nombre réel de lignes peut changer.
+       *
+       * On attend donc la fin du resize
+       * puis on laisse le navigateur recalculer
+       * entièrement les retours à la ligne.
        */
       resizeTimeout = setTimeout(() => {
         isResizing = false;
+
         resumeAnimation();
       }, 250);
     }
 
     window.addEventListener("resize", handleResize);
 
-    resumeAnimation();
+    /*
+     * On attend si nécessaire que les polices
+     * soient réellement chargées.
+     *
+     * Sinon le navigateur pourrait calculer
+     * les lignes avec une police temporaire
+     * puis modifier les retours à la ligne après.
+     */
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        if (!finished) {
+          resumeAnimation();
+        }
+      });
+    } else {
+      resumeAnimation();
+    }
   });
 }
 
@@ -556,6 +778,7 @@ async function runAnimation() {
 
   for (const wrapper of wrappers) {
     const first = wrapper.firstElementChild;
+
     const last = wrapper.lastElementChild;
 
     if (!first || !last) {
@@ -564,7 +787,8 @@ async function runAnimation() {
 
     /*
      * Étape 1 :
-     * on attend que cette carte entre dans le viewport.
+     * on attend que cette carte
+     * entre dans le viewport.
      */
     await waitElementVisible(wrapper);
 
@@ -576,12 +800,17 @@ async function runAnimation() {
 
     /*
      * Petite pause permettant de distinguer clairement
-     * l'apparition de la carte de ses animations internes.
+     * l'apparition de la carte
+     * de ses animations internes.
      */
     await new Promise((resolve) => {
       setTimeout(resolve, 180);
     });
 
+    /*
+     * On regarde quel enfant contient
+     * le visuel.
+     */
     const firstContainsVisual =
       first.matches(".img__products") ||
       first.querySelector("img") ||
@@ -590,26 +819,88 @@ async function runAnimation() {
       first.querySelector("#robot-container") ||
       first.querySelector("canvas");
 
+    /*
+     * On récupère le visuel et le texte
+     * indépendamment de leur ordre dans le HTML.
+     */
+    const visualElement = firstContainsVisual ? first : last;
+
+    const textContainer = firstContainsVisual ? last : first;
+
+    const textElement = textContainer.matches(".text__products")
+      ? textContainer
+      : textContainer.querySelector(".text__products");
+
+    // -------------------------------------------------------------------------
+    // SMARTPHONE
+    // -------------------------------------------------------------------------
+
+    /*
+     * Sur smartphone :
+     *
+     * VISUEL TOUJOURS EN PREMIER.
+     *
+     * Peu importe que dans le HTML on ait :
+     *
+     * image → texte
+     *
+     * ou :
+     *
+     * texte → image
+     *
+     * l'animation sera toujours :
+     *
+     * carte
+     * → image / globe / visuel
+     * → texte ligne par ligne
+     */
+    if (isSmartphone()) {
+      await revealVisual(visualElement);
+
+      await revealTextLines(textElement);
+
+      continue;
+    }
+
+    // -------------------------------------------------------------------------
+    // DESKTOP / TABLETTE
+    // -------------------------------------------------------------------------
+
+    /*
+     * Sur les écrans supérieurs à 600px,
+     * on conserve ton fonctionnement :
+     *
+     * si le visuel est à gauche,
+     * il apparaît avant le texte.
+     *
+     * si le texte est à gauche,
+     * il apparaît avant le visuel.
+     */
+
     if (firstContainsVisual) {
       /*
-       * Produit 1 et produit 3 :
+       * Exemple :
+       *
+       * IMAGE | TEXTE
        *
        * carte
-       * → visuel venant de gauche
-       * → écriture du texte
+       * → image
+       * → texte ligne par ligne
        */
       await revealVisual(first);
 
-      await revealTextLines(last.querySelector(".text__products"));
+      await revealTextLines(textElement);
     } else {
       /*
-       * Produit 2 :
+       * Exemple :
+       *
+       * TEXTE | IMAGE
        *
        * carte
-       * → écriture du texte
-       * → visuel venant de droite
+       * → texte ligne par ligne
+       * → image
        */
-      await revealTextLines(first.querySelector(".text__products"));
+      await revealTextLines(textElement);
 
       await revealVisual(last);
     }
@@ -622,8 +913,10 @@ async function runAnimation() {
 
 export function initAnimations() {
   /*
-   * Empêche le lancement simultané de plusieurs séquences
-   * si initAnimations() est appelée plusieurs fois.
+   * Empêche le lancement simultané
+   * de plusieurs séquences
+   * si initAnimations() est appelée
+   * plusieurs fois.
    */
   if (animationAlreadyStarted) {
     return;
@@ -633,8 +926,8 @@ export function initAnimations() {
 
   /*
    * Pas de window.addEventListener("load") ici :
-   * la fonction est appelée après le loader, donc l'événement
-   * load est parfois déjà terminé.
+   * la fonction est appelée une fois que
+   * le contenu principal est prêt.
    */
   setTimeout(() => {
     runAnimation().catch((error) => {

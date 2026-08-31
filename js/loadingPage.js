@@ -1,6 +1,5 @@
 // loadingPage.js
 
-import { autoWriteText } from "./animationHome.js";
 import { initFakeVSCode } from "./codeAuto.js";
 import { initUiBuilder } from "./uiBuilder.js";
 import { addDecodeText } from "./animationHome.js";
@@ -12,163 +11,98 @@ import { initRobot3D } from "./robot3d.js";
 import { initHeroButtons } from "./buttonNeon.js";
 import { initContactAnimation } from "./animationContact.js";
 import { initAboutAnimation } from "./animationAbout.js";
+import { initProcedure } from "./procedure.js";
+
+/* =====================================================
+   INITIALISATION DU CONTENU
+===================================================== */
 
 function initPageContent() {
   const main = document.getElementById("main-content");
 
-  if (!main) return;
+  if (!main) {
+    return;
+  }
 
+  /*
+   * On s'assure que le contenu principal
+   * est directement visible.
+   */
   main.style.display = "block";
+
+  /* =====================================================
+     HEADER
+  ===================================================== */
 
   loadHeaderScriptDirect();
 
-  //initFakeVSCode(".diagonal.left");
+  /* =====================================================
+     ANIMATIONS HOME
+  ===================================================== */
+
+  // initFakeVSCode(".diagonal.left");
   // initUiBuilder(".diagonal.right");
+
   showDiagonals();
+
   addDecodeText();
+
+  /* =====================================================
+     ANIMATIONS PRINCIPALES
+  ===================================================== */
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       initGlobe();
+
       initCircuit3D();
+
       initRobot3D();
+
       initHeroButtons();
+
       initContactAnimation();
+
       initAboutAnimation();
+
+      initProcedure();
+
+      /* =================================================
+         ANIMATIONS SERVICES / PRODUITS
+      ================================================= */
 
       requestAnimationFrame(() => {
         initAnimations();
 
+        /*
+         * Informe les autres scripts que
+         * tout le contenu principal est prêt.
+         */
         window.dispatchEvent(new CustomEvent("pageContentReady"));
       });
     });
   });
 }
 
+/* =====================================================
+   LANCEMENT DU SITE
+===================================================== */
+
+/*
+ * On conserve le nom AddLoader pour ne pas casser
+ * les autres fichiers qui importent déjà cette fonction.
+ *
+ * Il n'y a désormais plus aucun loader :
+ * le site est initialisé immédiatement.
+ */
+
 export function AddLoader() {
-  const hasSeenLoader = sessionStorage.getItem("hasSeenLoader");
-
-  // Si le loader a déjà été vu dans cette session
-  if (hasSeenLoader) {
-    initPageContent();
-    return;
-  }
-
-  // ---------------------------------------------------------------------- INJECT CSS -----------------------------------------------------------------------------
-
-  if (!document.getElementById("loadingPageStyle")) {
-    const style = document.createElement("style");
-    style.id = "loadingPageStyle";
-
-    style.textContent = `
-        * {
-            margin: 0;
-        }
-
-        .loading {
-            position: fixed;
-            height: 100%;
-            width: 100%;
-            transition: 0.6s;
-            z-index: 9999;
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        .loading-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -70%);
-            font-family: 'Franklin Gothic Heavy';
-            color: var(--text-color);
-            font-size: clamp(30px, 4vw, 40px);
-            text-align: center;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.3),
-                         5px 5px 70px rgba(255,255,255,0.5);
-        }
-
-        .logo img {
-            margin: 0 auto;
-            margin-bottom: 20px;
-            width: clamp(80px, 10vw, 100px);
-        }
-
-        #bar {
-            left: 50%;
-            width: clamp(150px, 40vw, 400px);
-            height: clamp(10px, 2vw, 20px);
-            border: 1px solid white;
-            margin-top: 20px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.3),
-                        5px 5px 70px rgba(255,255,255,0.5);
-        }
-
-        #progress {
-            background: linear-gradient(90deg, white, grey);
-            width: 0%;
-            height: 100%;
-        }
-    `;
-
-    document.head.appendChild(style);
-  }
-
-  // ------------------------------------------------------------------------- INJECT HTML ------------------------------------------------------------------------
-
-  const loading = document.createElement("div");
-  loading.className = "loading";
-
-  loading.innerHTML = `
-        <div class="loading-container">
-            <div class="logo">
-                <img src="./img/lightGreyLogo.png" alt="logo">
-            </div>
-            <div class="number">
-                <span id="loadingText">Loading....</span>
-            </div>
-            <div id="bar">
-                <div id="progress"></div>
-            </div>
-        </div>
-    `;
-  document.body.appendChild(loading);
-
-  // -------------------------------------------------------------------------- LOGIC JS ---------------------------------------------------------------------------
-
-  const loadingTextSpan = loading.querySelector("#loadingText");
-  autoWriteText(loadingTextSpan, 150, 200);
-
-  let progress = loading.querySelector("#progress");
-  let count = 0;
-
-  function animateLoading() {
-    if (count <= 100) {
-      progress.style.width = count + "%";
-
-      let speed = count < 60 ? 10 : 30;
-      count++;
-
-      setTimeout(animateLoading, speed);
-    } else {
-      finishLoading();
-    }
-  }
-
-  function finishLoading() {
-    loading.style.opacity = 0;
-
-    setTimeout(() => {
-      loading.remove();
-
-      // On enregistre que le loader a déjà été vu
-      sessionStorage.setItem("hasSeenLoader", "true");
-
-      initPageContent();
-    }, 600);
-  }
-
-  animateLoading();
+  initPageContent();
 }
+
+/* =====================================================
+   ANIMATION DES DIAGONALES
+===================================================== */
 
 function showDiagonals() {
   const diagonals = [

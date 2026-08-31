@@ -1215,7 +1215,7 @@ display: none !important;
     ),
     #050608;
 
-  border: 1px solid var(--other-color);
+  border: var(--border);
   border-radius: 8px;
 
   box-sizing: border-box;
@@ -1391,7 +1391,7 @@ display: none !important;
   align-items: center;
   justify-content: center;
 
-  border: 1px solid rgba(182, 108, 240, 0.72);
+  border: var(--border);
   border-radius: 50%;
 
   color: #bd7ce7;
@@ -1458,7 +1458,7 @@ display: none !important;
 
   padding: 0 18px;
 
-  border: 1px solid rgba(182, 108, 240, 0.6);
+  border: var(--border);
   border-radius: 4px;
 
   background:
@@ -1737,10 +1737,10 @@ const webDemoCardsData = [
   ======================================================= */
 
   {
-    title: "Salon de coiffure",
+    title: "Coiffure",
     features: [
       {
-        name: "Prise de rendez-vous",
+        name: "Prise de rdv",
         icon: "calendar",
       },
       {
@@ -1761,7 +1761,7 @@ const webDemoCardsData = [
     title: "Pâtisserie",
     features: [
       {
-        name: "Galerie des créations",
+        name: "Galerie",
         icon: "gallery",
       },
       {
@@ -1776,10 +1776,10 @@ const webDemoCardsData = [
   ======================================================= */
 
   {
-    title: "E-commerce décoration",
+    title: "E-Commerce",
     features: [
       {
-        name: "Catalogue produits",
+        name: "Produits",
         icon: "gallery",
       },
       {
@@ -3163,7 +3163,7 @@ function createColumnElement(columnData) {
     itemDiv.className = "demo-carousel__item demo-animation-card";
 
     if (window.innerWidth <= 600) {
-      itemDiv.style.height = "clamp(250px, 30vw, 300px)";
+      itemDiv.style.height = "clamp(200px, 30vw, 300px)";
     }
 
     itemDiv.dataset.index = String(item.originalIndex);
