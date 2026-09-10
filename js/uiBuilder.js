@@ -1,4 +1,5 @@
 // js/uiBuilder.js
+
 import { initStars } from "./stars.js";
 
 const STYLE_ID = "uiBuilderCSS";
@@ -49,9 +50,7 @@ const UI_BUILDER_CSS = `
     opacity: 0;
     pointer-events: none;
     transform: translateY(-50px);
-    transition:
-      transform 0.5s ease,
-      opacity 0.5s ease;
+    transition: transform 0.5s ease, opacity 0.5s ease;
   }
 
   .ui-header__nav.is-visible {
@@ -119,35 +118,43 @@ const UI_BUILDER_CSS = `
     display: flex;
     font-family: monospace;
     color: white;
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    clip-path: polygon(
+      50% 0%,
+      100% 50%,
+      50% 100%,
+      0% 50%
+    );
     opacity: 0;
     --anim-x: 0px;
     --anim-y: 0px;
     transform: translate(-50%, -50%) translate(var(--anim-x), var(--anim-y));
-    transition:
-      transform 0.5s ease,
-      opacity 0.5s ease;
+    transition: transform 0.5s ease, opacity 0.5s ease;
   }
 
   .ui-builder__overlay {
-  position: absolute;
-  width: clamp(65px, 12vw, 150px);
-  height: clamp(65px, 12vw, 150px);
-  z-index: 20;
-  display: flex;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-}
+    position: absolute;
+    width: clamp(65px, 12vw, 150px);
+    height: clamp(65px, 12vw, 150px);
+    z-index: 20;
+    display: flex;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+  }
 
   .overlay-content {
     width: 100%;
     height: 100%;
     background: var(--text-color);
-    opacity : 80%;
+    opacity: 80%;
     display: flex;
     align-items: center;
     justify-content: center;
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    clip-path: polygon(
+      50% 0%,
+      100% 50%,
+      50% 100%,
+      0% 50%
+    );
   }
 
   .div-children {
@@ -157,7 +164,12 @@ const UI_BUILDER_CSS = `
     display: flex;
     align-items: center;
     justify-content: center;
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    clip-path: polygon(
+      50% 0%,
+      100% 50%,
+      50% 100%,
+      0% 50%
+    );
   }
 
   .grid-item-1 > .div-children,
@@ -183,9 +195,7 @@ const UI_BUILDER_CSS = `
     --anim-x: 0px;
     --anim-y: 0px;
     transform: translate(-50%, -50%) translate(var(--anim-x), var(--anim-y));
-    transition:
-      transform 0.5s ease,
-      opacity 0.5s ease;
+    transition: transform 0.5s ease, opacity 0.5s ease;
   }
 
   .anim-layer {
@@ -195,9 +205,7 @@ const UI_BUILDER_CSS = `
     --anim-x: 0px;
     --anim-y: 0px;
     transform: translate(var(--anim-x), var(--anim-y));
-    transition:
-      transform 0.5s ease,
-      opacity 0.5s ease;
+    transition: transform 0.5s ease, opacity 0.5s ease;
   }
 
   .from-left {
@@ -264,10 +272,12 @@ function getPolygonPointsInPixels(el) {
   const clipPath = getComputedStyle(el).clipPath;
   const rect = el.getBoundingClientRect();
   const match = clipPath.match(/polygon\((.*)\)/);
+
   if (!match) return null;
 
   return match[1].split(",").map((point) => {
     const [x, y] = point.trim().split(/\s+/);
+
     return {
       x: parseCssValueToPixels(x, rect.width),
       y: parseCssValueToPixels(y, rect.height),
@@ -283,12 +293,14 @@ function getPolygonCentroid(points) {
   for (let i = 0; i < points.length; i++) {
     const j = (i + 1) % points.length;
     const cross = points[i].x * points[j].y - points[j].x * points[i].y;
+
     x += (points[i].x + points[j].x) * cross;
     y += (points[i].y + points[j].y) * cross;
     area += cross;
   }
 
   area *= 0.5;
+
   return {
     x: x / (6 * area),
     y: y / (6 * area),
@@ -304,9 +316,11 @@ function getMiddle(p1, p2) {
 
 function getDiagonalRightGeometry() {
   const diagonal = document.querySelector(".diagonal.right");
+
   if (!diagonal) return null;
 
   const points = getPolygonPointsInPixels(diagonal);
+
   if (!points) return null;
 
   return {
@@ -320,9 +334,14 @@ function getElementSize(el, displayMode = "block") {
   if (!el) return { width: 0, height: 0 };
 
   const computedDisplay = getComputedStyle(el).display;
+
   if (computedDisplay !== "none") {
     const rect = el.getBoundingClientRect();
-    return { width: rect.width, height: rect.height };
+
+    return {
+      width: rect.width,
+      height: rect.height,
+    };
   }
 
   const previous = {
@@ -341,7 +360,10 @@ function getElementSize(el, displayMode = "block") {
 
   Object.assign(el.style, previous);
 
-  return { width: rect.width, height: rect.height };
+  return {
+    width: rect.width,
+    height: rect.height,
+  };
 }
 
 function setAbsolutePosition(el, x, y) {
@@ -369,6 +391,7 @@ function getAnimNode(el) {
 function getAnimClass(el) {
   if (el.matches(SELECTORS.overlay)) return "from-right";
   if (el.matches(SELECTORS.button)) return "from-bottom";
+
   return "from-left";
 }
 
@@ -390,6 +413,7 @@ function showAnimatedElement(el) {
     "from-right",
     "from-bottom",
   );
+
   animNode.classList.add(animClass);
 
   requestAnimationFrame(() => {
@@ -412,12 +436,16 @@ function hideAnimatedElement(el) {
     "from-right",
     "from-bottom",
   );
+
   animNode.classList.add(animClass);
 
   clearTimeout(el._hideTimeout);
+
   el._hideTimeout = setTimeout(() => {
     el.style.display = "none";
+
     const canvas = el.querySelector("canvas");
+
     if (canvas) canvas.remove();
   }, ANIMATION_DURATION);
 }
@@ -431,6 +459,7 @@ export function Create(el) {
   }
 
   const isHidden = getComputedStyle(el).display === "none";
+
   if (isHidden) {
     showAnimatedElement(el);
   } else {
@@ -455,6 +484,7 @@ export function PicturesSystem(show) {
     const timeoutId = setTimeout(() => {
       const isHidden = getComputedStyle(el).display === "none";
       const shouldToggle = show ? isHidden : !isHidden;
+
       if (shouldToggle) Create(el);
     }, index * 650);
 
@@ -464,6 +494,7 @@ export function PicturesSystem(show) {
 
 function updateUIPositions(contentPics) {
   const geometry = getDiagonalRightGeometry();
+
   if (!geometry) return;
 
   const item1 = contentPics.querySelector(SELECTORS.item1);
@@ -474,6 +505,7 @@ function updateUIPositions(contentPics) {
   if (!item1 || !item2 || !overlay || !button) return;
 
   const { center, rect, points } = geometry;
+
   const localCenterX = center.x - contentPics.offsetLeft;
   const localCenterY = center.y - contentPics.offsetTop;
 
@@ -482,7 +514,9 @@ function updateUIPositions(contentPics) {
   const item2Size = getElementSize(item2, "block");
 
   const offsets = getLayoutOffsets(rect.width, rect.height);
+
   const bottomMid = getMiddle(points[2], points[3]);
+
   const buttonLocalX = bottomMid.x - contentPics.offsetLeft;
   const buttonLocalY = bottomMid.y - contentPics.offsetTop;
 
@@ -509,7 +543,9 @@ function updateUIPositions(contentPics) {
 
 function createHeader() {
   const header = document.createElement("div");
+
   header.className = "ui-header";
+
   header.innerHTML = `
     <nav class="ui-header__nav">
       <ul>
@@ -521,23 +557,29 @@ function createHeader() {
       </ul>
     </nav>
   `;
+
   return header;
 }
 
 function createGridItem(className, imagePath, alt) {
   const item = document.createElement("div");
+
   item.className = className;
+
   item.innerHTML = `
     <div class="div-children">
       <img src="${imagePath}" alt="${alt}">
     </div>
   `;
+
   return item;
 }
 
 function createOverlay() {
   const overlay = document.createElement("div");
+
   overlay.className = "ui-builder__overlay";
+
   overlay.innerHTML = `
     <div class="anim-layer">
       <div class="overlay-content">
@@ -547,26 +589,32 @@ function createOverlay() {
       </div>
     </div>
   `;
+
   return overlay;
 }
 
 function createButton() {
   const button = document.createElement("button");
+
   button.className = "bottom-button";
   button.textContent = "ENTER";
+
   return button;
 }
 
 function createContentArea() {
   const contentPics = document.createElement("div");
+
   contentPics.className = "content__pics";
 
   const gridContainer = document.createElement("div");
+
   gridContainer.className = "grid-container";
 
   gridContainer.appendChild(
     createGridItem("grid-item-1", "./img/sitePatisserie.png", "img1"),
   );
+
   gridContainer.appendChild(
     createGridItem("grid-item-2", "./img/siteDeco.png", "img2"),
   );
@@ -580,11 +628,13 @@ function createContentArea() {
 
 export function initUiBuilder(parentSelector) {
   const parent = document.querySelector(parentSelector);
+
   if (!parent || parent.querySelector(SELECTORS.wrapper)) return;
 
   ensureStyles();
 
   const wrapper = document.createElement("div");
+
   wrapper.className = "ui-wrapper";
 
   const header = createHeader();
@@ -592,9 +642,11 @@ export function initUiBuilder(parentSelector) {
 
   wrapper.appendChild(header);
   wrapper.appendChild(contentPics);
+
   parent.appendChild(wrapper);
 
   updateUIPositions(contentPics);
+
   window.addEventListener("resize", () => updateUIPositions(contentPics));
 
   initStars(contentPics);

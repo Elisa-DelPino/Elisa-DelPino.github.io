@@ -1,6 +1,4 @@
 // circuit3d.js
-// Three.js est chargé globalement dans index.html avec three.min.js.
-// Ne mets pas : import * as THREE from "three";
 
 let circuitAnimationFrameId = null;
 let circuitResizeObserver = null;
@@ -19,7 +17,6 @@ export function initCircuit3D() {
     return;
   }
 
-  // Évite de recréer plusieurs canvas.
   if (container.querySelector("canvas")) {
     return;
   }
@@ -47,10 +44,8 @@ export function initCircuit3D() {
 
   const circuitGroup = new THREE.Group();
 
-  // Circuit parfaitement droit.
   circuitGroup.rotation.set(0, 0, 0);
 
-  // Taille générale du circuit.
   circuitGroup.scale.set(0.7, 0.7, 0.7);
 
   scene.add(circuitGroup);
@@ -78,7 +73,6 @@ export function initCircuit3D() {
 
   circuitGroup.add(chip);
 
-  // Contour de la puce centrale uniquement.
   const chipEdges = new THREE.EdgesGeometry(chipGeometry);
 
   const chipEdgeMaterial = new THREE.LineBasicMaterial({
@@ -112,7 +106,6 @@ export function initCircuit3D() {
 
   circuitGroup.add(core);
 
-  // Halo derrière le cœur.
   const coreHaloGeometry = new THREE.PlaneGeometry(0.95, 0.95);
 
   const coreHaloMaterial = new THREE.MeshBasicMaterial({
@@ -133,10 +126,6 @@ export function initCircuit3D() {
 
   const circuitPaths = [];
 
-  /**
-   * Calcule la longueur totale d’un chemin composé
-   * de plusieurs segments droits.
-   */
   function calculatePathData(vectors) {
     const segmentLengths = [];
     let totalLength = 0;
@@ -154,10 +143,6 @@ export function initCircuit3D() {
     };
   }
 
-  /**
-   * Retourne une position précise le long d’un chemin.
-   * progress doit être compris entre 0 et 1.
-   */
   function getPositionAlongPath(pathData, progress) {
     const { vectors, segmentLengths, totalLength } = pathData;
 
@@ -187,9 +172,6 @@ export function initCircuit3D() {
     return vectors[vectors.length - 1].clone();
   }
 
-  /**
-   * Crée un halo circulaire pour une impulsion.
-   */
   function createPulseHalo(size, opacity) {
     const geometry = new THREE.CircleGeometry(size, 32);
 
@@ -204,15 +186,11 @@ export function initCircuit3D() {
     return new THREE.Mesh(geometry, material);
   }
 
-  /**
-   * Crée une piste et son impulsion lumineuse animée.
-   */
   function createCircuitPath(points, delay = 0, speed = 0.32) {
     const vectors = points.map(([x, y]) => new THREE.Vector3(x, y, 0.03));
 
     const geometry = new THREE.BufferGeometry().setFromPoints(vectors);
 
-    // Ligne principale sombre et violette.
     const material = new THREE.LineBasicMaterial({
       color: purple,
       transparent: true,
@@ -225,7 +203,6 @@ export function initCircuit3D() {
 
     circuitGroup.add(line);
 
-    // Petite impulsion centrale très lumineuse.
     const pulseCoreGeometry = new THREE.CircleGeometry(0.045, 24);
 
     const pulseCoreMaterial = new THREE.MeshBasicMaterial({
@@ -242,14 +219,12 @@ export function initCircuit3D() {
 
     circuitGroup.add(pulseCore);
 
-    // Premier halo.
     const pulseHalo = createPulseHalo(0.11, 0.55);
 
     pulseHalo.position.z = 0.075;
 
     circuitGroup.add(pulseHalo);
 
-    // Second halo plus large et plus discret.
     const pulseOuterHalo = createPulseHalo(0.2, 0.18);
 
     pulseOuterHalo.position.z = 0.065;
@@ -548,31 +523,21 @@ export function initCircuit3D() {
 
     const elapsed = clock.getElapsedTime();
 
-    // Le circuit reste toujours parfaitement droit.
     circuitGroup.rotation.set(0, 0, 0);
 
-    // Pulsation douce du cœur.
     const pulse = 1 + Math.sin(elapsed * 2.8) * 0.08;
 
-    // Le cœur grossit légèrement.
     core.scale.set(pulse, pulse, pulse);
 
-    // Le halo suit le mouvement avec une amplitude un peu plus grande.
     const haloPulse = 1 + Math.sin(elapsed * 2.8) * 0.15;
 
     coreHalo.scale.set(haloPulse, haloPulse, haloPulse);
 
-    // L'opacité varie très légèrement.
     coreMaterial.opacity = 0.95 + Math.sin(elapsed * 2.8) * 0.05;
 
     coreHaloMaterial.opacity = 0.06 + Math.sin(elapsed * 2.8) * 0.04;
 
-    // Déplacement des impulsions sur les pistes.
     circuitPaths.forEach((pathData) => {
-      /*
-       * Le modulo fait recommencer l’impulsion
-       * après son arrivée à l’extrémité.
-       */
       const rawProgress = elapsed * pathData.speed - pathData.delay;
 
       const progress = ((rawProgress % 1) + 1) % 1;
@@ -585,11 +550,6 @@ export function initCircuit3D() {
 
       pathData.pulseOuterHalo.position.set(position.x, position.y, 0.07);
 
-      /*
-       * L’impulsion apparaît progressivement,
-       * reste visible, puis disparaît doucement
-       * à l’extrémité de la piste.
-       */
       const fadeIn = THREE.MathUtils.smoothstep(progress, 0, 0.08);
 
       const fadeOut = 1 - THREE.MathUtils.smoothstep(progress, 0.82, 1);
@@ -608,11 +568,9 @@ export function initCircuit3D() {
 
       pathData.pulseHalo.scale.set(pulseScale, pulseScale, pulseScale);
 
-      // La piste s’éclaire légèrement au passage.
       pathData.material.opacity = 0.3 + visibility * 0.3;
     });
 
-    // Pulsation discrète des extrémités.
     glowingNodes.forEach((nodeData, index) => {
       const pulse = 1 + Math.sin(elapsed * 2.5 - index * 0.4) * 0.13;
 
@@ -635,6 +593,8 @@ export function initCircuit3D() {
   });
 }
 
+// ---------------------------------------------------------------- DESTRUCTION
+
 export function destroyCircuit3D() {
   if (circuitAnimationFrameId !== null) {
     cancelAnimationFrame(circuitAnimationFrameId);
@@ -644,6 +604,7 @@ export function destroyCircuit3D() {
 
   if (circuitResizeObserver) {
     circuitResizeObserver.disconnect();
+
     circuitResizeObserver = null;
   }
 

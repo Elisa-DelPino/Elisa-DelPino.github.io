@@ -15,7 +15,9 @@ if (!document.getElementById("demo3Fonts")) {
   document.head.appendChild(font);
 }
 
-// INJECT HTML
+/* =========================================================
+   INITIALISATION DE LA DÉMO
+========================================================= */
 
 export function addDemoWeb3(element) {
   if (!element) return;
@@ -541,8 +543,6 @@ function createHomeHTML(element) {
     </div>
   `;
 
-  /* Tous les boutons conduisant au shop */
-
   wrapper.querySelectorAll(".js-open-shop").forEach((button) => {
     button.addEventListener("click", () => {
       createShopHTML();
@@ -550,8 +550,6 @@ function createHomeHTML(element) {
       scrollTopDemo(element);
     });
   });
-
-  /* Ouverture des fiches produit */
 
   wrapper.querySelectorAll("[data-product-index]").forEach((card) => {
     card.addEventListener("click", () => {
@@ -683,10 +681,6 @@ function createPageShop(objet) {
 
   const allProducts = getDataDemoWeb3();
 
-  /*
-   * On retire le produit actuellement affiché
-   * et on sélectionne quatre recommandations.
-   */
   const relatedProducts = allProducts
     .filter((product) => product !== objet)
     .slice(0, 4);
@@ -975,8 +969,8 @@ function createPageShop(objet) {
   });
 
   /* =======================================================
-   AJOUT AU PANIER
-======================================================= */
+     AJOUT AU PANIER
+  ======================================================= */
 
   const addButton = wrapper.querySelector(".btnaddProduct");
 
@@ -1405,16 +1399,9 @@ function addProductPanier(product = null, quantityToAdd = 1) {
 
   const existingProduct = cartItems.find((item) => item.key === productKey);
 
-  /*
-   * Si le produit existe déjà, on augmente seulement
-   * sa quantité.
-   */
   if (existingProduct) {
     existingProduct.quantity += safeQuantity;
   } else {
-    /*
-     * Sinon, on crée une seule nouvelle entrée.
-     */
     cartItems.push({
       key: productKey,
       product,
@@ -1645,10 +1632,6 @@ function addCartProductEvents() {
 
         if (!cartProduct) return;
 
-        /*
-         * À 1, le bouton moins ne descend pas
-         * automatiquement à zéro.
-         */
         if (cartProduct.quantity <= 1) {
           return;
         }

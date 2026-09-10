@@ -1,0 +1,928 @@
+/* =====================================================
+   LIGHTBOX
+===================================================== */
+
+.logiciel-devis-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(15px, 3vw, 35px);
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(5px);
+  z-index: 5000;
+}
+
+.logiciel-devis-overlay.is-open {
+  display: flex;
+}
+
+/* =====================================================
+   LOGICIEL
+===================================================== */
+
+.devis-demo {
+  position: relative;
+  width: min(96vw, 1600px);
+  height: min(90vh, 850px);
+  display: grid;
+  grid-template-columns: minmax(210px, 250px) minmax(400px, 1fr) minmax(360px, 0.9fr);
+  background: #0e1317;
+  border: 1px solid #273139;
+  border-radius: 10px;
+  color: #e5ebee;
+  font-family: "Montserrat", Arial, sans-serif;
+  overflow: hidden;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+}
+
+.devis-demo button,
+.devis-demo input,
+.devis-demo textarea {
+  font-family: inherit;
+}
+
+/* =====================================================
+   FERMETURE
+===================================================== */
+
+.devis-demo__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0 3px;
+  border: 1px solid #34414a;
+  border-radius: 6px;
+  background: #151c21;
+  color: #aab4ba;
+  font-family: Arial, sans-serif;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 20;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.devis-demo__close:hover {
+  background: #202a30;
+  border-color: #53636d;
+  color: white;
+}
+
+/* =====================================================
+   PANNEAU CLIENTS
+===================================================== */
+
+.devis-demo__clients {
+  min-width: 0;
+  padding: 25px 16px;
+  background: #11171b;
+  border-right: 1px solid #273139;
+  overflow-y: auto;
+}
+
+.devis-demo__section-title {
+  margin: 0;
+  color: #f1f4f5;
+  font-size: clamp(17px, 1.5vw, 22px);
+  font-weight: 650;
+}
+
+.devis-demo__section-description {
+  margin-top: 6px;
+  color: #7f8c94;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.devis-demo__new-client {
+  width: 100%;
+  min-height: 42px;
+  margin-top: 22px;
+  padding: 9px 13px;
+  border: 1px solid #328f85;
+  border-radius: 6px;
+  background: rgba(50, 143, 133, 0.12);
+  color: #73d2c6;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.devis-demo__new-client:hover {
+  background: rgba(50, 143, 133, 0.22);
+  border-color: #4ab6aa;
+  color: #9be5dc;
+}
+
+.devis-demo__client-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+/* =====================================================
+   CLIENT
+===================================================== */
+
+.devis-demo__client-item {
+  position: relative;
+  width: 100%;
+}
+
+.devis-demo__client-button {
+  width: 100%;
+  min-height: 62px;
+  padding: 13px 42px 13px 13px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease;
+}
+
+.devis-demo__client-button:hover {
+  background: #182026;
+  border-color: #293740;
+}
+
+.devis-demo__client-button.is-active {
+  background: rgba(50, 143, 133, 0.13);
+  border-color: rgba(67, 169, 158, 0.5);
+}
+
+.devis-demo__client-name {
+  color: #e8edef;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.devis-demo__client-type {
+  color: #74828a;
+  font-size: 9px;
+}
+
+.devis-demo__client-button.is-active .devis-demo__client-type {
+  color: #69bdb4;
+}
+
+/* =====================================================
+   SUPPRESSION CLIENT
+===================================================== */
+
+.devis-demo__delete-client {
+  position: absolute;
+  top: 50%;
+  right: 9px;
+  width: 29px;
+  height: 29px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0 2px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: #78868d;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+  z-index: 3;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.devis-demo__delete-client:hover {
+  background: rgba(207, 91, 78, 0.14);
+  color: #df796d;
+}
+
+/* =====================================================
+   ESPACE DE TRAVAIL
+===================================================== */
+
+.devis-demo__workspace {
+  min-width: 0;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: #0e1317;
+  overflow-y: auto;
+}
+
+/* =====================================================
+   CARTE CLIENT
+===================================================== */
+
+.devis-demo__client-card {
+  padding: 20px;
+  background: #141a1f;
+  border: 1px solid #28343c;
+  border-radius: 8px;
+}
+
+.devis-demo__eyebrow {
+  display: block;
+  margin-bottom: 13px;
+  color: #6d7d85;
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.devis-demo__selected-name {
+  margin: 0;
+  color: #f0f3f4;
+  font-size: clamp(17px, 1.7vw, 23px);
+  font-weight: 650;
+}
+
+.devis-demo__selected-person {
+  margin-top: 5px;
+  color: #a4afb5;
+  font-size: 11px;
+}
+
+.devis-demo__selected-address {
+  margin-top: 11px;
+  color: #7f8d95;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+/* =====================================================
+   AJOUT D'UN PRODUIT OU D'UNE PRESTATION
+===================================================== */
+
+.devis-demo__service-card {
+  padding: 20px;
+  background: #141a1f;
+  border: 1px solid #28343c;
+  border-radius: 8px;
+}
+
+.devis-demo__subtitle {
+  margin: 0 0 17px;
+  color: #e6ecee;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.devis-demo__service-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 90px 145px 100px;
+  gap: 10px;
+  align-items: end;
+}
+
+.devis-demo__field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.devis-demo__field label {
+  color: #89969d;
+  font-size: 9px;
+  font-weight: 550;
+}
+
+.devis-demo__field input,
+.devis-demo__field textarea {
+  width: 100%;
+  border: 1px solid #344149;
+  border-radius: 5px;
+  background: #0d1216;
+  color: #e6ecee;
+  outline: none;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.devis-demo__field input {
+  height: 40px;
+  padding: 0 11px;
+  font-size: 11px;
+}
+
+.devis-demo__field textarea {
+  min-height: 75px;
+  padding: 10px 11px;
+  resize: vertical;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.devis-demo__field input::placeholder,
+.devis-demo__field textarea::placeholder {
+  color: #526069;
+}
+
+.devis-demo__field input:focus,
+.devis-demo__field textarea:focus {
+  border-color: #3a9e93;
+  background: #10171b;
+}
+
+.devis-demo__add-service {
+  height: 40px;
+  padding: 0 17px;
+  border: 1px solid #328f85;
+  border-radius: 5px;
+  background: #237b72;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease;
+}
+
+.devis-demo__add-service:hover {
+  background: #2a9186;
+  border-color: #49aaa0;
+}
+
+.devis-demo__form-message {
+  min-height: 16px;
+  margin-top: 9px;
+  color: #db7d72;
+  font-size: 9px;
+}
+
+/* =====================================================
+   PRODUITS ET PRESTATIONS AJOUTÉS
+===================================================== */
+
+.devis-demo__services-card {
+  min-height: 170px;
+  padding: 20px;
+  background: #141a1f;
+  border: 1px solid #28343c;
+  border-radius: 8px;
+}
+
+.devis-demo__service-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.devis-demo__service-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 54px 112px 92px 32px;
+  gap: 8px;
+  align-items: center;
+  min-height: 48px;
+  border-bottom: 1px solid #263038;
+}
+
+.devis-demo__service-row:first-child {
+  border-top: 1px solid #263038;
+}
+
+.devis-demo__service-label {
+  min-width: 0;
+  color: #cfd6da;
+  font-size: 10px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.devis-demo__service-quantity {
+  color: #9aa6ac;
+  font-size: 9px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.devis-demo__service-unit-price {
+  color: #9aa6ac;
+  font-size: 9px;
+  line-height: 1.3;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.devis-demo__service-price {
+  color: #e9edee;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* =====================================================
+   SUPPRESSION PRODUIT OU PRESTATION
+===================================================== */
+
+.devis-demo__delete-service {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0 2px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: #78868d;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  justify-self: center;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.devis-demo__delete-service:hover {
+  background: rgba(207, 91, 78, 0.12);
+  color: #df796d;
+}
+
+.devis-demo__empty-services {
+  padding: 25px 10px;
+  color: #64727a;
+  font-size: 10px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+/* =====================================================
+   APERÇU DU DEVIS
+===================================================== */
+
+.devis-demo__preview-panel {
+  min-width: 0;
+  padding: 25px 18px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  background: #171e23;
+  border-left: 1px solid #273139;
+  overflow-y: auto;
+}
+
+.devis-demo__paper {
+  width: 100%;
+  max-width: 500px;
+  min-height: 620px;
+  flex: 1 0 auto;
+  padding: clamp(24px, 3vw, 38px);
+  background: #f4f5f5;
+  color: #20262a;
+  border-radius: 3px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.28);
+}
+
+.devis-demo__paper-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid #d6dbdd;
+}
+
+.devis-demo__paper-title {
+  margin: 0;
+  color: #171c1f;
+  font-size: clamp(24px, 2.5vw, 34px);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.devis-demo__paper-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #687278;
+  font-size: 8px;
+  text-align: right;
+}
+
+.devis-demo__paper-meta strong {
+  color: #2b3337;
+  font-weight: 600;
+}
+
+.devis-demo__paper-client {
+  padding: 16px 0 20px;
+}
+
+.devis-demo__paper-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #7e888d;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.devis-demo__paper-client-name {
+  display: block;
+  color: #22292d;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.devis-demo__paper-client-person {
+  display: block;
+  margin-top: 4px;
+  color: #555f64;
+  font-size: 9px;
+}
+
+.devis-demo__paper-client-address {
+  display: block;
+  margin-top: 7px;
+  color: #687277;
+  font-size: 9px;
+  line-height: 1.45;
+  white-space: pre-line;
+}
+
+/* =====================================================
+   TABLEAU DU DEVIS
+===================================================== */
+
+.devis-demo__quote-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.devis-demo__quote-table th {
+  padding: 9px 8px;
+  background: #e6e9ea;
+  color: #4d575c;
+  font-size: 7px;
+  font-weight: 650;
+  text-align: left;
+}
+
+.devis-demo__quote-table th:first-child,
+.devis-demo__quote-table td:first-child {
+  width: 44%;
+}
+
+.devis-demo__quote-table th:nth-child(2),
+.devis-demo__quote-table td:nth-child(2) {
+  width: 10%;
+  text-align: center;
+}
+
+.devis-demo__quote-table th:nth-child(3),
+.devis-demo__quote-table td:nth-child(3) {
+  width: 22%;
+  text-align: right;
+}
+
+.devis-demo__quote-table th:last-child,
+.devis-demo__quote-table td:last-child {
+  width: 24%;
+  text-align: right;
+}
+
+.devis-demo__quote-table td {
+  padding: 11px 8px;
+  border-bottom: 1px solid #dfe3e4;
+  color: #343c40;
+  font-size: 8px;
+  line-height: 1.35;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.devis-demo__quote-table td:nth-child(2),
+.devis-demo__quote-table td:nth-child(3),
+.devis-demo__quote-table td:last-child {
+  white-space: nowrap;
+}
+
+.devis-demo__quote-table td:last-child {
+  font-weight: 600;
+}
+
+.devis-demo__quote-empty td {
+  padding: 30px 10px;
+  color: #8a9499;
+  text-align: center !important;
+}
+
+/* =====================================================
+   TOTAL
+===================================================== */
+
+.devis-demo__quote-total {
+  width: min(220px, 70%);
+  margin: 25px 0 0 auto;
+  padding: 15px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 2px solid #2f3a3f;
+}
+
+.devis-demo__quote-total span {
+  color: #626d72;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.devis-demo__quote-total strong {
+  color: #172023;
+  font-size: 16px;
+  font-weight: 750;
+}
+
+/* =====================================================
+   RÉINITIALISER
+===================================================== */
+
+.devis-demo__reset {
+  width: min(100%, 500px);
+  min-height: 42px;
+  flex-shrink: 0;
+  padding: 9px 18px;
+  border: 1px solid #3a474f;
+  border-radius: 6px;
+  background: #12191d;
+  color: #9da9af;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.devis-demo__reset:hover {
+  background: #1b2429;
+  border-color: #64747d;
+  color: white;
+}
+
+/* =====================================================
+   MODALE NOUVEAU CLIENT
+===================================================== */
+
+.devis-demo__client-modal {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(5, 8, 10, 0.82);
+  backdrop-filter: blur(4px);
+  z-index: 30;
+}
+
+.devis-demo__client-modal.is-open {
+  display: flex;
+}
+
+.devis-demo__client-form-card {
+  position: relative;
+  width: min(92%, 470px);
+  padding: 25px;
+  background: #151c21;
+  border: 1px solid #344149;
+  border-radius: 9px;
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.48);
+}
+
+.devis-demo__client-form-title {
+  margin: 0 0 20px;
+  color: #eff2f3;
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.devis-demo__client-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.devis-demo__client-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.devis-demo__client-form-actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+}
+
+.devis-demo__cancel-client,
+.devis-demo__save-client {
+  min-height: 38px;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.devis-demo__cancel-client {
+  border: 1px solid #38454d;
+  background: transparent;
+  color: #9ba6ac;
+}
+
+.devis-demo__save-client {
+  border: 1px solid #328f85;
+  background: #237b72;
+  color: white;
+}
+
+.devis-demo__cancel-client:hover {
+  background: #1b2328;
+  color: white;
+}
+
+.devis-demo__save-client:hover {
+  background: #2a9186;
+}
+
+.devis-demo__client-form-message {
+  min-height: 15px;
+  color: #db7d72;
+  font-size: 9px;
+}
+
+/* =====================================================
+   RESPONSIVE DU LOGICIEL > 900PX
+===================================================== */
+
+@media screen and (min-width: 901px) and (max-width: 1150px) {
+  .devis-demo {
+    height: 92vh;
+    grid-template-columns: 220px minmax(0, 1fr);
+    overflow-y: auto;
+  }
+
+  .devis-demo__clients {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .devis-demo__workspace {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .devis-demo__preview-panel {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding: 30px 30px 14px;
+    border-top: 1px solid #273139;
+    border-left: none;
+  }
+
+  .devis-demo__paper {
+    max-width: 600px;
+  }
+
+  .devis-demo__reset {
+    max-width: 600px;
+  }
+
+  .devis-demo__service-form {
+    grid-template-columns: minmax(0, 1fr) 80px 130px;
+  }
+
+  .devis-demo__add-service {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .devis-demo__service-row {
+    grid-template-columns: minmax(0, 1fr) 50px 100px 85px 32px;
+    gap: 7px;
+  }
+}
+
+/* =====================================================
+   APERÇU NOIR <= 900PX
+===================================================== */
+
+.logiciel-devis-preview-overlay {
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 5001;
+}
+
+.logiciel-devis-preview {
+  position: relative;
+  width: min(92vw, 900px);
+  aspect-ratio: 16 / 9;
+  flex-shrink: 0;
+  background: #000;
+  border: 1px solid #273139;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+}
+
+.logiciel-devis-preview__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+.logiciel-devis-preview__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0 3px;
+  border: 1px solid #34414a;
+  border-radius: 6px;
+  background: #151c21;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.logiciel-devis-preview__close:hover {
+  background: #202a30;
+  border-color: #53636d;
+  color: #fff;
+}
+
+@media screen and (max-width: 900px) {
+  #logiciel-devis-overlay .devis-demo {
+    display: none;
+  }
+
+  .logiciel-devis-preview-overlay {
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+  }
+
+  .logiciel-devis-preview {
+    width: min(94vw, 900px);
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .logiciel-devis-preview-overlay {
+    padding: 10px;
+  }
+
+  .logiciel-devis-preview {
+    width: 96vw;
+    border-radius: 8px;
+  }
+
+  .logiciel-devis-preview__close {
+    top: 9px;
+    right: 9px;
+    width: 38px;
+    height: 38px;
+    font-size: 26px;
+  }
+}

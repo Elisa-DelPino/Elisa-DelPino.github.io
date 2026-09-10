@@ -1,10 +1,6 @@
 // header.js
 
 export function loadHeaderScriptDirect() {
-  /*
-   * Empêche la création de plusieurs headers
-   * si cette fonction est appelée plusieurs fois.
-   */
   const existingHeader = document.querySelector(".header");
 
   if (existingHeader) {
@@ -24,7 +20,7 @@ export function loadHeaderScriptDirect() {
       .header {
         background-color: black;
         width: 100%;
-        height: 15vh;
+        height: clamp(80px, 8vw, 120px);
         position: fixed;
         top: 0;
         left: 0;
@@ -32,9 +28,6 @@ export function loadHeaderScriptDirect() {
         align-items: center;
         justify-content: space-between;
         padding: 0 clamp(25px, 6vw, 35px);
-        box-shadow:
-          rgba(185, 185, 194, 0.35) 0 13px 27px -5px,
-          rgba(218, 203, 221, 0.53) 0 8px 16px -8px;
         z-index: 999;
       }
 
@@ -60,7 +53,7 @@ export function loadHeaderScriptDirect() {
       }
 
       /* -----------------------------------------------------------------------
-         TITRE NÉON
+         TITRE
       ----------------------------------------------------------------------- */
 
       .header__title {
@@ -80,9 +73,8 @@ export function loadHeaderScriptDirect() {
 
       .header__neon-title {
         position: relative;
-        isolation: isolate;
         display: inline-block;
-        color: #c45cff;
+        color: var(--text-color);
         font-family: "Montserrat", sans-serif;
         font-weight: 100;
         font-size: clamp(20px, 2vw, 30px);
@@ -90,74 +82,6 @@ export function loadHeaderScriptDirect() {
         line-height: 1;
         text-align: center;
         white-space: nowrap;
-        opacity: 1;
-        transform: translateZ(0);
-        text-shadow:
-          0 0 1px #d98cff,
-          0 0 3px rgba(196, 92, 255, 0.85),
-          0 0 7px rgba(162, 64, 223, 0.65),
-          0 0 14px rgba(162, 64, 223, 0.4);
-        transition:
-          opacity 30ms linear,
-          filter 30ms linear,
-          text-shadow 30ms linear;
-      }
-
-      .header__neon-title::before {
-        content: attr(data-text);
-        position: absolute;
-        inset: 0;
-        color: #a240df;
-        transform: translate(0.5px, 0.5px);
-        filter: blur(1px);
-        opacity: 0.48;
-        text-shadow:
-          0 0 4px rgba(196, 92, 255, 0.8),
-          0 0 9px rgba(162, 64, 223, 0.65),
-          0 0 16px rgba(162, 64, 223, 0.38);
-        z-index: -1;
-      }
-
-      .header__neon-title::after {
-        content: attr(data-text);
-        position: absolute;
-        inset: 0;
-        color: transparent;
-        opacity: 0.32;
-        filter: blur(4px);
-        text-shadow:
-          0 0 8px rgba(196, 92, 255, 0.72),
-          0 0 18px rgba(162, 64, 223, 0.5),
-          0 0 30px rgba(162, 64, 223, 0.28);
-        z-index: -2;
-      }
-
-      .header__neon-title.neon-dim {
-        opacity: 0.48;
-        filter: brightness(0.68) saturate(0.9);
-        text-shadow:
-          0 0 1px rgba(196, 92, 255, 0.8),
-          0 0 3px rgba(162, 64, 223, 0.55),
-          0 0 7px rgba(162, 64, 223, 0.35);
-      }
-
-      .header__neon-title.neon-off {
-        opacity: 0.14;
-        filter: brightness(0.3) saturate(0.55);
-        text-shadow:
-          0 0 1px rgba(162, 64, 223, 0.28),
-          0 0 3px rgba(162, 64, 223, 0.18);
-      }
-
-      .header__neon-title.neon-flash {
-        opacity: 1;
-        filter: brightness(1.28) saturate(1.15);
-        text-shadow:
-          0 0 1px #d98cff,
-          0 0 3px #c45cff,
-          0 0 7px rgba(196, 92, 255, 0.9),
-          0 0 13px rgba(162, 64, 223, 0.72),
-          0 0 22px rgba(162, 64, 223, 0.42);
       }
 
       /* -----------------------------------------------------------------------
@@ -175,7 +99,7 @@ export function loadHeaderScriptDirect() {
         list-style: none;
         display: flex;
         align-items: center;
-        gap: clamp(12px, 1.5vw, 22px);
+        gap: clamp(12px, 1vw, 15px);
       }
 
       .header__nav__menu__link {
@@ -184,9 +108,9 @@ export function loadHeaderScriptDirect() {
 
       .header__nav__menu__link a {
         color: var(--text-color);
-        font-family: monospace;
-        font-size: clamp(5px, 2vw, 15px);
-        font-weight: 600;
+        font-family: "Montserrat", sans-serif;
+        font-size: clamp(5px, 2vw, 16px);
+        font-weight: 100;
         text-decoration: none;
         position: relative;
         cursor: pointer;
@@ -199,7 +123,7 @@ export function loadHeaderScriptDirect() {
         position: absolute;
         right: 0;
         bottom: -5px;
-        background: var(--other-color);
+        background: var(--text-color);
         transition: width 200ms ease-in-out;
       }
 
@@ -226,12 +150,6 @@ export function loadHeaderScriptDirect() {
         overflow: visible;
       }
 
-      /*
-       * Petite zone invisible entre le logo
-       * et la popup pour pouvoir descendre
-       * la souris sans fermer la popup.
-       */
-
       .header__nav__menu__reseaux::after {
         content: "";
         position: absolute;
@@ -254,8 +172,8 @@ export function loadHeaderScriptDirect() {
       }
 
       .header__img__reseaux {
-        width: 65px;
-        height: 65px;
+        width: 18px;
+        height: 18px;
         display: block;
         object-fit: contain;
         transform: scale(2.4);
@@ -276,19 +194,14 @@ export function loadHeaderScriptDirect() {
         flex-direction: column;
         padding: 6px;
         background: #050505;
-        border: 1px solid rgba(162, 64, 223, 0.7);
+        border: 1px solid var(--text-colorS);
         border-radius: 6px;
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
         transform: translate(50%, -8px);
-        box-shadow:
-          0 0 8px rgba(162, 64, 223, 0.35),
-          0 0 18px rgba(162, 64, 223, 0.18);
-        transition:
-          opacity 180ms ease,
-          transform 180ms ease,
-          visibility 180ms ease;
+        box-shadow: 0 0 8px rgba(162, 64, 223, 0.35), 0 0 18px rgba(162, 64, 223, 0.18);
+        transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
         z-index: 1000;
       }
 
@@ -300,15 +213,10 @@ export function loadHeaderScriptDirect() {
         width: 11px;
         height: 11px;
         background: #050505;
-        border-top: 1px solid rgba(162, 64, 223, 0.7);
-        border-left: 1px solid rgba(162, 64, 223, 0.7);
+        border-top: 1px solid var(text-color);
+        border-left: 1px solid var(--text-color);
         transform: translateX(50%) rotate(45deg);
       }
-
-      /*
-       * La popup apparaît uniquement au survol.
-       * Aucun clic n'est nécessaire.
-       */
 
       .header__nav__menu__reseaux:hover .header__reseauxPopup {
         opacity: 1;
@@ -330,9 +238,7 @@ export function loadHeaderScriptDirect() {
         font-size: 11px;
         font-weight: 600;
         white-space: nowrap;
-        transition:
-          color 180ms ease,
-          background-color 180ms ease;
+        transition: color 180ms ease, background-color 180ms ease;
       }
 
       .header__reseauxPopupLink:not(:last-child) {
@@ -340,7 +246,7 @@ export function loadHeaderScriptDirect() {
       }
 
       .header__reseauxPopupLink:hover {
-        color: #c45cff;
+        color: var(--text-color);
         background: rgba(162, 64, 223, 0.08);
       }
 
@@ -472,18 +378,9 @@ export function loadHeaderScriptDirect() {
           display: none;
         }
 
-        /*
-         * Le gros logo général disparaît.
-         */
-
         .header__reseauxButton {
           display: none;
         }
-
-        /*
-         * La popup devient simplement le conteneur
-         * permanent des trois réseaux.
-         */
 
         .header__reseauxPopup {
           position: static;
@@ -513,12 +410,6 @@ export function loadHeaderScriptDirect() {
           transform: none;
         }
 
-        /*
-         * Chaque ligne :
-         *
-         * petite icône + Elisa.Dev
-         */
-
         .header__reseauxPopupLink {
           width: auto;
           min-height: 30px;
@@ -537,17 +428,13 @@ export function loadHeaderScriptDirect() {
         }
 
         .header__reseauxPopupLink:hover {
-          color: #c45cff;
+          color: var(--text-color);
           background: transparent;
         }
 
         .header__reseauxPopupLink span {
           display: inline-block;
         }
-
-        /*
-         * Logos plus petits dans le burger.
-         */
 
         .header__reseauxPopupIcon {
           width: 18px;
@@ -569,9 +456,7 @@ export function loadHeaderScriptDirect() {
           position: relative;
           z-index: 5;
           flex-shrink: 0;
-          transition:
-            transform 220ms ease,
-            color 220ms ease;
+          transition: transform 220ms ease, color 220ms ease;
         }
 
         .header__nav__close.is-rotating {
@@ -666,7 +551,6 @@ export function loadHeaderScriptDirect() {
     <div class="header__title">
       <span
         class="header__neon-title"
-        data-text="CRÉATION SITE & LOGICIEL"
       >
         CRÉATION SITE & LOGICIEL
       </span>
@@ -681,7 +565,7 @@ export function loadHeaderScriptDirect() {
             data-section="home"
             class="active"
           >
-            ACCUEIL
+            Accueil
           </a>
         </li>
 
@@ -690,7 +574,7 @@ export function loadHeaderScriptDirect() {
             href="#demos"
             data-section="demos"
           >
-            DEMO
+            Démos
           </a>
         </li>
 
@@ -699,7 +583,7 @@ export function loadHeaderScriptDirect() {
             href="#services"
             data-section="services"
           >
-            SERVICES
+            Services
           </a>
         </li>
 
@@ -708,7 +592,7 @@ export function loadHeaderScriptDirect() {
             href="#about"
             data-section="about"
           >
-            À PROPOS
+            À propos
           </a>
         </li>
 
@@ -717,7 +601,7 @@ export function loadHeaderScriptDirect() {
             href="#contact"
             data-section="contact"
           >
-            CONTACT
+            Contact
           </a>
         </li>
 
@@ -734,7 +618,6 @@ export function loadHeaderScriptDirect() {
               class="header__img__reseaux"
             >
           </button>
-
 
           <div class="header__reseauxPopup">
 
@@ -775,7 +658,6 @@ export function loadHeaderScriptDirect() {
               <span>Elisa.Dev</span>
             </a>
 
-
             <!-- FACEBOOK -->
 
             <a
@@ -795,7 +677,6 @@ export function loadHeaderScriptDirect() {
 
               <span>Elisa.Dev</span>
             </a>
-
 
             <!-- LINKEDIN -->
 
@@ -824,7 +705,6 @@ export function loadHeaderScriptDirect() {
       </ul>
     </nav>
 
-
     <div
       class="header__burger"
       role="button"
@@ -846,7 +726,6 @@ export function loadHeaderScriptDirect() {
         />
       </svg>
     </div>
-
 
     <div
       class="header__nav__close"
@@ -890,15 +769,7 @@ export function loadHeaderScriptDirect() {
 
   const logoLink = header.querySelector(".header__logo a[data-section='home']");
 
-  const neonTitle = header.querySelector(".header__neon-title");
-
   let scrollAnimationFrameId = null;
-
-  /*
-   * Dernière section active.
-   * Elle reste sélectionnée dans les espaces
-   * situés entre deux sections.
-   */
 
   let currentActiveSection = "home";
 
@@ -1005,25 +876,12 @@ export function loadHeaderScriptDirect() {
   // ---------------------------------------------------------------------------
 
   function getSectionElement(sectionName) {
-    /*
-     * SERVICES :
-     * on cherche d'abord #services.
-     *
-     * Si ta section actuelle s'appelle encore #products,
-     * le menu continuera quand même à fonctionner.
-     */
-
     if (sectionName === "services") {
       return (
         document.getElementById("services") ||
         document.getElementById("products")
       );
     }
-
-    /*
-     * À PROPOS :
-     * plusieurs noms d'id sont acceptés.
-     */
 
     if (sectionName === "about") {
       return (
@@ -1056,7 +914,6 @@ export function loadHeaderScriptDirect() {
 
     if (!target) {
       console.warn(`La section #${sectionName} est introuvable.`);
-
       return;
     }
 
@@ -1077,11 +934,9 @@ export function loadHeaderScriptDirect() {
     event.preventDefault();
 
     const link = event.currentTarget;
-
     const sectionName = link.dataset.section;
 
     closeMenu();
-
     scrollToSection(sectionName);
   }
 
@@ -1094,7 +949,6 @@ export function loadHeaderScriptDirect() {
       event.preventDefault();
 
       closeMenu();
-
       scrollToSection("home");
     });
   }
@@ -1102,17 +956,6 @@ export function loadHeaderScriptDirect() {
   // ---------------------------------------------------------------------------
   // DÉTECTION DE LA SECTION ACTIVE
   // ---------------------------------------------------------------------------
-
-  /*
-   * On garde uniquement les références vers les sections.
-   *
-   * IMPORTANT :
-   * on ne mémorise plus leur offsetTop au démarrage.
-   * Certaines sections changent de position visuelle pendant
-   * les animations ou après le chargement des différents éléments.
-   *
-   * On recalculera donc leur position réelle à chaque mise à jour.
-   */
 
   const sectionConfiguration = [
     {
@@ -1135,35 +978,14 @@ export function loadHeaderScriptDirect() {
 
   function updateActiveLinkOnScroll() {
     const scrollPosition = window.scrollY;
-
     const headerHeight = header.offsetHeight;
-
-    /*
-     * Ligne virtuelle située légèrement sous le header.
-     *
-     * Dès que le haut VISUEL d'une section passe cette ligne,
-     * son lien devient actif.
-     *
-     * getBoundingClientRect() tient compte de la vraie position
-     * affichée à l'écran, y compris des transforms d'animation.
-     * C'est particulièrement important pour la section À PROPOS.
-     */
-
     const activationLine =
       headerHeight + Math.min(80, window.innerHeight * 0.08);
 
     if (scrollPosition <= 10 || sectionConfiguration.length === 0) {
       setActiveLink("home");
-
       return;
     }
-
-    /*
-     * Les positions sont recalculées à chaque scroll.
-     *
-     * Cela évite qu'une ancienne valeur d'offsetTop
-     * fasse sauter À PROPOS ou active CONTACT trop tôt.
-     */
 
     const orderedSections = sectionConfiguration
       .map((section) => {
@@ -1186,12 +1008,6 @@ export function loadHeaderScriptDirect() {
       }
     }
 
-    /*
-     * Tout en bas de la page, CONTACT doit rester actif
-     * même si la page n'a pas assez de hauteur disponible
-     * pour faire passer son début exactement sous la ligne.
-     */
-
     const pageBottomReached =
       window.innerHeight + window.scrollY >=
       document.documentElement.scrollHeight - 2;
@@ -1210,7 +1026,6 @@ export function loadHeaderScriptDirect() {
 
     scrollAnimationFrameId = requestAnimationFrame(() => {
       updateActiveLinkOnScroll();
-
       scrollAnimationFrameId = null;
     });
   }
@@ -1223,32 +1038,11 @@ export function loadHeaderScriptDirect() {
     passive: true,
   });
 
-  /*
-   * Les animations de la page peuvent modifier
-   * la position visuelle d'une section sans provoquer
-   * immédiatement un nouvel événement scroll.
-   *
-   * On recalcule donc aussi lorsque le contenu principal
-   * signale qu'il est prêt.
-   */
-
   window.addEventListener("pageContentReady", requestActiveLinkUpdate);
-
-  /*
-   * La section À PROPOS possède une animation
-   * de translateY. Lorsqu'elle se termine,
-   * on vérifie immédiatement quel lien doit être actif.
-   */
 
   const aboutSection = getSectionElement("about");
 
   aboutSection?.addEventListener("transitionend", requestActiveLinkUpdate);
-
-  /*
-   * Même vérification après le chargement des polices,
-   * car elles peuvent légèrement modifier les hauteurs
-   * et donc la position des sections.
-   */
 
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => {
@@ -1257,97 +1051,4 @@ export function loadHeaderScriptDirect() {
   }
 
   updateActiveLinkOnScroll();
-
-  // ---------------------------------------------------------------------------
-  // ANIMATION DU TITRE NÉON
-  // ---------------------------------------------------------------------------
-
-  let neonSequenceTimeout = null;
-
-  let neonStepTimeout = null;
-
-  function clearNeonState() {
-    if (!neonTitle) {
-      return;
-    }
-
-    neonTitle.classList.remove("neon-dim", "neon-off", "neon-flash");
-  }
-
-  function setNeonState(stateClass = null) {
-    clearNeonState();
-
-    if (stateClass) {
-      neonTitle.classList.add(stateClass);
-    }
-  }
-
-  /*
-   * Même rythme général que le robot :
-   * le prochain grésillement arrive
-   * entre une et deux secondes plus tard.
-   */
-
-  function scheduleNextNeonFlicker() {
-    if (!neonTitle) {
-      return;
-    }
-
-    clearTimeout(neonSequenceTimeout);
-
-    const delay = 1000 + Math.random() * 1000;
-
-    neonSequenceTimeout = window.setTimeout(playNeonFlicker, delay);
-  }
-
-  /*
-   * Séquence comparable au robot :
-   * elle dure entre 350 et 600 millisecondes
-   * avec des intensités irrégulières.
-   */
-
-  function playNeonFlicker() {
-    if (!neonTitle) {
-      return;
-    }
-
-    const sequenceDuration = 350 + Math.random() * 250;
-
-    const startTime = performance.now();
-
-    function flickerStep(now) {
-      const elapsed = now - startTime;
-
-      if (elapsed >= sequenceDuration) {
-        clearNeonState();
-
-        scheduleNextNeonFlicker();
-
-        return;
-      }
-
-      const randomValue = Math.random();
-
-      if (randomValue < 0.18) {
-        setNeonState("neon-off");
-      } else if (randomValue < 0.38) {
-        setNeonState("neon-dim");
-      } else if (randomValue < 0.58) {
-        setNeonState("neon-flash");
-      } else {
-        setNeonState(null);
-      }
-
-      neonStepTimeout = window.setTimeout(
-        () => {
-          requestAnimationFrame(flickerStep);
-        },
-        35 + Math.random() * 35,
-      );
-    }
-
-    requestAnimationFrame(flickerStep);
-  }
-
-  scheduleNextNeonFlicker();
 }

@@ -1,7 +1,4 @@
 // loadingPage.js
-
-import { initFakeVSCode } from "./codeAuto.js";
-import { initUiBuilder } from "./uiBuilder.js";
 import { addDecodeText } from "./animationHome.js";
 import { loadHeaderScriptDirect } from "./header.js";
 import { initAnimations } from "./animationProducts.js";
@@ -12,6 +9,8 @@ import { initHeroButtons } from "./buttonNeon.js";
 import { initContactAnimation } from "./animationContact.js";
 import { initAboutAnimation } from "./animationAbout.js";
 import { initProcedure } from "./procedure.js";
+import { initLogicielStock } from "./logicielStock.js";
+import { initLogicielDevis } from "./logicielDevis.js";
 
 /* =====================================================
    INITIALISATION DU CONTENU
@@ -24,10 +23,6 @@ function initPageContent() {
     return;
   }
 
-  /*
-   * On s'assure que le contenu principal
-   * est directement visible.
-   */
   main.style.display = "block";
 
   /* =====================================================
@@ -39,9 +34,6 @@ function initPageContent() {
   /* =====================================================
      ANIMATIONS HOME
   ===================================================== */
-
-  // initFakeVSCode(".diagonal.left");
-  // initUiBuilder(".diagonal.right");
 
   showDiagonals();
 
@@ -67,6 +59,10 @@ function initPageContent() {
 
       initProcedure();
 
+      initLogicielStock();
+
+      initLogicielDevis();
+
       /* =================================================
          ANIMATIONS SERVICES / PRODUITS
       ================================================= */
@@ -74,10 +70,6 @@ function initPageContent() {
       requestAnimationFrame(() => {
         initAnimations();
 
-        /*
-         * Informe les autres scripts que
-         * tout le contenu principal est prêt.
-         */
         window.dispatchEvent(new CustomEvent("pageContentReady"));
       });
     });
@@ -87,14 +79,6 @@ function initPageContent() {
 /* =====================================================
    LANCEMENT DU SITE
 ===================================================== */
-
-/*
- * On conserve le nom AddLoader pour ne pas casser
- * les autres fichiers qui importent déjà cette fonction.
- *
- * Il n'y a désormais plus aucun loader :
- * le site est initialisé immédiatement.
- */
 
 export function AddLoader() {
   initPageContent();

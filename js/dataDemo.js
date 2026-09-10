@@ -10,9 +10,6 @@ import { anim6 } from "./animDemo.js";
 import { anim7 } from "./animDemo.js";
 import { anim8 } from "./animDemo.js";
 
-import { autoWriteText } from "./animationHome.js";
-import { initDecodeText } from "./animationHome.js";
-
 const dataDemoWeb = [
   {
     title: "DEMO - Salon de coiffure",

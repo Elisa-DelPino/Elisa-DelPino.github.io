@@ -4,6 +4,10 @@ let robotAnimationFrameId = null;
 let robotResizeObserver = null;
 let robotRenderer = null;
 
+/* =====================================================
+   INITIALISATION
+===================================================== */
+
 export function initRobot3D() {
   const container = document.getElementById("robot-container");
 
@@ -17,15 +21,13 @@ export function initRobot3D() {
     return;
   }
 
-  /*
-   * Empêche la création de plusieurs scènes
-   * ou de plusieurs canvas dans le même conteneur.
-   */
   if (container.querySelector("canvas")) {
     return;
   }
 
-  // ---------------------------------------------------------------- SCÈNE
+  // ----------------------------------------------------------------
+  // SCÈNE
+  // ----------------------------------------------------------------
 
   const scene = new THREE.Scene();
 
@@ -44,7 +46,9 @@ export function initRobot3D() {
 
   container.appendChild(robotRenderer.domElement);
 
-  // ---------------------------------------------------------------- GROUPE PRINCIPAL
+  // ----------------------------------------------------------------
+  // GROUPE PRINCIPAL
+  // ----------------------------------------------------------------
 
   const robotGroup = new THREE.Group();
 
@@ -52,12 +56,16 @@ export function initRobot3D() {
 
   scene.add(robotGroup);
 
-  // ---------------------------------------------------------------- COULEURS
+  // ----------------------------------------------------------------
+  // COULEURS
+  // ----------------------------------------------------------------
 
   const purple = 0xa240df;
   const brightPurple = 0xc45cff;
 
-  // ---------------------------------------------------------------- OUTILS DE DESSIN
+  // ----------------------------------------------------------------
+  // OUTILS DE DESSIN
+  // ----------------------------------------------------------------
 
   const glowMaterials = [];
   const neonCoreMaterials = [];
@@ -85,7 +93,6 @@ export function initRobot3D() {
 
     const geometry = new THREE.BufferGeometry().setFromPoints(vectors);
 
-    // Halo extérieur.
     const outerGlowMaterial = createLineMaterial(purple, 0.22);
 
     const outerGlow = new THREE.Line(geometry.clone(), outerGlowMaterial);
@@ -95,7 +102,6 @@ export function initRobot3D() {
 
     robotGroup.add(outerGlow);
 
-    // Halo intermédiaire.
     const middleGlowMaterial = createLineMaterial(brightPurple, 0.55);
 
     const middleGlow = new THREE.Line(geometry.clone(), middleGlowMaterial);
@@ -105,7 +111,6 @@ export function initRobot3D() {
 
     robotGroup.add(middleGlow);
 
-    // Ligne principale violette.
     const neonMaterial = createLineMaterial(
       brightPurple,
       1,
@@ -119,7 +124,6 @@ export function initRobot3D() {
 
     robotGroup.add(neonLine);
 
-    // Cœur presque blanc.
     const coreMaterial = createLineMaterial(
       0xffffff,
       0.28,
@@ -138,7 +142,9 @@ export function initRobot3D() {
     neonCoreMaterials.push(neonMaterial, coreMaterial);
   }
 
-  // ---------------------------------------------------------------- FORME DE LA TÊTE
+  // ----------------------------------------------------------------
+  // FORME DE LA TÊTE
+  // ----------------------------------------------------------------
 
   createNeonLine(
     [
@@ -154,7 +160,9 @@ export function initRobot3D() {
     true,
   );
 
-  // ---------------------------------------------------------------- OREILLES
+  // ----------------------------------------------------------------
+  // OREILLES
+  // ----------------------------------------------------------------
 
   createNeonLine(
     [
@@ -176,7 +184,9 @@ export function initRobot3D() {
     true,
   );
 
-  // ---------------------------------------------------------------- ANTENNE
+  // ----------------------------------------------------------------
+  // ANTENNE
+  // ----------------------------------------------------------------
 
   createNeonLine(
     [
@@ -203,7 +213,9 @@ export function initRobot3D() {
     true,
   );
 
-  // ---------------------------------------------------------------- YEUX
+  // ----------------------------------------------------------------
+  // YEUX
+  // ----------------------------------------------------------------
 
   createNeonLine(
     [
@@ -225,7 +237,9 @@ export function initRobot3D() {
     true,
   );
 
-  // ---------------------------------------------------------------- BOUCHE
+  // ----------------------------------------------------------------
+  // BOUCHE
+  // ----------------------------------------------------------------
 
   createNeonLine(
     [
@@ -237,7 +251,9 @@ export function initRobot3D() {
     true,
   );
 
-  // ---------------------------------------------------------------- REDIMENSIONNEMENT
+  // ----------------------------------------------------------------
+  // REDIMENSIONNEMENT
+  // ----------------------------------------------------------------
 
   function resizeRobot() {
     const width = container.clientWidth;
@@ -269,7 +285,9 @@ export function initRobot3D() {
 
   robotResizeObserver.observe(container);
 
-  // ---------------------------------------------------------------- ANIMATION DU NÉON
+  // ----------------------------------------------------------------
+  // ANIMATION DU NÉON
+  // ----------------------------------------------------------------
 
   const clock = new THREE.Clock();
 
@@ -282,9 +300,6 @@ export function initRobot3D() {
 
     const elapsed = clock.getElapsedTime();
 
-    /*
-     * Respiration lente du néon.
-     */
     const breathing = 1 + Math.sin(elapsed * 0.35) * 0.18;
 
     neonCoreMaterials.forEach((material, index) => {
@@ -299,9 +314,6 @@ export function initRobot3D() {
       material.opacity = Math.min(1, baseOpacity * breathing);
     });
 
-    /*
-     * Déclenchement du grésillement.
-     */
     if (!isFlickering && elapsed >= nextFlickerTime) {
       isFlickering = true;
 
@@ -329,10 +341,6 @@ export function initRobot3D() {
         material.opacity *= flicker;
       });
 
-      /*
-       * Conservé uniquement si robotLight existe
-       * dans une autre version du script.
-       */
       if (typeof robotLight !== "undefined") {
         robotLight.intensity *= flicker;
       }
@@ -347,13 +355,6 @@ export function initRobot3D() {
     robotRenderer.render(scene, camera);
   }
 
-  /*
-   * Un seul lancement de la boucle.
-   *
-   * Il y avait auparavant deux blocs identiques,
-   * ce qui créait deux boucles requestAnimationFrame
-   * permanentes pour le même robot.
-   */
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       resizeRobot();
@@ -361,6 +362,10 @@ export function initRobot3D() {
     });
   });
 }
+
+/* =====================================================
+   DESTRUCTION
+===================================================== */
 
 export function destroyRobot3D() {
   if (robotAnimationFrameId !== null) {

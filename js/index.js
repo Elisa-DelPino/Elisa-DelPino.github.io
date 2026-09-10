@@ -19,10 +19,6 @@ function initProductsNavigation() {
   const children = document.querySelectorAll(".children__other");
 
   children.forEach((child, index) => {
-    /*
-     * Évite d'ajouter plusieurs fois le même listener
-     * si le script est relancé accidentellement.
-     */
     if (child.dataset.productNavigationBound === "true") {
       return;
     }

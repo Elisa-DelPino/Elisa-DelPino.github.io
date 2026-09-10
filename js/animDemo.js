@@ -1,35 +1,37 @@
+// -----------------------------------------------------------------------------
+// ANIMATION 1
+// -----------------------------------------------------------------------------
+
 export function anim1(textElement) {
   if (!textElement) return;
 
   const style = document.createElement("style");
 
   style.innerHTML = `
-
-  .title {
-   text-transform: uppercase;
-   font-family: "Oswald"; 
-  }
-
-  .title .ltr {
-    display: inline-block;
-    transform: translateY(1em);
-      opacity: 0;
-    animation: fade-in 500ms ease-in-out var(--delay);
-  }
-
-  @keyframes fade-in {
-    to {
-      transform: translateY(0);
-      opacity: 1;
+    .title {
+      text-transform: uppercase;
+      font-family: "Oswald";
     }
-  }
+
+    .title .ltr {
+      display: inline-block;
+      transform: translateY(1em);
+      opacity: 0;
+      animation: fade-in 500ms ease-in-out var(--delay);
+    }
+
+    @keyframes fade-in {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
 
     .title .ltr.show {
       transform: translateY(0);
       opacity: 1;
     }
-
-`;
+  `;
 
   document.head.appendChild(style);
 
@@ -38,7 +40,7 @@ export function anim1(textElement) {
   textElement.innerHTML = textElement.innerText
     .split("")
     .map((ltr, idx) => {
-      return `<span class="ltr" style="--delay: ${idx * 250}ms" >${ltr}</span>`;
+      return `<span class="ltr" style="--delay: ${idx * 250}ms">${ltr}</span>`;
     })
     .join("");
 
@@ -50,6 +52,10 @@ export function anim1(textElement) {
     });
   });
 }
+
+// -----------------------------------------------------------------------------
+// ANIMATION 2
+// -----------------------------------------------------------------------------
 
 export function anim2(textElement) {
   if (!textElement) return;
@@ -64,7 +70,6 @@ export function anim2(textElement) {
 
   textElement.dataset.text = content;
 
-  // Nettoyage des anciennes classes
   textElement.classList.remove("text2");
   void textElement.offsetWidth;
   textElement.classList.add("text2");
@@ -115,6 +120,10 @@ export function anim2(textElement) {
   textElement.style.color = backGroundColor;
 }
 
+// -----------------------------------------------------------------------------
+// ANIMATION 3
+// -----------------------------------------------------------------------------
+
 export function anim3(textElement) {
   if (!textElement) return;
 
@@ -151,9 +160,7 @@ export function anim3(textElement) {
       height: 2px;
       background: ${initialColor};
       transform: translate(-50%, -50%);
-      animation:
-        anim3LineGrow 0.8s ease forwards,
-        anim3LineSplit 0.5s ease forwards 0.8s;
+      animation: anim3LineGrow 0.8s ease forwards, anim3LineSplit 0.5s ease forwards 0.8s;
     }
 
     .anim3::before {
@@ -198,6 +205,10 @@ export function anim3(textElement) {
   document.head.appendChild(style);
 }
 
+// -----------------------------------------------------------------------------
+// ANIMATION 4
+// -----------------------------------------------------------------------------
+
 export function anim4(textElement) {
   if (!textElement) return;
 
@@ -214,27 +225,14 @@ export function anim4(textElement) {
   style.innerHTML = `
     .anim4 {
       display: inline-block;
-
       --bg-size: 250%;
-
       color: transparent;
       -webkit-text-fill-color: transparent;
-
-      background-image: linear-gradient(
-        90deg,
-        white 0%,
-        ${initialColor} 25%,
-        white 50%,
-        ${initialColor} 75%,
-        white 100%
-      );
-
+      background-image: linear-gradient(90deg, white 0%, ${initialColor} 25%, white 50%, ${initialColor} 75%, white 100%);
       background-size: var(--bg-size) 100%;
       background-position: 0% center;
-
       -webkit-background-clip: text;
       background-clip: text;
-
       animation: anim4Move 2s linear infinite;
     }
 
@@ -250,9 +248,13 @@ export function anim4(textElement) {
   `;
 
   textElement.classList.remove("anim4");
-  void textElement.offsetWidth; // force le redémarrage de l'animation
+  void textElement.offsetWidth;
   textElement.classList.add("anim4");
 }
+
+// -----------------------------------------------------------------------------
+// ANIMATION 5
+// -----------------------------------------------------------------------------
 
 export function anim5(textElement) {
   if (!textElement) return;
@@ -301,9 +303,6 @@ export function anim5(textElement) {
 
     .anim5__part--right {
       transform: translate(120%, -0.6em);
-    }
-
-    .anim5__part--right {
       animation-name: anim5JoinRight;
     }
 
@@ -313,12 +312,7 @@ export function anim5(textElement) {
       left: -40%;
       width: 35%;
       height: 100%;
-      background: linear-gradient(
-        120deg,
-        transparent,
-        white,
-        transparent
-      );
+      background: linear-gradient(120deg, transparent, white, transparent);
       opacity: 0;
       transform: skewX(-20deg);
       animation: anim5Flash 0.45s ease forwards;
@@ -386,11 +380,16 @@ export function anim5(textElement) {
   `;
 }
 
+// -----------------------------------------------------------------------------
+// ANIMATION 6
+// -----------------------------------------------------------------------------
+
 export function anim6(textElement) {
   if (!textElement) return;
 
   const initialColor = getComputedStyle(textElement).color;
   const text = textElement.textContent.trim();
+
   textElement.style.letterSpacing = "-0.1em";
 
   textElement.innerHTML = text
@@ -399,10 +398,7 @@ export function anim6(textElement) {
       const content = letter === " " ? "&nbsp;" : letter;
 
       return `
-        <span 
-          class="anim6__letter" 
-          style="animation-delay: ${index * 0.15}s"
-        >
+        <span class="anim6__letter" style="animation-delay: ${index * 0.15}s">
           ${content}
         </span>
       `;
@@ -438,11 +434,16 @@ export function anim6(textElement) {
   `;
 }
 
+// -----------------------------------------------------------------------------
+// ANIMATION 7
+// -----------------------------------------------------------------------------
+
 export function anim7(textElement) {
   if (!textElement) return;
 
   const initialColor = getComputedStyle(textElement).color;
   const text = textElement.textContent.trim();
+
   textElement.style.letterSpacing = "-0.1em";
 
   textElement.innerHTML = text
@@ -507,6 +508,10 @@ export function anim7(textElement) {
 
   requestAnimationFrame(animateWave);
 }
+
+// -----------------------------------------------------------------------------
+// ANIMATION 8
+// -----------------------------------------------------------------------------
 
 export function anim8(textElement) {
   if (!textElement) return;
