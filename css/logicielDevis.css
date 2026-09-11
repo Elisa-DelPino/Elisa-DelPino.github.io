@@ -4,7 +4,10 @@
 
 .logiciel-devis-overlay {
   position: fixed;
-  inset: 0;
+  top: clamp(80px, 8vw, 120px);
+  right: 0;
+  bottom: 0;
+  left: 0;
   display: none;
   align-items: center;
   justify-content: center;
@@ -26,6 +29,7 @@
   position: relative;
   width: min(96vw, 1600px);
   height: min(90vh, 850px);
+  max-height: 100%;
   display: grid;
   grid-template-columns: minmax(210px, 250px) minmax(400px, 1fr) minmax(360px, 0.9fr);
   background: #0e1317;
@@ -893,6 +897,10 @@
 }
 
 @media screen and (max-width: 900px) {
+  .logiciel-devis-overlay {
+    inset: 0;
+  }
+
   #logiciel-devis-overlay .devis-demo {
     display: none;
   }
