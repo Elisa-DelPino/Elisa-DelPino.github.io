@@ -3,8 +3,8 @@ import { addDecodeText } from "./animationHome.js";
 import { loadHeaderScriptDirect } from "./header.js";
 import { initAnimations } from "./animationProducts.js";
 import { initGlobe } from "./globe3d.js";
+import { initHorloge } from "./horloge.js";
 import { initCircuit3D } from "./circuit3d.js";
-import { initRobot3D } from "./robot3d.js";
 import { initHeroButtons } from "./buttonNeon.js";
 import { initContactAnimation } from "./animationContact.js";
 import { initAboutAnimation } from "./animationAbout.js";
@@ -47,9 +47,9 @@ function initPageContent() {
     requestAnimationFrame(() => {
       initGlobe();
 
-      initCircuit3D();
+      initHorloge();
 
-      initRobot3D();
+      initCircuit3D();
 
       initHeroButtons();
 

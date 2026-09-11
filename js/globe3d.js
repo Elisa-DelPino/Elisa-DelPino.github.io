@@ -56,8 +56,8 @@ export function initGlobe() {
 
   // ------------------------------------------------ COULEURS
 
-  const purple = 0xa240df;
-  const darkPurple = 0x36104f;
+  const purple = 0xb8b8b8;
+  const darkPurple = 0x2a2a2a;
   const darkBlue = 0x070b15;
 
   // ------------------------------------------------ SPHÈRE CENTRALE

@@ -52,10 +52,10 @@ export function initCircuit3D() {
 
   // ---------------------------------------------------------------- COULEURS
 
-  const purple = 0xa240df;
-  const brightPurple = 0xd88cff;
-  const whitePurple = 0xf5ddff;
-  const darkPurple = 0x260b38;
+  const purple = 0xb8b8b8;
+  const brightPurple = 0xf2f2f2;
+  const whitePurple = 0xffffff;
+  const darkPurple = 0x242424;
 
   // ---------------------------------------------------------------- PUCE CENTRALE
 
@@ -450,7 +450,7 @@ export function initCircuit3D() {
     const geometry = new THREE.BoxGeometry(width, height, 0.1);
 
     const material = new THREE.MeshPhongMaterial({
-      color: 0x160820,
+      color: 0x151515,
       emissive: purple,
       emissiveIntensity: 0.3,
       transparent: true,
