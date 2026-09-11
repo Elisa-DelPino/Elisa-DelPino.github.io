@@ -15,7 +15,6 @@ let cakeCamera = null;
 let cakeAnimationFrame = null;
 
 let cakeResizeObserver = null;
-let cakeVisibilityObserver = null;
 
 let cakeSceneVersion = 0;
 
@@ -52,36 +51,25 @@ if (!document.getElementById("cakeAnimationStyle")) {
 
   cakeStyle.innerHTML = `
     .cake-animation {
-      position: relative;
-      width: 100%;
-      min-width: 0;
-      min-height: 300px;
-      overflow: hidden;
-      background: transparent;
-      box-sizing: border-box;
+      position:relative;
+      width:100%;
+      min-width:0;
+      min-height:300px;
+      overflow:hidden;
+      background:transparent;
+      box-sizing:border-box;
     }
 
     .cake-animation canvas {
-      position: absolute;
-      inset: 0;
-      width: 100% !important;
-      height: 100% !important;
-      display: block;
+      position:absolute;
+      inset:0;
+      width:100%!important;
+      height:100%!important;
+      display:block;
     }
   `;
 
   document.head.appendChild(cakeStyle);
-}
-
-/* =====================================================
-   OBSERVER VISIBILITÉ
-===================================================== */
-
-function disconnectCakeVisibilityObserver() {
-  if (cakeVisibilityObserver) {
-    cakeVisibilityObserver.disconnect();
-    cakeVisibilityObserver = null;
-  }
 }
 
 /* =====================================================
@@ -99,35 +87,12 @@ export function startCakeAnimation(container) {
     return;
   }
 
-  disconnectCakeVisibilityObserver();
   destroyCakeScene();
 
   cakeContainer = container;
   cakeContainer.classList.add("cake-animation");
 
-  /* ===================================================
-     OBSERVATION DE LA DIV
-  =================================================== */
-
-  cakeVisibilityObserver = new IntersectionObserver(
-    (entries) => {
-      const entry = entries[0];
-
-      if (!entry.isIntersecting) {
-        destroyCakeScene();
-        return;
-      }
-
-      if (entry.intersectionRatio >= 0.8 && !cakeRenderer) {
-        initCakeScene(cakeContainer);
-      }
-    },
-    {
-      threshold: [0, 0.8],
-    },
-  );
-
-  cakeVisibilityObserver.observe(cakeContainer);
+  initCakeScene(cakeContainer);
 }
 
 /* =====================================================
@@ -136,7 +101,6 @@ export function startCakeAnimation(container) {
 ===================================================== */
 
 export function stopCakeAnimation() {
-  disconnectCakeVisibilityObserver();
   destroyCakeScene();
   cakeContainer = null;
 }
@@ -236,7 +200,7 @@ function initCakeScene(container) {
 
   cakeGroup = new THREE.Group();
 
-  cakeGroup.position.set(0.45, 8, 0);
+  cakeGroup.position.set(getCakeHorizontalOffset(container), 8, 0);
 
   cakeScene.add(cakeGroup);
 
@@ -259,7 +223,7 @@ function initCakeScene(container) {
 
   const spongeMaterial = new THREE.MeshBasicMaterial({
     map: spongeTexture,
-    color: 0xffffff,
+    color: 0xf9dbbd,
     toneMapped: false,
   });
 
@@ -278,8 +242,6 @@ function initCakeScene(container) {
 
   cakeTiers = [];
 
-  /* ÉTAGE DU BAS */
-
   cakeTiers.push(
     createCakeTier({
       group: cakeGroup,
@@ -291,8 +253,6 @@ function initCakeScene(container) {
     }),
   );
 
-  /* ÉTAGE DU MILIEU */
-
   cakeTiers.push(
     createCakeTier({
       group: cakeGroup,
@@ -303,8 +263,6 @@ function initCakeScene(container) {
       creamMaterial,
     }),
   );
-
-  /* ÉTAGE DU HAUT */
 
   cakeTiers.push(
     createCakeTier({
@@ -349,10 +307,6 @@ function initCakeScene(container) {
 
           cakeGroup.add(rosesGroup);
 
-          /* =========================================
-             ROSE 1
-          ========================================= */
-
           addRose({
             x: 2.2,
             y: 2,
@@ -363,10 +317,6 @@ function initCakeScene(container) {
             rotationZ: 0.15,
             color: "rgb(236, 68, 68)",
           });
-
-          /* =========================================
-             ROSE 2
-          ========================================= */
 
           addRose({
             x: 1.7,
@@ -379,10 +329,6 @@ function initCakeScene(container) {
             color: "rgb(232, 121, 121)",
           });
 
-          /* =========================================
-             ROSE 3
-          ========================================= */
-
           addRose({
             x: -0.25,
             y: 0.8,
@@ -393,10 +339,6 @@ function initCakeScene(container) {
             rotationZ: -0.45,
             color: "rgb(223, 66, 66)",
           });
-
-          /* =========================================
-             ROSE 4
-          ========================================= */
 
           addRose({
             x: 0.2,
@@ -409,10 +351,6 @@ function initCakeScene(container) {
             color: "#c9828b",
           });
 
-          /* =========================================
-             ROSE 5
-          ========================================= */
-
           addRose({
             x: 3.25,
             y: 0,
@@ -423,10 +361,6 @@ function initCakeScene(container) {
             rotationZ: -0.45,
             color: "#f03948",
           });
-
-          /* =========================================
-             ROSE 6
-          ========================================= */
 
           addRose({
             x: 3.4,
@@ -481,8 +415,6 @@ function initCakeScene(container) {
 
           cakeGroup.add(eucalyptusGroup);
 
-          /* FEUILLE 1 */
-
           addEucalyptus({
             x: -0.7,
             y: 1.6,
@@ -492,8 +424,6 @@ function initCakeScene(container) {
             rotationY: 0,
             rotationZ: 1,
           });
-
-          /* FEUILLE 2 */
 
           addEucalyptus({
             x: 0.7,
@@ -505,8 +435,6 @@ function initCakeScene(container) {
             rotationZ: 3.5,
           });
 
-          /* FEUILLE 3 */
-
           addEucalyptus({
             x: 2.6,
             y: 3.2,
@@ -516,8 +444,6 @@ function initCakeScene(container) {
             rotationY: 0,
             rotationZ: -1,
           });
-
-          /* FEUILLE 4 */
 
           addEucalyptus({
             x: 2.6,
@@ -561,10 +487,6 @@ function initCakeScene(container) {
 
     const eucalyptus = eucalyptusModel.clone(true);
 
-    /* =========================================
-       CALCUL DIMENSIONS + CENTRE
-    ========================================= */
-
     const box = new THREE.Box3().setFromObject(eucalyptus);
     const size = new THREE.Vector3();
     const center = new THREE.Vector3();
@@ -572,35 +494,19 @@ function initCakeScene(container) {
     box.getSize(size);
     box.getCenter(center);
 
-    /* =========================================
-       PIVOT
-    ========================================= */
-
     const wrapper = new THREE.Group();
 
     eucalyptus.position.set(-center.x, -center.y, -center.z);
 
     wrapper.add(eucalyptus);
 
-    /* =========================================
-       NORMALISATION DE TAILLE
-    ========================================= */
-
     const maxDimension = Math.max(size.x, size.y, size.z);
     const normalizedScale = 1.5 / maxDimension;
 
     wrapper.scale.setScalar(normalizedScale * scale);
 
-    /* =========================================
-       POSITION FINALE
-    ========================================= */
-
     const finalPosition = new THREE.Vector3(x, y, z);
     const finalRotation = new THREE.Euler(rotationX, rotationY, rotationZ);
-
-    /* =========================================
-       POSITION DE DÉPART
-    ========================================= */
 
     const fallHeight = THREE.MathUtils.randFloat(4.5, 6);
 
@@ -614,10 +520,6 @@ function initCakeScene(container) {
 
     wrapper.visible = false;
 
-    /* =========================================
-       DONNÉES D'ANIMATION
-    ========================================= */
-
     wrapper.userData.fallAnimation = {
       finalPosition,
       finalRotation,
@@ -630,10 +532,6 @@ function initCakeScene(container) {
     eucalyptusGroup.add(wrapper);
 
     wrapper.rotation.set(rotationX, rotationY, rotationZ);
-
-    /* =========================================
-       MATÉRIAU EUCALYPTUS
-    ========================================= */
 
     eucalyptus.traverse((child) => {
       if (child.isMesh) {
@@ -677,16 +575,8 @@ function initCakeScene(container) {
 
     rose.scale.setScalar(scale);
 
-    /* =========================================
-       POSITION FINALE
-    ========================================= */
-
     const finalPosition = new THREE.Vector3(x, y, z);
     const finalRotation = new THREE.Euler(rotationX, rotationY, rotationZ);
-
-    /* =========================================
-       POSITION DE DÉPART
-    ========================================= */
 
     const fallHeight = THREE.MathUtils.randFloat(4.5, 6.5);
 
@@ -699,10 +589,6 @@ function initCakeScene(container) {
     );
 
     rose.visible = false;
-
-    /* =========================================
-       ANIMATION
-    ========================================= */
 
     rose.userData.fallAnimation = {
       finalPosition,
@@ -786,6 +672,10 @@ function initCakeScene(container) {
     cakeRenderer.setSize(width, height, false);
 
     updateCakeCamera(container);
+
+    if (cakeGroup && cakeCycle.phase !== "exiting") {
+      cakeGroup.position.x = getCakeHorizontalOffset(container);
+    }
   });
 
   cakeResizeObserver.observe(container);
@@ -808,10 +698,6 @@ function initCakeScene(container) {
     if (!cakeGroup) {
       return false;
     }
-
-    /* ===================================================
-       1 — CHUTE DU GÂTEAU
-    =================================================== */
 
     if (cakeCycle.phase === "entering") {
       if (cakeCycle.phaseStart === null) {
@@ -839,10 +725,6 @@ function initCakeScene(container) {
       return false;
     }
 
-    /* ===================================================
-       2 — ATTENTE DE 0,5 SECONDE
-    =================================================== */
-
     if (cakeCycle.phase === "waitingGlaze") {
       if (time - cakeCycle.phaseStart < 500) {
         return false;
@@ -860,10 +742,6 @@ function initCakeScene(container) {
       return false;
     }
 
-    /* ===================================================
-       3 — DÉCORATION
-    =================================================== */
-
     if (cakeCycle.phase === "decorating") {
       updateGlazeAnimation(time);
       updateDecorationAnimation(time);
@@ -876,10 +754,6 @@ function initCakeScene(container) {
       return false;
     }
 
-    /* ===================================================
-       4 — ATTENTE AVANT SORTIE
-    =================================================== */
-
     if (cakeCycle.phase === "waitingExit") {
       if (time - cakeCycle.phaseStart < 1000) {
         return false;
@@ -891,10 +765,6 @@ function initCakeScene(container) {
 
       return false;
     }
-
-    /* ===================================================
-       5 — SORTIE À DROITE
-    =================================================== */
 
     if (cakeCycle.phase === "exiting") {
       const duration = 1200;
@@ -931,10 +801,6 @@ function initCakeScene(container) {
     return false;
   }
 
-  /* =====================================================
-     BOUCLE DE RENDU
-  ===================================================== */
-
   function renderCake(time) {
     const restarted = updateCakeCycle(time);
 
@@ -968,10 +834,6 @@ function createCakeTier({
 }) {
   const tierGroup = new THREE.Group();
 
-  /* =====================================================
-     CORPS
-  ===================================================== */
-
   const spongeGeometry = new THREE.CylinderGeometry(
     radius,
     radius * 1.01,
@@ -985,10 +847,6 @@ function createCakeTier({
   sponge.receiveShadow = true;
 
   tierGroup.add(sponge);
-
-  /* =====================================================
-     CRÈME SUR LE DESSUS
-  ===================================================== */
 
   const topCreamGeometry = new THREE.CylinderGeometry(
     radius * 0.985,
@@ -1004,10 +862,6 @@ function createCakeTier({
   topCream.receiveShadow = true;
 
   tierGroup.add(topCream);
-
-  /* =====================================================
-     POSITION
-  ===================================================== */
 
   tierGroup.position.y = y;
 
@@ -1026,10 +880,6 @@ function createCakeTier({
 ===================================================== */
 
 function createGlazeSystem() {
-  /* =====================================================
-     MATÉRIAU
-  ===================================================== */
-
   const glazeMaterial = new THREE.MeshPhysicalMaterial({
     color: 0xffcfd2,
     roughness: 0.27,
@@ -1043,17 +893,9 @@ function createGlazeSystem() {
   dripMaterial.transparent = true;
   dripMaterial.opacity = 1;
 
-  /* =====================================================
-     GROUPE
-  ===================================================== */
-
   const glazeGroup = new THREE.Group();
 
   cakeGroup.add(glazeGroup);
-
-  /* =====================================================
-     ÉTAGES GLACÉS
-  ===================================================== */
 
   const glazedTiers = [
     createGlazeTier(cakeTiers[2], glazeMaterial, dripMaterial, glazeGroup, 14),
@@ -1061,20 +903,12 @@ function createGlazeSystem() {
     createGlazeTier(cakeTiers[0], glazeMaterial, dripMaterial, glazeGroup, 20),
   ];
 
-  /* =====================================================
-     FILET DE GLAÇAGE
-  ===================================================== */
-
   const streamGeometry = new THREE.CylinderGeometry(0.055, 0.075, 2.8, 20);
   const stream = new THREE.Mesh(streamGeometry, glazeMaterial);
 
   stream.position.set(0, 4.8, 0);
 
   glazeGroup.add(stream);
-
-  /* =====================================================
-     MASSE À L'IMPACT
-  ===================================================== */
 
   const impactGeometry = new THREE.SphereGeometry(0.18, 32, 16);
   const impact = new THREE.Mesh(impactGeometry, glazeMaterial);
@@ -1106,10 +940,6 @@ function createGlazeTier(tier, glazeMaterial, dripMaterial, parent, dripCount) {
 
   parent.add(group);
 
-  /* =====================================================
-     DESSUS
-  ===================================================== */
-
   const topGeometry = new THREE.CylinderGeometry(
     tier.radius + 0.035,
     tier.radius + 0.035,
@@ -1123,10 +953,6 @@ function createGlazeTier(tier, glazeMaterial, dripMaterial, parent, dripCount) {
   top.scale.set(0.04, 1, 0.04);
 
   group.add(top);
-
-  /* =====================================================
-     PAROI
-  ===================================================== */
 
   const shellGeometry = new THREE.CylinderGeometry(
     tier.radius + 0.045,
@@ -1144,10 +970,6 @@ function createGlazeTier(tier, glazeMaterial, dripMaterial, parent, dripCount) {
 
   group.add(shell);
 
-  /* =====================================================
-     BORD ARRONDI
-  ===================================================== */
-
   const rimGeometry = new THREE.TorusGeometry(
     tier.radius + 0.02,
     0.055,
@@ -1162,10 +984,6 @@ function createGlazeTier(tier, glazeMaterial, dripMaterial, parent, dripCount) {
   rim.scale.set(0.05, 0.05, 0.05);
 
   group.add(rim);
-
-  /* =====================================================
-     COULURES
-  ===================================================== */
 
   const drips = [];
 
@@ -1219,10 +1037,6 @@ function createGlazeDrip(radius, angle, maxLength, tierHeight, material) {
 
   const width = THREE.MathUtils.randFloat(0.045, 0.095);
 
-  /* =====================================================
-     CORPS
-  ===================================================== */
-
   const bodyGeometry = new THREE.CylinderGeometry(width * 0.72, width, 1, 14);
 
   const body = new THREE.Mesh(bodyGeometry, material);
@@ -1230,10 +1044,6 @@ function createGlazeDrip(radius, angle, maxLength, tierHeight, material) {
   body.scale.y = 0.001;
 
   group.add(body);
-
-  /* =====================================================
-     GOUTTE
-  ===================================================== */
 
   const dropGeometry = new THREE.SphereGeometry(width * 1.15, 18, 12);
   const drop = new THREE.Mesh(dropGeometry, material);
@@ -1277,10 +1087,6 @@ function updateGlazeAnimation(time) {
     animateGlazeTier(glazedTier, progress);
   });
 
-  /* =====================================================
-     FILET
-  ===================================================== */
-
   if (elapsed < 4.2) {
     glazeSystem.stream.visible = true;
 
@@ -1296,10 +1102,6 @@ function updateGlazeAnimation(time) {
     glazeSystem.impact.scale.x = impactScale;
     glazeSystem.impact.scale.z = impactScale;
   }
-
-  /* =====================================================
-     FINITION
-  ===================================================== */
 
   if (elapsed > 4.2) {
     const finishProgress = THREE.MathUtils.clamp((elapsed - 4.2) / 0.8, 0, 1);
@@ -1333,10 +1135,6 @@ function updateGlazeAnimation(time) {
 function animateGlazeTier(glazedTier, progress) {
   const { tier, top, shell, rim, drips } = glazedTier;
 
-  /* =====================================================
-     ÉTALEMENT DU DESSUS
-  ===================================================== */
-
   const topProgress = smoothStep(THREE.MathUtils.clamp(progress / 0.28, 0, 1));
 
   const topScale = THREE.MathUtils.lerp(0.04, 1, topProgress);
@@ -1345,10 +1143,6 @@ function animateGlazeTier(glazedTier, progress) {
   top.scale.z = topScale;
 
   rim.scale.set(topScale, topScale, topScale);
-
-  /* =====================================================
-     COULURES
-  ===================================================== */
 
   const dripProgress = smoothStep(
     THREE.MathUtils.clamp((progress - 0.18) / 0.48, 0, 1),
@@ -1368,10 +1162,6 @@ function animateGlazeTier(glazedTier, progress) {
     drip.drop.position.y = -length;
     drip.drop.visible = individual > 0.03;
   });
-
-  /* =====================================================
-     RECOUVREMENT DE LA PAROI
-  ===================================================== */
 
   const shellProgress = smoothStep(
     THREE.MathUtils.clamp((progress - 0.35) / 0.58, 0, 1),
@@ -1507,17 +1297,9 @@ function animateFallingLeaves(items, elapsed) {
 
     const eased = easeInCubic(progress);
 
-    /* =========================================
-       CHUTE VERTICALE
-    ========================================= */
-
     const startY = anim.finalPosition.y + 5;
 
     item.position.y = THREE.MathUtils.lerp(startY, anim.finalPosition.y, eased);
-
-    /* =========================================
-       BALANCEMENT
-    ========================================= */
 
     const windStrength = (1 - progress) * 1.8;
     const frequency = 2.5 + index * 0.2;
@@ -1525,10 +1307,6 @@ function animateFallingLeaves(items, elapsed) {
 
     item.position.x = anim.finalPosition.x + swing;
     item.position.z = anim.finalPosition.z;
-
-    /* =========================================
-       ROTATION
-    ========================================= */
 
     const rotationSwing =
       Math.sin(progress * Math.PI * frequency) * (1 - progress) * 0.35;
@@ -1546,10 +1324,6 @@ function animateFallingLeaves(items, elapsed) {
     );
 
     item.rotation.z = anim.finalRotation.z + rotationSwing;
-
-    /* =========================================
-       ARRIVÉE
-    ========================================= */
 
     if (progress < 1) {
       allFinished = false;
@@ -1575,10 +1349,6 @@ function updateDecorationAnimation(time) {
     return;
   }
 
-  /* =========================================
-     ATTENTE FIN DU GLAÇAGE
-  ========================================= */
-
   if (decorationAnimation.phase === "waitingGlaze") {
     if (!glazeSystem.finished) {
       return;
@@ -1587,10 +1357,6 @@ function updateDecorationAnimation(time) {
     decorationAnimation.phase = "roses";
     decorationAnimation.phaseStart = time;
   }
-
-  /* =========================================
-     ROSES
-  ========================================= */
 
   if (decorationAnimation.phase === "roses") {
     if (decorationAnimation.roses.length === 0) {
@@ -1609,10 +1375,6 @@ function updateDecorationAnimation(time) {
     return;
   }
 
-  /* =========================================
-     FEUILLES
-  ========================================= */
-
   if (decorationAnimation.phase === "leaves") {
     if (decorationAnimation.leaves.length === 0) {
       return;
@@ -1630,6 +1392,20 @@ function updateDecorationAnimation(time) {
       decorationAnimation.phase = "finished";
     }
   }
+}
+
+/* =====================================================
+   POSITION HORIZONTALE RESPONSIVE
+===================================================== */
+
+function getCakeHorizontalOffset(container) {
+  const width = container?.clientWidth || 0;
+
+  if (width > 0 && width <= 600) {
+    return 0;
+  }
+
+  return 0.45;
 }
 
 /* =====================================================
@@ -1668,27 +1444,15 @@ function updateCakeCamera(container) {
 function destroyCakeScene() {
   cakeSceneVersion++;
 
-  /* =====================================================
-     REQUEST ANIMATION FRAME
-  ===================================================== */
-
   if (cakeAnimationFrame) {
     cancelAnimationFrame(cakeAnimationFrame);
     cakeAnimationFrame = null;
   }
 
-  /* =====================================================
-     RESIZE OBSERVER
-  ===================================================== */
-
   if (cakeResizeObserver) {
     cakeResizeObserver.disconnect();
     cakeResizeObserver = null;
   }
-
-  /* =====================================================
-     GÉOMÉTRIES / MATÉRIAUX / TEXTURES
-  ===================================================== */
 
   if (cakeScene) {
     cakeScene.traverse((object) => {
@@ -1712,10 +1476,6 @@ function destroyCakeScene() {
     });
   }
 
-  /* =====================================================
-     RENDERER
-  ===================================================== */
-
   if (cakeRenderer) {
     cakeRenderer.dispose();
 
@@ -1723,10 +1483,6 @@ function destroyCakeScene() {
       cakeRenderer.domElement.remove();
     }
   }
-
-  /* =====================================================
-     RESET DES VARIABLES
-  ===================================================== */
 
   cakeTiers = [];
   glazeSystem = null;

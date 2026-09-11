@@ -2,6 +2,8 @@ import { startCakeAnimation, stopCakeAnimation } from "./cakeAnimation.js";
 import { startCakeCarousel, stopCakeCarousel } from "./cakeCarousel.js";
 import { demo2Cakes } from "./dataDemo2.js";
 
+let demo2RootElement = null;
+
 /* =====================================================
    POLICES
 ===================================================== */
@@ -17,8 +19,35 @@ if (!document.getElementById("demo2Font")) {
   document.head.appendChild(font);
 }
 
-function isGallerySmartphone() {
-  return window.matchMedia("(max-width: 600px)").matches;
+function getDemo2Width(element = demo2RootElement) {
+  const site = element?.querySelector(".demo2__site");
+  const target = site || element;
+  const width = target?.getBoundingClientRect().width;
+
+  return width || window.innerWidth;
+}
+
+function isGallerySmartphone(element = demo2RootElement) {
+  return getDemo2Width(element) <= 600;
+}
+
+function scrollDemo2ToTop(element, behavior = "auto") {
+  if (!element) {
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    if (typeof element.scrollTo === "function") {
+      element.scrollTo({
+        top: 0,
+        left: 0,
+        behavior,
+      });
+    } else {
+      element.scrollTop = 0;
+      element.scrollLeft = 0;
+    }
+  });
 }
 
 /* =====================================================
@@ -46,7 +75,6 @@ function createHeaderHTML() {
 
       <ul class="header__nav__demo2">
 
-
         <li class="header__nav__demo2__link">
 
           <button
@@ -58,7 +86,6 @@ function createHeaderHTML() {
           </button>
 
         </li>
-
 
         <li
           class="header__nav__demo2__logo"
@@ -75,7 +102,6 @@ function createHeaderHTML() {
 
         </li>
 
-
         <li class="header__nav__demo2__link">
 
           <button
@@ -87,7 +113,6 @@ function createHeaderHTML() {
           </button>
 
         </li>
-
 
       </ul>
 
@@ -107,10 +132,12 @@ function connectHeaderNavigation(element) {
 
   homeButton?.addEventListener("click", () => {
     createHomeHTML(element);
+    scrollDemo2ToTop(element);
   });
 
   galleryButton?.addEventListener("click", () => {
     createGalleryHTML(element);
+    scrollDemo2ToTop(element);
   });
 
   function goHomeTop() {
@@ -120,16 +147,7 @@ function connectHeaderNavigation(element) {
       createHomeHTML(element);
     }
 
-    requestAnimationFrame(() => {
-      if (typeof element.scrollTo === "function") {
-        element.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        });
-      } else {
-        element.scrollTop = 0;
-      }
-    });
+    scrollDemo2ToTop(element, "smooth");
   }
 
   logoButton?.addEventListener("click", goHomeTop);
@@ -152,6 +170,8 @@ export function addDemoWeb2(element) {
     return;
   }
 
+  demo2RootElement = element;
+
   element.style.background = "#fffdfa";
 
   createHomeHTML(element);
@@ -168,22 +188,13 @@ function createHomeHTML(element) {
 
     <div class="demo2__site">
 
-
       ${createHeaderHTML()}
-
 
       <main class="wrapper__demo2">
 
-
-        <!-- ==================================================
-             HERO
-        =================================================== -->
-
         <section class="demo2__hero">
 
-
           <div class="demo2__heroContent">
-
 
             <h1 class="demo2__heroTitle">
 
@@ -193,19 +204,13 @@ function createHomeHTML(element) {
 
               QUI ÉVEILLENT
 
-
               <span class="demo2__heroTitleItalic">
-
                 vos sens
-
               </span>
-
 
             </h1>
 
-
           </div>
-
 
           <div class="demo2__heroVisual">
 
@@ -216,23 +221,15 @@ function createHomeHTML(element) {
 
           </div>
 
-
         </section>
 
-
-        <!-- ==================================================
-             AVANTAGES
-        =================================================== -->
-
         <section class="demo2__benefits">
-
 
           <div class="demo2__benefit">
 
             <span class="demo2__benefitIcon">
               ♧
             </span>
-
 
             <div class="demo2__benefitText">
 
@@ -248,13 +245,11 @@ function createHomeHTML(element) {
 
           </div>
 
-
           <div class="demo2__benefit">
 
             <span class="demo2__benefitIcon">
               ♢
             </span>
-
 
             <div class="demo2__benefitText">
 
@@ -270,13 +265,11 @@ function createHomeHTML(element) {
 
           </div>
 
-
-          <div class="demo2__benefit">
+                    <div class="demo2__benefit">
 
             <span class="demo2__benefitIcon">
               ♧
             </span>
-
 
             <div class="demo2__benefitText">
 
@@ -292,13 +285,11 @@ function createHomeHTML(element) {
 
           </div>
 
-
           <div class="demo2__benefit">
 
             <span class="demo2__benefitIcon">
               ♢
             </span>
-
 
             <div class="demo2__benefitText">
 
@@ -314,66 +305,38 @@ function createHomeHTML(element) {
 
           </div>
 
-
         </section>
-
-
-        <!-- ==================================================
-             CARROUSEL
-        =================================================== -->
 
         <section class="demo2__creations">
 
-
           <div class="demo2__sectionHeading">
 
-
             <h2 class="demo2__sectionTitle">
-
               NOS CRÉATIONS GOURMANDES
-
             </h2>
-
 
             <div
               class="demo2__smallOrnament"
               aria-hidden="true"
             >
-
               <span></span>
-
             </div>
 
-
           </div>
-
 
           <div class="demo2__carouselArea">
-
             <div class="cake-carousel"></div>
-
           </div>
-
 
         </section>
 
-
-        <!-- ==================================================
-             SAVOIR-FAIRE
-        =================================================== -->
-
         <section class="demo2__craft">
-
 
           <div class="demo2__craftContent">
 
-
             <p class="demo2__craftEyebrow">
-
               NOTRE SAVOIR-FAIRE
-
             </p>
-
 
             <h2 class="demo2__craftTitle">
 
@@ -385,9 +348,7 @@ function createHomeHTML(element) {
 
             </h2>
 
-
             <div class="demo2__craftSeparator"></div>
-
 
             <p class="demo2__craftParagraph">
 
@@ -397,9 +358,7 @@ function createHomeHTML(element) {
 
             </p>
 
-
           </div>
-
 
           <div class="demo2__cakeArea">
 
@@ -409,44 +368,26 @@ function createHomeHTML(element) {
 
           </div>
 
-
         </section>
-
-
-        <!-- ==================================================
-             COLLECTIONS
-        =================================================== -->
 
         <section class="demo2__universes">
 
-
           <div class="demo2__sectionHeading">
 
-
             <h2 class="demo2__sectionTitle">
-
               NOS COLLECTIONS
-
             </h2>
-
 
             <div
               class="demo2__smallOrnament"
               aria-hidden="true"
             >
-
               <span></span>
-
             </div>
-
 
           </div>
 
-
           <div class="demo2__universeGrid">
-
-
-            <!-- GÂTEAUX -->
 
             <article class="demo2__universe">
 
@@ -465,20 +406,15 @@ function createHomeHTML(element) {
 
               </div>
 
-
               <h3 class="demo2__universeTitle">
                 GÂTEAUX
               </h3>
-
 
               <span class="demo2__universeLink">
                 DÉCOUVRIR
               </span>
 
             </article>
-
-
-            <!-- PÂTISSERIE -->
 
             <article class="demo2__universe">
 
@@ -497,20 +433,15 @@ function createHomeHTML(element) {
 
               </div>
 
-
               <h3 class="demo2__universeTitle">
                 PÂTISSERIE
               </h3>
-
 
               <span class="demo2__universeLink">
                 DÉCOUVRIR
               </span>
 
             </article>
-
-
-            <!-- MACARONS -->
 
             <article class="demo2__universe">
 
@@ -529,20 +460,15 @@ function createHomeHTML(element) {
 
               </div>
 
-
               <h3 class="demo2__universeTitle">
                 MACARONS
               </h3>
-
 
               <span class="demo2__universeLink">
                 DÉCOUVRIR
               </span>
 
             </article>
-
-
-            <!-- CUPCAKES -->
 
             <article class="demo2__universe">
 
@@ -561,11 +487,9 @@ function createHomeHTML(element) {
 
               </div>
 
-
               <h3 class="demo2__universeTitle">
                 CUPCAKES
               </h3>
-
 
               <span class="demo2__universeLink">
                 DÉCOUVRIR
@@ -573,29 +497,17 @@ function createHomeHTML(element) {
 
             </article>
 
-
           </div>
-
 
         </section>
 
-
       </main>
-
 
     </div>
 
   `;
 
-  /* =====================================================
-     HEADER
-  ===================================================== */
-
   connectHeaderNavigation(element);
-
-  /* =====================================================
-     COLLECTIONS → GALERIE
-  ===================================================== */
 
   const collectionGalleryLinks = element.querySelectorAll(
     "[data-gallery-link]",
@@ -604,6 +516,7 @@ function createHomeHTML(element) {
   collectionGalleryLinks.forEach((link) => {
     function openGallery() {
       createGalleryHTML(element);
+      scrollDemo2ToTop(element);
     }
 
     link.addEventListener("click", openGallery);
@@ -617,18 +530,9 @@ function createHomeHTML(element) {
     });
   });
 
-  /* =====================================================
-     CARROUSEL
-  ===================================================== */
-
   const carouselContainer = element.querySelector(".cake-carousel");
 
   startCakeCarousel(carouselContainer);
-
-  /* =====================================================
-     CLIC CARROUSEL
-     → GALERIE
-  ===================================================== */
 
   carouselContainer?.addEventListener("click", (event) => {
     const item = event.target.closest(".cake-carousel__item");
@@ -638,11 +542,8 @@ function createHomeHTML(element) {
     }
 
     createGalleryHTML(element);
+    scrollDemo2ToTop(element);
   });
-
-  /* =====================================================
-     GÂTEAU THREE.JS
-  ===================================================== */
 
   const cakeContainer = element.querySelector(".cake-animation");
 
@@ -660,52 +561,30 @@ function createGalleryHTML(element) {
 
     <div class="demo2__site">
 
-
       ${createHeaderHTML()}
-
 
       <main class="wrapper__demo2">
 
-
         <section class="demo2__galleryPage">
-
-
-          <!-- ==================================================
-               TITRE
-          =================================================== -->
 
           <div class="demo2__galleryHeader">
 
-
             <h1 class="demo2__galleryTitle">
-
               NOS CRÉATIONS
-
             </h1>
-
 
             <div
               class="demo2__smallOrnament"
               aria-hidden="true"
             >
-
               <span></span>
-
             </div>
-
 
           </div>
 
-
-          <!-- ==================================================
-               GALERIE
-          =================================================== -->
-
           <div class="demo2__galerie">
 
-
             <div class="demo2__galerie__item">
-
 
               ${demo2Cakes
                 .map(
@@ -715,7 +594,6 @@ function createGalleryHTML(element) {
                       class="demo2__imgWrapper"
                       data-cake-index="${index}"
                     >
-
 
                       <button
                         type="button"
@@ -731,41 +609,26 @@ function createGalleryHTML(element) {
 
                       </button>
 
-
-                      <div
-                        class="demo2__cakeInfo"
-                      >
-
+                      <div class="demo2__cakeInfo">
 
                         <span class="demo2__cakeInfoLabel">
-
                           CRÉATION SIGNATURE
-
                         </span>
 
-
                         <h2 class="demo2__cakeInfoTitle">
-
                           ${cake.name}
-
                         </h2>
-
 
                         <div
                           class="demo2__cakeInfoSeparator"
                           aria-hidden="true"
                         ></div>
 
-
                         <p class="demo2__cakeInfoDescription">
-
                           ${cake.description}
-
                         </p>
 
-
                       </div>
-
 
                     </article>
 
@@ -773,44 +636,26 @@ function createGalleryHTML(element) {
                 )
                 .join("")}
 
-
             </div>
-
 
           </div>
 
-
         </section>
 
-
       </main>
-
 
     </div>
 
   `;
 
-  /* =====================================================
-     HEADER
-  ===================================================== */
-
   connectHeaderNavigation(element);
-
-  /* =====================================================
-     CARTES GALERIE
-  ===================================================== */
 
   const cakeItems = element.querySelectorAll(".demo2__imgWrapper");
 
   const mobileCakePositions = new WeakMap();
 
-  /* =====================================================
-     SMARTPHONE
-     DÉPLACER UN GÂTEAU DE DROITE À GAUCHE
-  ===================================================== */
-
   function moveCakeToRowStart(item) {
-    if (!item || !isGallerySmartphone()) {
+    if (!item || !isGallerySmartphone(element)) {
       return;
     }
 
@@ -842,11 +687,6 @@ function createGalleryHTML(element) {
     parent.insertBefore(item, leftCake);
   }
 
-  /* =====================================================
-     SMARTPHONE
-     REMETTRE LE GÂTEAU À SA POSITION D'ORIGINE
-  ===================================================== */
-
   function restoreCakePosition(item) {
     if (!item) {
       return;
@@ -873,10 +713,6 @@ function createGalleryHTML(element) {
     mobileCakePositions.delete(item);
   }
 
-  /* =====================================================
-     FERMER UNE CARTE
-  ===================================================== */
-
   function closeCakeCard(item) {
     if (!item) {
       return;
@@ -891,10 +727,6 @@ function createGalleryHTML(element) {
     restoreCakePosition(item);
   }
 
-  /* =====================================================
-     FERMER TOUTES LES CARTES
-  ===================================================== */
-
   function closeAllCakeCards(exceptItem = null) {
     cakeItems.forEach((item) => {
       if (item === exceptItem) {
@@ -904,10 +736,6 @@ function createGalleryHTML(element) {
       closeCakeCard(item);
     });
   }
-
-  /* =====================================================
-     OUVRIR UNE CARTE
-  ===================================================== */
 
   function openCakeCard(item) {
     if (!item) {
@@ -925,10 +753,6 @@ function createGalleryHTML(element) {
     trigger?.setAttribute("aria-expanded", "true");
   }
 
-  /* =====================================================
-     TOGGLE D'UNE CARTE
-  ===================================================== */
-
   function toggleCakeCard(item) {
     if (!item) {
       return;
@@ -943,10 +767,6 @@ function createGalleryHTML(element) {
     }
   }
 
-  /* =====================================================
-     ÉVÉNEMENTS
-  ===================================================== */
-
   cakeItems.forEach((item) => {
     const trigger = item.querySelector(".demo2__galleryTrigger");
 
@@ -954,33 +774,21 @@ function createGalleryHTML(element) {
       return;
     }
 
-    /* =================================================
-       SURVOL
-    ================================================= */
-
     item.addEventListener("pointerenter", (event) => {
-      if (isGallerySmartphone() || event.pointerType === "touch") {
+      if (isGallerySmartphone(element) || event.pointerType === "touch") {
         return;
       }
 
       openCakeCard(item);
     });
 
-    /* =================================================
-       FIN DU SURVOL
-    ================================================= */
-
     item.addEventListener("pointerleave", (event) => {
-      if (isGallerySmartphone() || event.pointerType === "touch") {
+      if (isGallerySmartphone(element) || event.pointerType === "touch") {
         return;
       }
 
       closeCakeCard(item);
     });
-
-    /* =================================================
-       TAP SMARTPHONE / TABLETTE
-    ================================================= */
 
     trigger.addEventListener("pointerup", (event) => {
       if (event.pointerType !== "touch") {
@@ -990,10 +798,6 @@ function createGalleryHTML(element) {
       toggleCakeCard(item);
     });
 
-    /* =================================================
-       CLAVIER
-    ================================================= */
-
     trigger.addEventListener("click", (event) => {
       if (event.detail !== 0) {
         return;
@@ -1002,11 +806,6 @@ function createGalleryHTML(element) {
       toggleCakeCard(item);
     });
   });
-
-  /* =====================================================
-     CLIC / TAP EN DEHORS
-     → FERME TOUTES LES CARTES
-  ===================================================== */
 
   const gallery = element.querySelector(".demo2__galleryPage");
 

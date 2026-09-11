@@ -3,6 +3,7 @@ import { getDataDemoWeb3 } from "./dataDemoWeb3.js";
 let cartItems = [];
 let demo3Element = null;
 let pricePanier = 0;
+let demo3ResizeObserver = null;
 
 if (!document.getElementById("demo3Fonts")) {
   const font = document.createElement("link");
@@ -27,6 +28,7 @@ export function addDemoWeb3(element) {
   createHeader(element);
   createHomeHTML(element);
   addProductPanier();
+  initDemo3ResponsiveObserver();
 
   element.style.background = "#c2c5aa";
 }
@@ -35,13 +37,18 @@ function createHeader(element) {
   element.innerHTML = `
     <div class="demo3__site">
 
-      <nav class="header__demo3">
+      <nav
+        class="header__demo3"
+        aria-label="Navigation de la boutique"
+      >
 
-        <ul class="header__nav__demo3">
+        <div class="header__nav__demo3">
 
-          <li
+          <button
+            type="button"
             class="demo3__brand"
             data-page="accueil"
+            aria-label="Retour à l'accueil de la boutique"
           >
             <span class="demo3__brandIcon">
               <svg viewBox="0 0 40 40" aria-hidden="true">
@@ -51,110 +58,114 @@ function createHeader(element) {
                 <path d="M20 30C14 30 10 27 8 22C14 22 18 25 20 30Z"></path>
               </svg>
             </span>
-
-          </li>
+          </button>
 
           <div class="demo3__navigation">
 
-          <li class="header__nav__demo3__link">
-          <span
-            data-page="accueil"
-            data-category="Accueil"
-          >
-            ACCUEIL
-          </span>
-          </li>        
+            <button
+              type="button"
+              class="header__nav__demo3__link"
+              data-page="accueil"
+              data-category="Accueil"
+            >
+              ACCUEIL
+            </button>
 
-            <li class="header__nav__demo3__link">
-            <span 
+            <button
+              type="button"
+              class="header__nav__demo3__link"
               data-page="shop"
               data-category="all"
             >
               BOUTIQUE
-            </span>
-          </li>
+            </button>
 
-          <li class="header__nav__demo3__link">
-            <span
+            <button
+              type="button"
+              class="header__nav__demo3__link"
               data-page="shop"
               data-category="Vases"
             >
               VASES
-            </span>
-          </li>
+            </button>
 
-          <li class="header__nav__demo3__link">
-            <span
+            <button
+              type="button"
+              class="header__nav__demo3__link"
               data-page="shop"
               data-category="Bougies"
             >
               BOUGIES
-            </span>
-          </li>
+            </button>
 
-          <li class="header__nav__demo3__link">
-            <span
+            <button
+              type="button"
+              class="header__nav__demo3__link"
               data-page="shop"
               data-category="Encens"
             >
               ENCENS
-            </span>
-          </li>
+            </button>
 
-        </div>
+          </div>
 
-          <nav class="demo3__mobileMenu">
-  <button
-    type="button"
-    data-page="accueil"
-  >
-    ACCUEIL
-  </button>
+          <div
+            class="demo3__mobileMenu"
+            aria-label="Navigation mobile de la boutique"
+          >
 
-  <button
-    type="button"
-    data-page="shop"
-    data-category="all"
-  >
-    BOUTIQUE
-  </button>
+            <button
+              type="button"
+              data-page="accueil"
+            >
+              ACCUEIL
+            </button>
 
-  <button
-    type="button"
-    data-page="shop"
-    data-category="Vases"
-  >
-    VASES
-  </button>
+            <button
+              type="button"
+              data-page="shop"
+              data-category="all"
+            >
+              BOUTIQUE
+            </button>
 
-  <button
-    type="button"
-    data-page="shop"
-    data-category="Bougies"
-  >
-    BOUGIES
-  </button>
+            <button
+              type="button"
+              data-page="shop"
+              data-category="Vases"
+            >
+              VASES
+            </button>
 
-  <button
-    type="button"
-    data-page="shop"
-    data-category="Encens"
-  >
-    ENCENS
-  </button>
-</nav>
+            <button
+              type="button"
+              data-page="shop"
+              data-category="Bougies"
+            >
+              BOUGIES
+            </button>
+
+            <button
+              type="button"
+              data-page="shop"
+              data-category="Encens"
+            >
+              ENCENS
+            </button>
+
+          </div>
 
           <div class="demo3__headerActions">
 
-            <div
+            <button
+              type="button"
               class="cart-container"
-              role="button"
-              tabindex="0"
               aria-label="Ouvrir le panier"
             >
               <svg
                 viewBox="0 0 24 24"
                 class="cart-icon"
+                aria-hidden="true"
               >
                 <rect
                   x="5"
@@ -176,22 +187,22 @@ function createHeader(element) {
               </svg>
 
               <span class="cart-badge"></span>
-            </div>
+            </button>
 
             <button
-  type="button"
-  class="demo3__burgerButton"
-  aria-label="Ouvrir le menu"
-  aria-expanded="false"
->
-  <span></span>
-  <span></span>
-  <span></span>
-</button>
+              type="button"
+              class="demo3__burgerButton"
+              aria-label="Ouvrir le menu"
+              aria-expanded="false"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
 
           </div>
 
-        </ul>
+        </div>
 
       </nav>
 
@@ -199,42 +210,42 @@ function createHeader(element) {
 
         <div class="overlay__demo3"></div>
 
-      <aside class="panier__demo3">
+        <aside class="panier__demo3">
 
-  <button
-    type="button"
-    class="demo3__closeCart"
-    aria-label="Fermer le panier"
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M5 5L19 19"></path>
-      <path d="M19 5L5 19"></path>
-    </svg>
-  </button>
+          <button
+            type="button"
+            class="demo3__closeCart"
+            aria-label="Fermer le panier"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 5L19 19"></path>
+              <path d="M19 5L5 19"></path>
+            </svg>
+          </button>
 
-  <header class="demo3__cartHeader">
-    <h2>VOTRE PANIER</h2>
-    <span></span>
-  </header>
+          <header class="demo3__cartHeader">
+            <h2>VOTRE PANIER</h2>
+            <span></span>
+          </header>
 
-  <div class="contentProductsPanier__demo3"></div>
+          <div class="contentProductsPanier__demo3"></div>
 
-  <button
-    type="button"
-    class="buttonPanier"
-  >
-    CONTINUER
-  </button>
+          <button
+            type="button"
+            class="buttonPanier"
+          >
+            CONTINUER
+          </button>
 
-  <button
-  type="button"
-  class="demo3__continueShopping"
->
-  <span>←</span>
-  CONTINUER VOS ACHATS
-</button>
+          <button
+            type="button"
+            class="demo3__continueShopping"
+          >
+            <span>←</span>
+            CONTINUER VOS ACHATS
+          </button>
 
-</aside> 
+        </aside>
 
         <main class="wrapper__demo3"></main>
 
@@ -257,19 +268,20 @@ function createHeader(element) {
       }
 
       hidePanier();
+      closeDemo3MobileMenu();
       scrollTopDemo(element);
     });
   });
 
   const panier = element.querySelector(".cart-container");
 
-  panier.addEventListener("click", () => {
+  panier?.addEventListener("click", () => {
     showPanier();
   });
 
   const overlay = element.querySelector(".overlay__demo3");
 
-  overlay.addEventListener("click", () => {
+  overlay?.addEventListener("click", () => {
     hidePanier();
   });
 
@@ -277,6 +289,21 @@ function createHeader(element) {
 
   closeCartButton?.addEventListener("click", () => {
     hidePanier();
+  });
+
+  element.addEventListener("click", (event) => {
+    const burgerButton = element.querySelector(".demo3__burgerButton");
+    const mobileMenu = element.querySelector(".demo3__mobileMenu");
+
+    if (
+      !mobileMenu?.classList.contains("open") ||
+      burgerButton?.contains(event.target) ||
+      mobileMenu.contains(event.target)
+    ) {
+      return;
+    }
+
+    closeDemo3MobileMenu();
   });
 
   initDemo3BurgerMenu();
@@ -621,7 +648,7 @@ function afficherHeroShop(category = "all") {
 
         <h1>
           ${currentHero.title}
-        </h1>
+                  </h1>
 
       </div>
 
@@ -999,6 +1026,7 @@ function createPageShop(objet) {
       if (!selectedProduct) return;
 
       createPageShop(selectedProduct);
+      scrollTopDemo(demo3Element);
     });
   });
 }
@@ -1057,6 +1085,7 @@ function createCardProduct(category = "all", search = "") {
       if (!product) return;
 
       createPageShop(product);
+      scrollTopDemo(demo3Element);
     });
   });
 }
@@ -1081,6 +1110,8 @@ function showPanier() {
   const panier = demo3Element?.querySelector(".panier__demo3");
 
   if (!overlay || !panier) return;
+
+  closeDemo3MobileMenu();
 
   panier.classList.add("open");
   overlay.classList.add("visible");
@@ -1266,8 +1297,7 @@ function resetEmptyCart() {
                 V103
               "
             ></path>
-
-          </g>
+                      </g>
 
           <g class="demo3__bagLogo">
 
@@ -1380,6 +1410,7 @@ function resetEmptyCart() {
   emptyCartButton?.addEventListener("click", () => {
     createShopHTML();
     hidePanier();
+    scrollTopDemo(demo3Element);
   });
 }
 
@@ -1720,7 +1751,40 @@ function validateCart() {
     createShopHTML();
     hidePanier();
     resetEmptyCart();
+    scrollTopDemo(demo3Element);
   };
+}
+
+function closeDemo3MobileMenu() {
+  const burgerButton = demo3Element?.querySelector(".demo3__burgerButton");
+
+  const mobileMenu = demo3Element?.querySelector(".demo3__mobileMenu");
+
+  if (!burgerButton || !mobileMenu) return;
+
+  mobileMenu.classList.remove("open");
+  burgerButton.classList.remove("open");
+  burgerButton.setAttribute("aria-expanded", "false");
+}
+
+function initDemo3ResponsiveObserver() {
+  const site = demo3Element?.querySelector(".demo3__site");
+
+  if (!site || typeof ResizeObserver === "undefined") {
+    return;
+  }
+
+  demo3ResizeObserver?.disconnect();
+
+  demo3ResizeObserver = new ResizeObserver((entries) => {
+    const width = entries[0]?.contentRect.width ?? 0;
+
+    if (width > 1100) {
+      closeDemo3MobileMenu();
+    }
+  });
+
+  demo3ResizeObserver.observe(site);
 }
 
 function initDemo3BurgerMenu() {
@@ -1740,18 +1804,20 @@ function initDemo3BurgerMenu() {
 
   mobileMenu.querySelectorAll("button").forEach((button) => {
     button.addEventListener("click", () => {
-      mobileMenu.classList.remove("open");
-      burgerButton.classList.remove("open");
-
-      burgerButton.setAttribute("aria-expanded", "false");
+      closeDemo3MobileMenu();
     });
   });
 }
 
 function scrollTopDemo(element) {
+  if (!element) {
+    return;
+  }
+
   requestAnimationFrame(() => {
     element.scrollTo({
       top: 0,
+      left: 0,
       behavior: "smooth",
     });
   });

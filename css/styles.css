@@ -40,7 +40,19 @@ html {
    BODY
 ===================================================== */
 
+html {
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+  scrollbar-width:thin;
+  scrollbar-color:#373737 #111827;
+  scroll-behavior:smooth;
+}
+
 body {
+  width:100%;
+  max-width:100%;
+  margin:0;
   background:black;
   overflow-y:auto;
   overflow-x:hidden;
@@ -365,7 +377,7 @@ body {
   position:relative;
   width:var(--w-container-size);
   min-height:clamp(420px,46vw,680px);
-  margin:var(--home-top-gap) auto var(--section-gap);
+  margin:clamp(80px,13vw,150px) auto var(--section-gap);
   margin-bottom:calc(var(--section-gap) * .8);
   background:#000;
   border:var(--border);
@@ -568,7 +580,7 @@ body {
     width:var(--w-container-size);
     height:auto;
     min-height:0;
-    margin:var(--home-top-gap) auto var(--section-gap);
+    margin:clamp(100px,13vw,230px) auto var(--section-gap);
     display:flex;
     flex-direction:column;
     align-items:stretch;
@@ -711,7 +723,7 @@ body {
     width:min(92vw,360px);
     height:auto;
     min-height:0;
-    margin-top:clamp(140px,16vw,230px);
+    margin-top:clamp(80px,13vw,230px);
   }
 
   .hero__media {

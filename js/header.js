@@ -17,18 +17,28 @@ export function loadHeaderScriptDirect() {
     style.id = "headerStyle";
 
     style.innerHTML = `
+      .header,
+      .header *,
+      .header *::before,
+      .header *::after {
+        box-sizing:border-box;
+      }
+
       .header {
         position:fixed;
         top:0;
+        right:0;
         left:0;
-        width:100%;
+        width:auto;
+        max-width:100%;
         height:clamp(80px,8vw,120px);
         display:flex;
         align-items:center;
         justify-content:space-between;
         padding:0 clamp(25px,6vw,35px);
         background-color:black;
-        z-index:999;
+        overflow:visible;
+        z-index:9999;
       }
 
       /* -----------------------------------------------------------------------
@@ -36,6 +46,7 @@ export function loadHeaderScriptDirect() {
       ----------------------------------------------------------------------- */
 
       .header__left {
+        min-width:0;
         display:flex;
         align-items:center;
         flex-shrink:0;
@@ -48,7 +59,7 @@ export function loadHeaderScriptDirect() {
       .header__logo {
         position:relative;
         flex-shrink:0;
-        z-index:3;
+        z-index:5;
       }
 
       .header__logo a {
@@ -58,6 +69,8 @@ export function loadHeaderScriptDirect() {
 
       .header__logo img {
         display:block;
+        width:auto;
+        height:auto;
         max-width:clamp(80px,12vw,120px);
         max-height:clamp(80px,12vw,120px);
       }
@@ -100,10 +113,12 @@ export function loadHeaderScriptDirect() {
 
       .header__nav {
         position:relative;
-        z-index:3;
+        min-width:0;
+        z-index:4;
       }
 
       .header__nav__menu {
+        min-width:0;
         margin:0;
         padding:0;
         display:flex;
@@ -113,16 +128,20 @@ export function loadHeaderScriptDirect() {
       }
 
       .header__nav__menu__link {
+        min-width:0;
         margin-right:0;
       }
 
       .header__nav__menu__link a {
         position:relative;
+        display:block;
         color:var(--text-color);
         font-family:"Montserrat",sans-serif;
         font-size:clamp(14px,1.2vw,18px);
         font-weight:100;
+        line-height:1;
         text-decoration:none;
+        white-space:nowrap;
         cursor:pointer;
       }
 
@@ -228,11 +247,21 @@ export function loadHeaderScriptDirect() {
         transform:translateX(50%) rotate(45deg);
       }
 
-      .header__nav__menu__reseaux:hover .header__reseauxPopup {
+      .header__nav__menu__reseaux.is-open .header__reseauxPopup {
         opacity:1;
         visibility:visible;
         pointer-events:auto;
         transform:translate(50%,0);
+      }
+
+      @media (hover:hover) and (pointer:fine) {
+        .header__nav__menu__reseaux:hover .header__reseauxPopup,
+        .header__nav__menu__reseaux:focus-within .header__reseauxPopup {
+          opacity:1;
+          visibility:visible;
+          pointer-events:auto;
+          transform:translate(50%,0);
+        }
       }
 
       .header__reseauxPopupLink {
@@ -241,7 +270,7 @@ export function loadHeaderScriptDirect() {
         padding:6px 7px;
         display:flex;
         align-items:center;
-        gap:9px;
+        justify-content:center;
         color:var(--text-color);
         font-family:monospace;
         font-size:13px;
@@ -369,11 +398,33 @@ export function loadHeaderScriptDirect() {
 
       @media screen and (max-width:600px) {
         .header {
+          position:fixed;
+          top:0;
+          right:0;
+          left:0;
+          width:auto;
+          max-width:100%;
           height:72px;
           padding:0 10px;
+          overflow:visible;
+          z-index:9999;
+        }
+
+        .header__left {
+          position:relative;
+          min-width:0;
+          flex-shrink:0;
+          z-index:6;
+        }
+
+        .header__logo {
+          position:relative;
+          z-index:6;
         }
 
         .header__logo img {
+          width:auto;
+          height:auto;
           max-width:62px;
           max-height:62px;
         }
@@ -384,24 +435,38 @@ export function loadHeaderScriptDirect() {
 
         .header__nav {
           position:absolute;
-          inset:0;
-          width:100%;
+          top:0;
+          right:0;
+          bottom:0;
+          left:0;
+          width:auto;
           height:100%;
-          z-index:3;
+          min-width:0;
+          z-index:4;
         }
 
         .header__nav__menu {
           position:relative;
           width:100%;
+          min-width:0;
           height:100%;
+          margin:0;
+          padding:0 54px 0 78px;
           display:flex;
           align-items:center;
           justify-content:center;
+          flex-wrap:nowrap;
           gap:6px;
         }
 
+        .header__nav__menu__link {
+          min-width:0;
+          flex:0 1 auto;
+        }
+
         .header__nav__menu__link a {
-          font-size:clamp(10px,2.5vw,14px);
+          font-size:clamp(9px,2.5vw,12px);
+          white-space:nowrap;
         }
 
         .header__nav__menu__reseaux {
@@ -410,8 +475,9 @@ export function loadHeaderScriptDirect() {
           right:10px;
           width:34px;
           height:34px;
-          margin-left:0;
+          margin:0;
           transform:translateY(-50%);
+          z-index:7;
         }
 
         .header__reseauxButton {
@@ -423,6 +489,33 @@ export function loadHeaderScriptDirect() {
           width:18px;
           height:18px;
           transform:scale(2);
+        }
+
+        .header__reseauxPopup {
+          top:calc(100% + 10px);
+          right:0;
+          width:42px;
+          padding:4px;
+          transform:translateY(-8px);
+        }
+
+        .header__reseauxPopup::before {
+          right:10px;
+          transform:rotate(45deg);
+        }
+
+        .header__reseauxPopupLink {
+          min-height:34px;
+          padding:5px;
+        }
+
+        .header__reseauxPopupIcon {
+          width:14px;
+          height:14px;
+        }
+
+        .header__nav__menu__reseaux.is-open .header__reseauxPopup {
+          transform:translateY(0);
         }
       }
 
@@ -436,16 +529,18 @@ export function loadHeaderScriptDirect() {
         }
 
         .header__logo img {
-          max-width:54px;
-          max-height:54px;
+          max-width:52px;
+          max-height:52px;
         }
 
         .header__nav__menu {
-          gap:4px;
+          padding-right:42px;
+          padding-left:62px;
+          gap:3px;
         }
 
         .header__nav__menu__link a {
-          font-size:10px;
+          font-size:clamp(8px,2.5vw,10px);
         }
 
         .header__nav__menu__reseaux {
@@ -463,6 +558,53 @@ export function loadHeaderScriptDirect() {
           width:12px;
           height:12px;
           transform:scale(1.8);
+        }
+
+        .header__reseauxPopup {
+          width:40px;
+          padding:4px;
+        }
+
+        .header__reseauxPopupLink {
+          min-height:32px;
+          padding:4px;
+        }
+
+        .header__reseauxPopupIcon {
+          width:13px;
+          height:13px;
+        }
+      }
+
+      /* -----------------------------------------------------------------------
+         RESPONSIVE <= 360PX
+      ----------------------------------------------------------------------- */
+
+      @media screen and (max-width:360px) {
+        .header__logo img {
+          max-width:46px;
+          max-height:46px;
+        }
+
+        .header__nav__menu {
+          padding-right:38px;
+          padding-left:54px;
+          gap:5px;
+        }
+
+        .header__nav__menu__link a {
+          font-size:8px;
+        }
+
+        .header__nav__menu__reseaux {
+          right:5px;
+          width:28px;
+          height:28px;
+        }
+
+        .header__reseauxButton {
+          width:28px;
+          height:28px;
         }
       }
     `;
@@ -557,6 +699,8 @@ export function loadHeaderScriptDirect() {
             type="button"
             class="header__reseauxButton"
             aria-label="Afficher mes réseaux sociaux"
+            aria-expanded="false"
+            aria-controls="headerReseauxPopup"
           >
             <img
               src="./img/logoReseaux.png"
@@ -565,7 +709,11 @@ export function loadHeaderScriptDirect() {
             >
           </button>
 
-          <div class="header__reseauxPopup">
+          <div
+            id="headerReseauxPopup"
+            class="header__reseauxPopup"
+            aria-hidden="true"
+          >
 
             <!-- INSTAGRAM -->
 
@@ -657,8 +805,86 @@ export function loadHeaderScriptDirect() {
   ];
 
   const logoLink = header.querySelector(".header__logo a[data-section='home']");
+  const reseauxMenu = header.querySelector(".header__nav__menu__reseaux");
+  const reseauxButton = header.querySelector(".header__reseauxButton");
+  const reseauxPopup = header.querySelector(".header__reseauxPopup");
+  const reseauxPopupLinks = [
+    ...header.querySelectorAll(".header__reseauxPopupLink"),
+  ];
 
   let scrollAnimationFrameId = null;
+
+  // ---------------------------------------------------------------------------
+  // OUVERTURE / FERMETURE DES RÉSEAUX SUR ÉCRAN TACTILE
+  // ---------------------------------------------------------------------------
+
+  function usesTouchSocialMenu() {
+    return (
+      window.matchMedia("(max-width:600px)").matches ||
+      !window.matchMedia("(hover:hover) and (pointer:fine)").matches
+    );
+  }
+
+  function setReseauxPopupOpen(isOpen) {
+    if (!reseauxMenu || !reseauxButton || !reseauxPopup) {
+      return;
+    }
+
+    reseauxMenu.classList.toggle("is-open", isOpen);
+    reseauxButton.setAttribute("aria-expanded", String(isOpen));
+    reseauxPopup.setAttribute("aria-hidden", String(!isOpen));
+  }
+
+  reseauxButton?.addEventListener("click", (event) => {
+    if (!usesTouchSocialMenu()) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const shouldOpen = !reseauxMenu?.classList.contains("is-open");
+
+    setReseauxPopupOpen(shouldOpen);
+  });
+
+  reseauxPopupLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      if (usesTouchSocialMenu()) {
+        setReseauxPopupOpen(false);
+      }
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (
+      !usesTouchSocialMenu() ||
+      !reseauxMenu?.classList.contains("is-open") ||
+      reseauxMenu.contains(event.target)
+    ) {
+      return;
+    }
+
+    setReseauxPopupOpen(false);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setReseauxPopupOpen(false);
+    }
+  });
+
+  window.addEventListener(
+    "resize",
+    () => {
+      if (!usesTouchSocialMenu()) {
+        setReseauxPopupOpen(false);
+      }
+    },
+    {
+      passive: true,
+    },
+  );
 
   // ---------------------------------------------------------------------------
   // LIEN ACTIF
@@ -705,6 +931,34 @@ export function loadHeaderScriptDirect() {
     return document.getElementById(sectionName);
   }
 
+  function getSectionNavigationTarget(sectionName) {
+    const section = getSectionElement(sectionName);
+
+    if (!section) {
+      return null;
+    }
+
+    const wrapper = section.closest(".section-with-title");
+
+    if (wrapper) {
+      const wrapperTitle = wrapper.querySelector(".section-title");
+
+      if (wrapperTitle) {
+        return wrapperTitle;
+      }
+
+      return wrapper;
+    }
+
+    const sectionTitle = section.querySelector(".section-title");
+
+    if (sectionTitle) {
+      return sectionTitle;
+    }
+
+    return section;
+  }
+
   // ---------------------------------------------------------------------------
   // SCROLL VERS LES SECTIONS
   // ---------------------------------------------------------------------------
@@ -721,17 +975,18 @@ export function loadHeaderScriptDirect() {
       return;
     }
 
-    const target = getSectionElement(sectionName);
+    const target = getSectionNavigationTarget(sectionName);
 
     if (!target) {
       console.warn(`La section #${sectionName} est introuvable.`);
+
       return;
     }
 
     const headerHeight = header.offsetHeight;
 
     const targetPosition =
-      target.getBoundingClientRect().top + window.scrollY - headerHeight;
+      target.getBoundingClientRect().top + window.scrollY - headerHeight - 12;
 
     window.scrollTo({
       top: Math.max(0, targetPosition),
@@ -769,19 +1024,19 @@ export function loadHeaderScriptDirect() {
   const sectionConfiguration = [
     {
       name: "demos",
-      element: getSectionElement("demos"),
+      element: getSectionNavigationTarget("demos"),
     },
     {
       name: "services",
-      element: getSectionElement("services"),
+      element: getSectionNavigationTarget("services"),
     },
     {
       name: "about",
-      element: getSectionElement("about"),
+      element: getSectionNavigationTarget("about"),
     },
     {
       name: "contact",
-      element: getSectionElement("contact"),
+      element: getSectionNavigationTarget("contact"),
     },
   ].filter((section) => section.element);
 
@@ -793,6 +1048,7 @@ export function loadHeaderScriptDirect() {
 
     if (scrollPosition <= 10 || sectionConfiguration.length === 0) {
       setActiveLink("home");
+
       return;
     }
 
@@ -835,6 +1091,7 @@ export function loadHeaderScriptDirect() {
 
     scrollAnimationFrameId = requestAnimationFrame(() => {
       updateActiveLinkOnScroll();
+
       scrollAnimationFrameId = null;
     });
   }

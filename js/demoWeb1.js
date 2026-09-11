@@ -6,134 +6,213 @@ export function addDemoWeb1(element) {
   element.style.background = "#f5ebe0";
 }
 
+function scrollDemo1ToTop(element, behavior = "smooth") {
+  if (!element) return;
+
+  requestAnimationFrame(() => {
+    if (typeof element.scrollTo === "function") {
+      element.scrollTo({
+        top: 0,
+        left: 0,
+        behavior,
+      });
+    } else {
+      element.scrollTop = 0;
+      element.scrollLeft = 0;
+    }
+  });
+}
+
+function scrollDemo1ToResponse(element, responseValidate) {
+  if (!element || !responseValidate) {
+    return;
+  }
+
+  const scrollToCard = () => {
+    const responseCard =
+      responseValidate.querySelector(".responseCard") || responseValidate;
+
+    const elementRect = element.getBoundingClientRect();
+    const cardRect = responseCard.getBoundingClientRect();
+
+    const viewportHeight = element.clientHeight;
+    const cardHeight = cardRect.height;
+
+    const visibleCardHeight = Math.min(cardHeight, viewportHeight - 40);
+
+    const desiredTop = Math.max(20, (viewportHeight - visibleCardHeight) / 2);
+
+    const targetTop =
+      element.scrollTop + cardRect.top - elementRect.top - desiredTop;
+
+    element.scrollTo({
+      top: Math.max(0, targetTop),
+      left: 0,
+      behavior: "smooth",
+    });
+  };
+
+  requestAnimationFrame(() => {
+    setTimeout(scrollToCard, 600);
+  });
+}
+
 function createHomeHTML(element) {
   element.innerHTML = `
-        <nav class="header__demo1">
-            <ul class="header__nav__demo1">
-                <li class="header__nav__demo1__link"><span data-page="home" >ACCUEIL</span></li>
-                <li class="header__nav__demo1__link"><span data-page="prestation" >PRESTATION</span></li>
-                <li class="header__nav__demo1__link"><span data-page="rdv" >RDV</span></li>
-            </ul>
-        </nav>
+    <div class="demo1__site">
 
-        <div class="wrapper__demo1"> 
-            <div class="hero__demo1">
-              <img class="img__hero" src="./img/hero-coiffure.png" alt="Intérieur du salon de coiffure">
-              <img class="logo__hero__demo1" src="./img/logoSalonCoiffure.png" alt="UMA Salon de coiffure">
-            </div>
+      <nav class="header__demo1">
+        <ul class="header__nav__demo1">
+          <li class="header__nav__demo1__link"><span data-page="home">ACCUEIL</span></li>
+          <li class="header__nav__demo1__link"><span data-page="prestation">PRESTATION</span></li>
+          <li class="header__nav__demo1__link"><span data-page="rdv">RDV</span></li>
+        </ul>
+      </nav>
 
-            <div class="contentService__demo1">
-                <div class="divService__demo1"> <img class="img__coiffure" src="./img/coiffure1.png" alt="Logo"> <div class="divTextService__demo1"> FEMME </div> </div>
-                <div class="divService__demo1"> <img class="img__coiffure" src="./img/coiffure3.png" alt="Logo"> <div class="divTextService__demo1"> HOMME</div> </div>
-                <div class="divService__demo1"> <img class="img__coiffure" src="./img/coiffure2.png" alt="Logo"> <div class="divTextService__demo1"> EVENEMENT </div> </div>
-            </div> 
+      <div class="wrapper__demo1">
 
-            <div class="contentSuite__demo1">
+        <div class="hero__demo1">
+          <img class="img__hero" src="./img/hero-coiffure.png" alt="Intérieur du salon de coiffure">
+          <img class="logo__hero__demo1" src="./img/logoSalonCoiffure.png" alt="UMA Salon de coiffure">
+        </div>
 
-    <div class="textContentSuite__demo1">
+        <div class="contentService__demo1">
 
-        <span class="subtitleSuite">
-            NOTRE SALON
-        </span>
+          <div class="divService__demo1">
+            <img class="img__coiffure" src="./img/coiffure1.png" alt="Coiffure femme">
+            <div class="divTextService__demo1">FEMME</div>
+          </div>
 
-        <h2 class="titleSuite">
-            Un salon dédié à votre beauté
-        </h2>
+          <div class="divService__demo1">
+            <img class="img__coiffure" src="./img/coiffure3.png" alt="Coiffure homme">
+            <div class="divTextService__demo1">HOMME</div>
+          </div>
 
-        <!-- Image utilisée uniquement sur téléphone -->
-        <div class="imgContentSuite__demo1 imgContentSuite__demo1--mobile">
-            <img
+          <div class="divService__demo1">
+            <img class="img__coiffure" src="./img/coiffure2.png" alt="Coiffure événementielle">
+            <div class="divTextService__demo1">EVENEMENT</div>
+          </div>
+
+        </div>
+
+        <div class="contentSuite__demo1">
+
+          <div class="textContentSuite__demo1">
+
+            <span class="subtitleSuite">
+              NOTRE SALON
+            </span>
+
+            <h2 class="titleSuite">
+              Un salon dédié à votre beauté
+            </h2>
+
+            <div class="imgContentSuite__demo1 imgContentSuite__demo1--mobile">
+              <img
                 class="img-contentSuite"
                 src="./img/salon-coiffure.png"
                 alt="Intérieur du salon de coiffure"
+              >
+            </div>
+
+            <p class="textSuite">
+              Depuis plusieurs années, nous mettons notre savoir-faire au service
+              de votre beauté. Notre équipe vous accueille dans un espace élégant,
+              chaleureux et entièrement pensé pour vous offrir un véritable moment
+              de détente.
+            </p>
+
+            <p class="textSuite">
+              Coupe, coloration, coiffure événementielle ou soins personnalisés :
+              chaque prestation est réalisée avec passion, des produits
+              professionnels et une attention particulière portée à chaque détail.
+            </p>
+
+            <button class="buttonSuite">
+              EN SAVOIR PLUS
+            </button>
+
+          </div>
+
+          <div class="imgContentSuite__demo1 imgContentSuite__demo1--desktop">
+            <img
+              class="img-contentSuite"
+              src="./img/salon-coiffure.png"
+              alt="Intérieur du salon de coiffure"
             >
+          </div>
+
         </div>
 
-        <p class="textSuite">
-            Depuis plusieurs années, nous mettons notre savoir-faire au service
-            de votre beauté. Notre équipe vous accueille dans un espace élégant,
-            chaleureux et entièrement pensé pour vous offrir un véritable moment
-            de détente.
-        </p>
+        <div class="contentPhoto__demo1">
 
-        <p class="textSuite">
-            Coupe, coloration, coiffure événementielle ou soins personnalisés :
-            chaque prestation est réalisée avec passion, des produits
-            professionnels et une attention particulière portée à chaque détail.
-        </p>
+          <div class="divImgContentPhoto__demo1">
+            <img class="img__favorite__coiffure" src="./img/favorite-coiffure2.png" alt="Coiffure">
+          </div>
 
-        <button class="buttonSuite">
-            EN SAVOIR PLUS
-        </button>
+          <div class="divImgContentPhoto__demo1">
+            <img class="img__favorite__coiffure" src="./img/favorite-coiffure4.png" alt="Coiffure">
+          </div>
+
+          <div class="divImgContentPhoto__demo1">
+            <img class="img__favorite__coiffure" src="./img/favorite-coiffure3.png" alt="Coiffure">
+          </div>
+
+          <div class="divImgContentPhoto__demo1">
+            <img class="img__favorite__coiffure" src="./img/favorite-coiffure1.png" alt="Coiffure">
+          </div>
+
+        </div>
+
+        <div class="lastContent__demo1">
+
+          <div class="rdvLastContent__demo1">
+
+            <span class="rdv-subtitle">
+              VOTRE MOMENT BEAUTÉ
+            </span>
+
+            <p class="rdv-text">
+              Un instant rien que pour vous.<br>
+              Réservez votre prestation en ligne.
+            </p>
+
+            <button class="rdv-button" type="button">
+              PRENDRE RENDEZ-VOUS
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
-
-    <!-- Image utilisée sur ordinateur -->
-    <div class="imgContentSuite__demo1 imgContentSuite__demo1--desktop">
-        <img
-            class="img-contentSuite"
-            src="./img/salon-coiffure.png"
-            alt="Intérieur du salon de coiffure"
-        >
-    </div>
-
-</div>
-
-            <div class="contentPhoto__demo1">
-                <div class="divImgContentPhoto__demo1"> <img class="img__favorite__coiffure" src="./img/favorite-coiffure2.png" alt="Logo"> </div>
-                <div class="divImgContentPhoto__demo1"> <img class="img__favorite__coiffure" src="./img/favorite-coiffure4.png" alt="Logo"> </div>
-                <div class="divImgContentPhoto__demo1"> <img class="img__favorite__coiffure" src="./img/favorite-coiffure3.png" alt="Logo"> </div>
-                <div class="divImgContentPhoto__demo1"> <img class="img__favorite__coiffure" src="./img/favorite-coiffure1.png" alt="Logo"> </div>
-            </div> 
-
-            <div class="lastContent__demo1"> 
-            <div class="rdvLastContent__demo1">
-
-    <span class="rdv-subtitle">
-        VOTRE MOMENT BEAUTÉ
-    </span>
-
-
-    <p class="rdv-text">
-        Un instant rien que pour vous.<br>
-        Réservez votre prestation en ligne.
-    </p>
-
-    <button class="rdv-button" type="button">
-    PRENDRE RENDEZ-VOUS
-</button>
-
-</div>
- </div> 
-        </div>     
-    `;
+  `;
 
   element.querySelector(".buttonSuite")?.addEventListener("click", () => {
     createPrestationHTML(element);
-
-    requestAnimationFrame(() => {
-      element.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    });
+    scrollDemo1ToTop(element);
   });
 
   const rdvButton = element.querySelector(".rdv-button");
 
-  rdvButton.addEventListener("click", () => {
+  rdvButton?.addEventListener("click", () => {
     createRdvHTML(element);
   });
 
   const buttonMenu = element.querySelectorAll(".header__nav__demo1__link span");
+
   buttonMenu.forEach((button) => {
     const page = button.dataset.page;
 
     button.addEventListener("click", () => {
       if (page === "home") {
         createHomeHTML(element);
+        scrollDemo1ToTop(element);
       } else if (page === "prestation") {
         createPrestationHTML(element);
+        scrollDemo1ToTop(element);
       } else {
         createRdvHTML(element);
       }
@@ -144,175 +223,167 @@ function createHomeHTML(element) {
 function createPrestationHTML(element) {
   const wrapper = element.querySelector(".wrapper__demo1");
 
-  wrapper.innerHTML = "";
-  wrapper.innerHTML = `  
-  
+  if (!wrapper) return;
+
+  wrapper.innerHTML = `
     <div class="hero__demo1">
-              <img class="img__hero" src="./img/hero-coiffure.png" alt="Intérieur du salon de coiffure">
-              <img class="logo__hero__demo1" src="./img/logoSalonCoiffure.png" alt="UMA Salon de coiffure">
-            </div>
+      <img class="img__hero" src="./img/hero-coiffure.png" alt="Intérieur du salon de coiffure">
+      <img class="logo__hero__demo1" src="./img/logoSalonCoiffure.png" alt="UMA Salon de coiffure">
+    </div>
 
     <div class="contentPrestation__demo1">
 
-  <!-- FEMMES -->
+      <section class="prestationCategory__demo1">
 
-  <section class="prestationCategory__demo1">
+        <div class="prestationImage__demo1">
+          <img
+            src="./img/coiffure1.png"
+            alt="Coiffure femme"
+          >
+        </div>
 
-    <div class="prestationImage__demo1">
-      <img
-        src="./img/coiffure1.png"
-        alt="Coiffure femme"
-      >
-    </div>
+        <div class="prestationText__demo1">
 
-    <div class="prestationText__demo1">
+          <span class="prestationSubtitle__demo1">
+            L'ÉLÉGANCE AU QUOTIDIEN
+          </span>
 
-      <span class="prestationSubtitle__demo1">
-        L'ÉLÉGANCE AU QUOTIDIEN
-      </span>
+          <h2 class="prestationTitle__demo1">
+            FEMMES
+          </h2>
 
-      <h2 class="prestationTitle__demo1">
-        FEMMES
-      </h2>
+          <p>
+            Coupe, brushing, coloration ou soin profond : chaque prestation
+            est pensée pour révéler votre style tout en respectant la nature
+            de vos cheveux.
+          </p>
 
-      <p>
-        Coupe, brushing, coloration ou soin profond : chaque prestation
-        est pensée pour révéler votre style tout en respectant la nature
-        de vos cheveux.
-      </p>
+          <p>
+            Notre équipe vous accompagne avec attention afin de créer une
+            coiffure personnalisée, élégante et facile à porter au quotidien.
+          </p>
 
-      <p>
-        Notre équipe vous accompagne avec attention afin de créer une
-        coiffure personnalisée, élégante et facile à porter au quotidien.
-      </p>
+          <button
+            type="button"
+            class="prestationButton__demo1"
+            data-page="rdv"
+          >
+            PRENDRE RENDEZ-VOUS
+          </button>
 
-      <button
-        type="button"
-        class="prestationButton__demo1"
-        data-page="rdv"
-      >
-        PRENDRE RENDEZ-VOUS
-      </button>
+        </div>
 
-    </div>
+      </section>
 
-  </section>
+      <section class="prestationCategory__demo1 prestationCategory__demo1--reverse">
 
+        <div class="prestationImage__demo1">
+          <img
+            src="./img/coiffure3.png"
+            alt="Coiffure homme"
+          >
+        </div>
 
-  <!-- HOMMES -->
+        <div class="prestationText__demo1">
 
-  <section class="prestationCategory__demo1 prestationCategory__demo1--reverse">
+          <span class="prestationSubtitle__demo1">
+            STYLE & PRÉCISION
+          </span>
 
-    <div class="prestationImage__demo1">
-      <img
-        src="./img/coiffure3.png"
-        alt="Coiffure homme"
-      >
-    </div>
+          <h2 class="prestationTitle__demo1">
+            HOMMES
+          </h2>
 
-    <div class="prestationText__demo1">
+          <p>
+            Coupe classique, dégradé moderne ou entretien de la barbe :
+            profitez d'un service précis, soigné et adapté à votre personnalité.
+          </p>
 
-      <span class="prestationSubtitle__demo1">
-        STYLE & PRÉCISION
-      </span>
+          <p>
+            Chaque détail est travaillé pour vous offrir un résultat net,
+            harmonieux et simple à entretenir entre deux rendez-vous.
+          </p>
 
-      <h2 class="prestationTitle__demo1">
-        HOMMES
-      </h2>
+          <button
+            type="button"
+            class="prestationButton__demo1"
+            data-page="rdv"
+          >
+            PRENDRE RENDEZ-VOUS
+          </button>
 
-      <p>
-        Coupe classique, dégradé moderne ou entretien de la barbe :
-        profitez d'un service précis, soigné et adapté à votre personnalité.
-      </p>
+        </div>
 
-      <p>
-        Chaque détail est travaillé pour vous offrir un résultat net,
-        harmonieux et simple à entretenir entre deux rendez-vous.
-      </p>
+      </section>
 
-      <button
-        type="button"
-        class="prestationButton__demo1"
-        data-page="rdv"
-      >
-        PRENDRE RENDEZ-VOUS
-      </button>
+      <section class="prestationCategory__demo1">
 
-    </div>
+        <div class="prestationImage__demo1">
+          <img
+            src="./img/coiffure2.png"
+            alt="Coiffure événementielle"
+          >
+        </div>
 
-  </section>
+        <div class="prestationText__demo1">
 
+          <span class="prestationSubtitle__demo1">
+            POUR VOS PLUS BEAUX MOMENTS
+          </span>
 
-  <!-- ÉVÉNEMENTS -->
+          <h2 class="prestationTitle__demo1">
+            ÉVÉNEMENTS
+          </h2>
 
-  <section class="prestationCategory__demo1">
+          <p>
+            Mariage, cérémonie ou soirée particulière : nous imaginons une
+            coiffure sur mesure qui sublime votre tenue et reflète pleinement
+            votre personnalité.
+          </p>
 
-    <div class="prestationImage__demo1">
-      <img
-        src="./img/coiffure2.png"
-        alt="Coiffure événementielle"
-      >
-    </div>
+          <p>
+            Chignon élégant, attaches délicates ou coiffure naturelle :
+            chaque création est réalisée avec soin pour vous accompagner
+            durant ce moment unique.
+          </p>
 
-    <div class="prestationText__demo1">
+          <button
+            type="button"
+            class="prestationButton__demo1"
+            data-page="rdv"
+          >
+            PRENDRE RENDEZ-VOUS
+          </button>
 
-      <span class="prestationSubtitle__demo1">
-        POUR VOS PLUS BEAUX MOMENTS
-      </span>
+        </div>
 
-      <h2 class="prestationTitle__demo1">
-        ÉVÉNEMENTS
-      </h2>
-
-      <p>
-        Mariage, cérémonie ou soirée particulière : nous imaginons une
-        coiffure sur mesure qui sublime votre tenue et reflète pleinement
-        votre personnalité.
-      </p>
-
-      <p>
-        Chignon élégant, attaches délicates ou coiffure naturelle :
-        chaque création est réalisée avec soin pour vous accompagner
-        durant ce moment unique.
-      </p>
-
-      <button
-        type="button"
-        class="prestationButton__demo1"
-        data-page="rdv"
-      >
-        PRENDRE RENDEZ-VOUS
-      </button>
+      </section>
 
     </div>
 
-  </section>
+    <div class="divPrestationImage__demo1"></div>
 
-</div>
+    <div class="lastContent__demo1">
 
-    <div class="divPrestationImage__demo1"> </div>
-    
-    <div class="lastContent__demo1"> 
-            <div class="rdvLastContent__demo1">
+      <div class="rdvLastContent__demo1">
 
-    <span class="rdv-subtitle">
-        VOTRE MOMENT BEAUTÉ
-    </span>
+        <span class="rdv-subtitle">
+          VOTRE MOMENT BEAUTÉ
+        </span>
 
+        <p class="rdv-text">
+          Un instant rien que pour vous.<br>
+          Réservez votre prestation en ligne.
+        </p>
 
-    <p class="rdv-text">
-        Un instant rien que pour vous.<br>
-        Réservez votre prestation en ligne.
-    </p>
+        <button class="rdv-button" type="button">
+          PRENDRE RENDEZ-VOUS
+        </button>
 
-   <button class="rdv-button" type="button">
-    PRENDRE RENDEZ-VOUS
-</button>
+      </div>
 
-</div>
- </div> 
-    
-    `;
+    </div>
+  `;
 
   element.querySelectorAll(".rdv-button").forEach((button) => {
     button.addEventListener("click", () => {
@@ -336,19 +407,13 @@ function createRdvHTML(element) {
 
   if (!wrapper) return;
 
-  // Remonte en haut après le changement de page
-  requestAnimationFrame(() => {
-    element.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  });
+  scrollDemo1ToTop(element);
 
   wrapper.innerHTML = `
     <div class="hero__demo1">
-              <img class="img__hero" src="./img/hero-coiffure.png" alt="Intérieur du salon de coiffure">
-              <img class="logo__hero__demo1" src="./img/logoSalonCoiffure.png" alt="UMA Salon de coiffure">
-            </div>
+      <img class="img__hero" src="./img/hero-coiffure.png" alt="Intérieur du salon de coiffure">
+      <img class="logo__hero__demo1" src="./img/logoSalonCoiffure.png" alt="UMA Salon de coiffure">
+    </div>
 
     <div class="contentRdv__demo1">
 
@@ -357,7 +422,6 @@ function createRdvHTML(element) {
         <div class="leftRdv">
 
           <div class="divInput__demo1">
-
             <input
               id="inputName"
               class="inputName"
@@ -404,6 +468,7 @@ function createRdvHTML(element) {
                 Coiffure événementielle
               </option>
             </select>
+
           </div>
 
           <div class="divInput__demo1">
@@ -432,6 +497,7 @@ function createRdvHTML(element) {
                 Stéphane
               </option>
             </select>
+
           </div>
 
           <div class="divInput__demo1">
@@ -441,6 +507,7 @@ function createRdvHTML(element) {
               class="textareaNote"
               placeholder="Ajoutez une demande particulière..."
             ></textarea>
+
           </div>
 
           <button
@@ -451,9 +518,8 @@ function createRdvHTML(element) {
           </button>
 
           <div class="responseValidate" aria-live="polite">
-  <div class="responseCard"></div>
-</div>
-
+            <div class="responseCard"></div>
+          </div>
 
         </div>
 
@@ -538,6 +604,7 @@ function createRdvHTML(element) {
           </div>
 
           <div class="durationBox">
+
             <span class="durationTitle">
               DURÉE ESTIMÉE
             </span>
@@ -545,11 +612,10 @@ function createRdvHTML(element) {
             <span class="durationText">
               Environ 1h
             </span>
+
           </div>
 
         </div>
-
-       
 
       </div>
 
@@ -561,6 +627,7 @@ function createRdvHTML(element) {
   buttonValidate?.addEventListener("click", () => {
     validateRdv(element);
   });
+
   initCalendar(element);
   choiceDate(element);
 }
@@ -597,6 +664,7 @@ function initCalendar(element) {
     const lastDayOfMonth = new Date(year, month + 1, 0);
 
     const daysInMonth = lastDayOfMonth.getDate();
+
     const startOffset =
       firstDayOfMonth.getDay() === 0 ? 6 : firstDayOfMonth.getDay() - 1;
 
@@ -609,6 +677,7 @@ function initCalendar(element) {
       const day = daysInPreviousMonth - i;
 
       const dayDiv = document.createElement("div");
+
       dayDiv.classList.add("dayCalendar", "otherMonth");
       dayDiv.textContent = day;
 
@@ -617,6 +686,7 @@ function initCalendar(element) {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const dayDiv = document.createElement("div");
+
       dayDiv.classList.add("dayCalendar");
       dayDiv.textContent = day;
 
@@ -633,10 +703,12 @@ function initCalendar(element) {
     }
 
     const totalCells = divDay.children.length;
+
     const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
 
     for (let i = 1; i <= remaining; i++) {
       const nextDayDiv = document.createElement("div");
+
       nextDayDiv.classList.add("dayCalendar", "otherMonth");
       nextDayDiv.textContent = i;
 
@@ -644,14 +716,16 @@ function initCalendar(element) {
     }
   }
 
-  arrowLeft.addEventListener("click", () => {
+  arrowLeft?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
+
     renderCalendar();
     choiceDate(element);
   });
 
-  arrowRight.addEventListener("click", () => {
+  arrowRight?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
+
     renderCalendar();
     choiceDate(element);
   });
@@ -661,7 +735,6 @@ function initCalendar(element) {
 
 function choiceDate(element) {
   const dayCalendar = element.querySelectorAll(".dayCalendar");
-
   const hourSpan = element.querySelectorAll(".hourSpan");
 
   dayCalendar.forEach((day) => {
@@ -691,21 +764,13 @@ function choiceDate(element) {
 
 function validateRdv(element) {
   const nameInput = element.querySelector(".inputName");
-
   const prestationSelect = element.querySelector(".selectPrestation");
-
   const collaboratorSelect = element.querySelector(".selectCollaborator");
-
   const noteInput = element.querySelector(".textareaNote");
-
   const monthSpan = element.querySelector(".divMonth span");
-
   const selectedDay = element.querySelector(".dayCalendar.activeDate");
-
   const selectedHour = element.querySelector(".hourSpan.activeDate");
-
   const responseValidate = element.querySelector(".responseValidate");
-
   const responseCard = element.querySelector(".responseCard");
 
   if (
@@ -728,12 +793,8 @@ function validateRdv(element) {
   const collaborator = collaboratorSelect.value;
   const note = noteInput?.value.trim() || "";
 
-  /*
-   * Vérification des champs obligatoires.
-   */
   if (!name || !prestation || !collaborator || !selectedDay || !selectedHour) {
     responseValidate.classList.remove("is-confirmed");
-
     responseValidate.classList.add("is-error");
 
     responseCard.innerHTML = `
@@ -742,6 +803,7 @@ function validateRdv(element) {
       </div>
 
       <div class="responseContent">
+
         <span class="responseEyebrow">
           INFORMATIONS MANQUANTES
         </span>
@@ -754,32 +816,27 @@ function validateRdv(element) {
           Veuillez renseigner votre nom, choisir une prestation,
           un collaborateur, une date et un horaire.
         </p>
+
       </div>
     `;
 
     responseValidate.classList.add("is-visible");
 
-    responseValidate.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
+    scrollDemo1ToResponse(element, responseValidate);
 
     return;
   }
 
-  /*
-   * Tous les renseignements connus.
-   */
   const day = selectedDay.textContent.trim();
   const month = monthSpan.textContent.trim();
   const hour = selectedHour.textContent.trim();
 
   responseValidate.classList.remove("is-error");
-
   responseValidate.classList.add("is-confirmed");
 
   responseCard.innerHTML = `
     <div class="responseIcon responseIcon--success">
+
       <svg
         viewBox="0 0 24 24"
         aria-hidden="true"
@@ -793,9 +850,11 @@ function validateRdv(element) {
           stroke-linejoin="round"
         />
       </svg>
+
     </div>
 
     <div class="responseContent">
+
       <span class="responseEyebrow">
         RENDEZ-VOUS CONFIRMÉ
       </span>
@@ -857,6 +916,7 @@ function validateRdv(element) {
         note
           ? `
             <div class="responseNote">
+
               <span class="responseDetailLabel">
                 VOTRE DEMANDE
               </span>
@@ -864,6 +924,7 @@ function validateRdv(element) {
               <p>
                 ${escapeHtml(note)}
               </p>
+
             </div>
           `
           : ""
@@ -872,20 +933,13 @@ function validateRdv(element) {
       <p class="responseFooter">
         Nous avons hâte de vous accueillir au salon.
       </p>
+
     </div>
   `;
 
   responseValidate.classList.add("is-visible");
 
-  /*
-   * On attend que la carte soit dessinée avant de scroller.
-   */
-  requestAnimationFrame(() => {
-    responseValidate.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
-  });
+  scrollDemo1ToResponse(element, responseValidate);
 }
 
 function escapeHtml(value) {

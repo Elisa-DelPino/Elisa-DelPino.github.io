@@ -1,4 +1,5 @@
 // loadingPage.js
+
 import { addDecodeText } from "./animationHome.js";
 import { loadHeaderScriptDirect } from "./header.js";
 import { initAnimations } from "./animationProducts.js";
@@ -17,14 +18,6 @@ import { initLogicielDevis } from "./logicielDevis.js";
 ===================================================== */
 
 function initPageContent() {
-  const main = document.getElementById("main-content");
-
-  if (!main) {
-    return;
-  }
-
-  main.style.display = "block";
-
   /* =====================================================
      HEADER
   ===================================================== */

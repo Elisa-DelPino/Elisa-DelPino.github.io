@@ -39,7 +39,10 @@ if (!document.getElementById("cssStyle")) {
 
   .overlay {
     position:fixed;
-    inset:0;
+    top:clamp(70px,7vw,100px);
+    right:0;
+    bottom:0;
+    left:0;
     z-index:9998;
     display:flex;
     align-items:center;
@@ -53,7 +56,7 @@ if (!document.getElementById("cssStyle")) {
   .lightbox__frame {
     position:relative;
     width:min(94vw,1500px);
-    height:min(92vh,930px);
+    height:min(82vh,800px);
     display:flex;
     flex-direction:column;
     padding:clamp(20px,2.5vw,38px) clamp(18px,2.8vw,44px) clamp(70px,5vw,75px);
@@ -248,11 +251,12 @@ if (!document.getElementById("cssStyle")) {
   @media screen and (max-width:700px) {
     .overlay {
       padding:8px;
+      top:20px;
     }
 
     .lightbox__frame {
       width:100%;
-      height:96vh;
+      height:75vh;
       padding:15px 9px 12px;
     }
 
@@ -287,7 +291,7 @@ if (!document.getElementById("cssStyle")) {
 
   .overlay--animation .lightbox__frame {
     width:min(94vw,1500px);
-    height:min(92vh,930px);
+    height:min(83vh,800px);
     display:flex;
     flex-direction:column;
     padding:clamp(20px,2.5vw,38px) clamp(18px,2.8vw,44px) clamp(22px,2.5vw,36px);
@@ -560,7 +564,7 @@ if (!document.getElementById("cssStyle")) {
 
     .overlay--animation .lightbox__frame {
       width:100%;
-      height:98dvh;
+      height:75vh;
       padding:10px 7px 8px;
       overflow:hidden;
     }
@@ -575,7 +579,7 @@ if (!document.getElementById("cssStyle")) {
       min-height:0!important;
       display:grid!important;
       grid-template-columns:32px minmax(0,1fr) 32px!important;
-      grid-template-rows:1fr 9fr;
+      grid-template-rows:1fr 2fr!important;
       grid-template-areas:"left preview right" ". controls ."!important;
       gap:8px!important;
       align-items:stretch!important;
@@ -600,6 +604,9 @@ if (!document.getElementById("cssStyle")) {
       min-height:0;
       margin:0!important;
       padding:14px 12px;
+      display:grid!important;
+      grid-template-columns:1fr;
+      grid-template-rows:auto minmax(0,1fr) auto;
       gap:15px;
       overflow-y:auto;
       overflow-x:hidden;
@@ -641,7 +648,93 @@ if (!document.getElementById("cssStyle")) {
     .animation-control-label {
       display:none;
     }
+
+    .overlay--animation .animation-controls > .animation-control-group:first-child {
+  width:100%;
+  grid-column:1;
+  grid-row:1;
+}
+
+.overlay--animation .animation-controls > .animation-control-group:nth-child(2) {
+  width:100%;
+  min-width:0;
+  grid-column:1;
+  grid-row:2;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  align-items:center;
+  gap:12px;
+}
+
+.overlay--animation .animation-controls > .animation-control-group:nth-child(2) #colorPicker {
+  grid-column:1;
+  grid-row:1;
+  width:auto!important;
+  max-width:100%;
+  margin:0 auto;
+  justify-self:center;
+  align-self:center;
+}
+
+.overlay--animation .animation-controls > .animation-control-group:nth-child(2) .animation-color-value {
+  grid-column:2;
+  grid-row:1;
+  width:100%;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.overlay--animation .animation-color-swatch {
+  width:32px;
+  height:32px;
+  flex:0 0 32px;
+}
+
+.overlay--animation .colorValue {
+  width:min(100%,105px);
+  min-width:0;
+  height:40px;
+  padding:0 8px;
+  font-size:10px;
+}
+
+.overlay--animation .animation-reset-button {
+  width:100%;
+  min-height:46px;
+  grid-column:1;
+  grid-row:3;
+  margin:0;
+}
+
+.overlay--animation .animation-control-label {
+  display:none;
+}
   }
+
+@media screen and (max-width:380px) {
+  .overlay--animation .animation-controls > .animation-control-group:nth-child(2) {
+    gap:8px;
+  }
+
+  .overlay--animation .animation-color-swatch {
+    width:28px;
+    height:28px;
+    flex-basis:28px;
+  }
+
+  .overlay--animation .animation-color-value {
+    gap:6px;
+  }
+
+  .overlay--animation .colorValue {
+    width:88px;
+    padding:0 5px;
+    font-size:9px;
+  }
+}
 
 `;
 
@@ -2481,8 +2574,12 @@ function animData(currentData) {
     return;
   }
 
+  const colorPickerWidth = window.matchMedia("(max-width:600px)").matches
+    ? 105
+    : 140;
+
   colorPicker = new iro.ColorPicker("#colorPicker", {
-    width: 150,
+    width: colorPickerWidth,
 
     color: DEFAULT_COLOR,
 
