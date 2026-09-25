@@ -1,5 +1,7 @@
 // procedure.js
+
 let procedureAnimationFrame = null;
+
 let procedureObserver = null;
 
 /* =====================================================
@@ -17,286 +19,19 @@ export function initProcedure() {
     return;
   }
 
+  const progressLine = section.querySelector(".procedure__lineProgress");
+  const axis = section.querySelector(".procedure__axis");
+  const steps = section.querySelectorAll(".procedure__step");
+
+  if (!progressLine || !axis || steps.length === 0) {
+    console.warn("La structure HTML de la procédure est incomplète.");
+
+    return;
+  }
+
   section.dataset.procedureReady = "true";
 
-  createProcedureHTML(section);
   startProcedureAnimation(section);
-}
-
-/* =====================================================
-   HTML
-===================================================== */
-
-function createProcedureHTML(section) {
-  section.innerHTML = `
-
-    <div class="div-title__demo section-title">
-      <h2 class="h2__demo">VOTRE PROJET, ÉTAPE PAR ÉTAPE</h2>
-    </div>
-
-    <div class="procedure__inner">
-
-      <!-- ==================================================
-           TIMELINE
-      =================================================== -->
-
-      <div class="procedure__timeline">
-
-        <!-- ==================================================
-             AXE PRINCIPAL
-        =================================================== -->
-
-        <div class="procedure__axis">
-          <div class="procedure__lineBase"></div>
-          <div class="procedure__lineProgress"></div>
-          <div class="procedure__arrow"></div>
-        </div>
-
-        <!-- ==================================================
-             ÉTAPE 1
-        =================================================== -->
-
-        <article
-          class="procedure__step procedure__step--top"
-          data-step-progress="0.12"
-          style="--step-x: 12%;"
-        >
-
-          <div class="procedure__card">
-
-            <div class="procedure__cardHeader">
-
-              <div
-                class="procedure__icon"
-                aria-hidden="true"
-              >
-
-                <svg viewBox="0 0 24 24">
-
-                  <path
-                    d="M21 15a4 4 0 0 1-4 4H9l-5 3v-5a7 7 0 0 1-2-5c0-4 4-7 9-7s10 3 10 10Z"
-                  ></path>
-
-                  <path d="M8 12h.01"></path>
-                  <path d="M12 12h.01"></path>
-                  <path d="M16 12h.01"></path>
-
-                </svg>
-
-              </div>
-
-              <h3 class="procedure__cardTitle">
-                Demande de devis
-              </h3>
-
-            </div>
-
-            <p class="procedure__cardText">
-              Vous me partagez vos besoins via le formulaire ou par échange direct.
-            </p>
-
-          </div>
-
-          <span class="procedure__connector"></span>
-          <span class="procedure__marker"></span>
-
-        </article>
-
-        <!-- ==================================================
-             ÉTAPE 2
-        =================================================== -->
-
-        <article
-          class="procedure__step procedure__step--bottom"
-          data-step-progress="0.38"
-          style="--step-x: 38%;"
-        >
-
-          <div class="procedure__card">
-
-            <div class="procedure__cardHeader">
-
-              <div
-                class="procedure__icon"
-                aria-hidden="true"
-              >
-
-                <svg viewBox="0 0 24 24">
-
-                  <path d="M7 3h7l4 4v13H7Z"></path>
-                  <path d="M14 3v5h5"></path>
-                  <path d="m9.5 14 2 2 4-4"></path>
-
-                </svg>
-
-              </div>
-
-              <h3 class="procedure__cardTitle">
-                Proposition de devis
-              </h3>
-
-            </div>
-
-            <p class="procedure__cardText">
-              Je vous envoie une proposition claire, détaillée et adaptée à votre projet.
-            </p>
-
-          </div>
-
-          <span class="procedure__connector"></span>
-          <span class="procedure__marker"></span>
-
-        </article>
-
-        <!-- ==================================================
-             ÉTAPE 3
-        =================================================== -->
-
-        <article
-          class="procedure__step procedure__step--top"
-          data-step-progress="0.63"
-          style="--step-x: 63%;"
-        >
-
-          <div class="procedure__card">
-
-            <div class="procedure__cardHeader">
-
-              <div
-                class="procedure__icon"
-                aria-hidden="true"
-              >
-
-                <svg viewBox="0 0 24 24">
-
-                  <rect
-                    x="3"
-                    y="4"
-                    width="18"
-                    height="16"
-                    rx="2"
-                  ></rect>
-
-                  <path d="M3 8h18"></path>
-                  <path d="m7 15 3-3 2 2 2-2 3 3"></path>
-
-                </svg>
-
-              </div>
-
-              <h3 class="procedure__cardTitle">
-                Réalisation de la maquette
-              </h3>
-
-            </div>
-
-            <p class="procedure__cardText">
-              Je conçois votre maquette sur mesure. Deux modifications sont incluses pour ajuster chaque détail.
-            </p>
-
-          </div>
-
-          <span class="procedure__connector"></span>
-          <span class="procedure__marker"></span>
-
-        </article>
-
-        <!-- ==================================================
-             ÉTAPE 4
-        =================================================== -->
-
-        <article
-          class="procedure__step procedure__step--bottom"
-          data-step-progress="0.88"
-          style="--step-x: 88%;"
-        >
-
-          <div class="procedure__card">
-
-            <div class="procedure__cardHeader">
-
-              <div
-                class="procedure__icon"
-                aria-hidden="true"
-              >
-
-                <svg viewBox="0 0 24 24">
-
-                  <path
-                    d="M14 4c3-2 6-2 6-2s0 3-2 6l-5 5-4-4Z"
-                  ></path>
-
-                  <path d="m9 9-4 1-3 3 6 1"></path>
-                  <path d="m13 13 1 6 3-3 1-4"></path>
-                  <path d="M7 17c-2 0-3 1-3 3 2 0 3-1 3-3Z"></path>
-
-                </svg>
-
-              </div>
-
-              <h3 class="procedure__cardTitle">
-                Livraison du site
-              </h3>
-
-            </div>
-
-            <p class="procedure__cardText">
-              Votre site est livré, optimisé et prêt à être mis en ligne. Deux modifications restent offertes après livraison.
-            </p>
-
-          </div>
-
-          <span class="procedure__connector"></span>
-          <span class="procedure__marker"></span>
-
-        </article>
-
-        <!-- ==================================================
-             DÉLAI 1
-        =================================================== -->
-
-        <div
-          class="procedure__delay"
-          style="--delay-x: 25%;"
-        >
-          Sous 48 heures
-        </div>
-
-        <!-- ==================================================
-             DÉLAI 2
-        =================================================== -->
-
-        <div
-          class="procedure__delay"
-          style="--delay-x: 50.5%;"
-        >
-          Sous 3 jours
-        </div>
-
-        <!-- ==================================================
-             DÉLAI 3
-        =================================================== -->
-
-        <div
-          class="procedure__delay procedure__delay--large"
-          style="--delay-x: 75.5%;"
-        >
-
-          <span>
-            Temps variable selon le projet
-          </span>
-
-          <span class="procedure__delaySecondary">
-            Exemple : 1 semaine pour un site vitrine 3 pages
-          </span>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  `;
 }
 
 /* =====================================================
@@ -305,7 +40,9 @@ function createProcedureHTML(section) {
 
 function startProcedureAnimation(section) {
   const progressLine = section.querySelector(".procedure__lineProgress");
+
   const axis = section.querySelector(".procedure__axis");
+
   const steps = [...section.querySelectorAll(".procedure__step")];
 
   if (!progressLine || !axis || steps.length === 0) {
@@ -343,8 +80,11 @@ function startProcedureAnimation(section) {
   ===================================================== */
 
   const fullTravelDuration = 8000;
+
   const cardPauseDuration = 3000;
+
   const endPauseDuration = 900;
+
   const activeAfterMarker = 0.025;
 
   /* =====================================================
@@ -355,20 +95,25 @@ function startProcedureAnimation(section) {
     .map((step, index) => {
       return {
         progress: Number(step.dataset.stepProgress),
+
         stepIndex: index,
       };
     })
+
     .filter((checkpoint) => {
       return Number.isFinite(checkpoint.progress);
     })
+
     .sort((checkpointA, checkpointB) => {
       return checkpointA.progress - checkpointB.progress;
     });
 
   const targets = [
     ...checkpoints,
+
     {
       progress: 1,
+
       stepIndex: null,
     },
   ];
@@ -378,17 +123,27 @@ function startProcedureAnimation(section) {
   ===================================================== */
 
   let isSectionVisible = false;
+
   let isRunning = false;
+
   let hasStarted = false;
+
   let pausedAt = null;
 
   let progress = 0;
+
   let targetIndex = 0;
+
   let segmentStartProgress = 0;
+
   let segmentStartTime = null;
+
   let pauseStartTime = null;
+
   let endPauseStartTime = null;
+
   let pausedStepIndex = null;
+
   let animationState = "moving";
 
   /* =====================================================
@@ -447,15 +202,23 @@ function startProcedureAnimation(section) {
 
   function resetCycle(now = performance.now()) {
     progress = 0;
+
     targetIndex = 0;
+
     segmentStartProgress = 0;
+
     segmentStartTime = now;
+
     pauseStartTime = null;
+
     endPauseStartTime = null;
+
     pausedStepIndex = null;
+
     animationState = "moving";
 
     updateLine();
+
     updateStepStates();
   }
 
@@ -489,15 +252,21 @@ function startProcedureAnimation(section) {
     }
 
     const targetProgress = target.progress;
+
     const distance = targetProgress - segmentStartProgress;
+
     const segmentDuration = Math.max(300, fullTravelDuration * distance);
+
     const elapsed = now - segmentStartTime;
+
     const rawProgress = Math.min(elapsed / segmentDuration, 1);
+
     const easedProgress = easeInOutCubic(rawProgress);
 
     progress = segmentStartProgress + distance * easedProgress;
 
     updateLine();
+
     updateStepStates();
 
     if (rawProgress >= 1) {
@@ -507,7 +276,9 @@ function startProcedureAnimation(section) {
 
       if (target.stepIndex !== null) {
         pausedStepIndex = target.stepIndex;
+
         animationState = "card-pause";
+
         pauseStartTime = now;
 
         updateStepStates();
@@ -516,6 +287,7 @@ function startProcedureAnimation(section) {
       }
 
       animationState = "end-pause";
+
       endPauseStartTime = now;
     }
   }
@@ -526,6 +298,7 @@ function startProcedureAnimation(section) {
 
   function updateCardPause(now) {
     updateLine();
+
     updateStepStates();
 
     if (pauseStartTime === null) {
@@ -539,10 +312,15 @@ function startProcedureAnimation(section) {
     }
 
     segmentStartProgress = progress;
+
     segmentStartTime = now;
+
     pauseStartTime = null;
+
     pausedStepIndex = null;
+
     targetIndex += 1;
+
     animationState = "moving";
 
     updateStepStates();
@@ -556,6 +334,7 @@ function startProcedureAnimation(section) {
     progress = 1;
 
     updateLine();
+
     updateStepStates();
 
     if (endPauseStartTime === null) {
@@ -608,12 +387,14 @@ function startProcedureAnimation(section) {
 
     if (!hasStarted) {
       resetCycle(now);
+
       hasStarted = true;
     } else if (pausedAt !== null) {
       shiftAnimationTimes(now - pausedAt);
     }
 
     pausedAt = null;
+
     isRunning = true;
 
     if (procedureAnimationFrame === null) {
@@ -631,6 +412,7 @@ function startProcedureAnimation(section) {
     }
 
     isRunning = false;
+
     pausedAt = performance.now();
 
     if (procedureAnimationFrame !== null) {
@@ -649,6 +431,7 @@ function startProcedureAnimation(section) {
     () => {
       updateLine();
     },
+
     {
       passive: true,
     },
@@ -686,6 +469,7 @@ function startProcedureAnimation(section) {
         stop();
       }
     },
+
     {
       threshold: [0, 0.15],
     },
