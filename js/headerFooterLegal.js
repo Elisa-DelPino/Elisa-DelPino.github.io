@@ -1,33 +1,3 @@
-function initLegalPageNavigation() {
-  document.addEventListener("click", (event) => {
-    const link = event.target.closest("[data-legal-page]");
-
-    if (!link) {
-      return;
-    }
-
-    if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
-      return;
-    }
-
-    event.preventDefault();
-
-    const targetUrl = link.href;
-
-    if ("scrollRestoration" in history) {
-      history.scrollRestoration = "manual";
-    }
-
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-    window.scrollTo(0, 0);
-
-    requestAnimationFrame(() => {
-      window.location.assign(targetUrl);
-    });
-  });
-}
-
 const LEGAL_HEADER_HTML = `
   <div class="header__left">
     <div class="header__logo">
@@ -35,7 +5,6 @@ const LEGAL_HEADER_HTML = `
         <img src="./img/Logo.png" alt="Logo Elisa.dev">
       </a>
     </div>
-
     <div class="header__title">
       <span class="header__neon-title">
         CRÉATION SITE &amp; LOGICIEL
@@ -214,14 +183,14 @@ const LEGAL_FOOTER_HTML = `
 
         <ul class="site-footer__links">
           <li>
-            <a href="./faq.html" data-legal-page="faq.html">
+            <a href="./faq.html#top" data-legal-page="faq.html">
               FAQ
             </a>
           </li>
 
           <li>
             <a
-              href="./mentions-legales.html"
+              href="./mentions-legales.html#top"
               data-legal-page="mentions-legales.html"
             >
               Mentions légales
@@ -230,7 +199,7 @@ const LEGAL_FOOTER_HTML = `
 
           <li>
             <a
-              href="./conditions-generales.html"
+              href="./conditions-generales.html#top"
               data-legal-page="conditions-generales.html"
             >
               Conditions générales
@@ -239,7 +208,7 @@ const LEGAL_FOOTER_HTML = `
 
           <li>
             <a
-              href="./politique-confidentialite.html"
+              href="./politique-confidentialite.html#top"
               data-legal-page="politique-confidentialite.html"
             >
               Politique de confidentialité
@@ -533,14 +502,14 @@ const LEGAL_FOOTER_HTML = `
 
         <ul class="site-footer__mobile-links">
           <li>
-            <a href="./faq.html" data-legal-page="faq.html">
+            <a href="./faq.html#top" data-legal-page="faq.html">
               FAQ
             </a>
           </li>
 
           <li>
             <a
-              href="./mentions-legales.html"
+              href="./mentions-legales.html#top"
               data-legal-page="mentions-legales.html"
             >
               Mentions légales
@@ -549,7 +518,7 @@ const LEGAL_FOOTER_HTML = `
 
           <li>
             <a
-              href="./conditions-generales.html"
+              href="./conditions-generales.html#top"
               data-legal-page="conditions-generales.html"
             >
               Conditions générales
@@ -558,7 +527,7 @@ const LEGAL_FOOTER_HTML = `
 
           <li>
             <a
-              href="./politique-confidentialite.html"
+              href="./politique-confidentialite.html#top"
               data-legal-page="politique-confidentialite.html"
             >
               Politique de confidentialité
@@ -729,6 +698,24 @@ function initLegalHeaderSocial() {
     if (event.key === "Escape") {
       setReseauxPopupOpen(false);
     }
+  });
+}
+
+function initLegalPageNavigation() {
+  document.addEventListener("click", (event) => {
+    const link = event.target.closest("[data-legal-page]");
+
+    if (!link) {
+      return;
+    }
+
+    if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+      return;
+    }
+
+    event.preventDefault();
+
+    window.location.replace(link.href);
   });
 }
 
