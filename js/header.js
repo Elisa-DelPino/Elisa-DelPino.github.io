@@ -2,7 +2,6 @@
 
 const HEADER_HTML = `
   <div class="header__left">
-
     <div class="header__logo">
       <a
         href="#home"
@@ -21,15 +20,13 @@ const HEADER_HTML = `
         CRÉATION SITE & LOGICIEL
       </span>
     </div>
-
   </div>
 
   <nav class="header__nav">
     <ul class="header__nav__menu">
-
       <li class="header__nav__menu__link">
         <a
-          href="#home"
+          href="./index.html"
           data-section="home"
           class="active"
         >
@@ -74,7 +71,6 @@ const HEADER_HTML = `
       </li>
 
       <li class="header__nav__menu__reseaux">
-
         <button
           type="button"
           class="header__reseauxButton"
@@ -94,7 +90,6 @@ const HEADER_HTML = `
           class="header__reseauxPopup"
           aria-hidden="true"
         >
-
           <!-- INSTAGRAM -->
 
           <a
@@ -165,18 +160,20 @@ const HEADER_HTML = `
               ></path>
             </svg>
           </a>
-
         </div>
-
       </li>
-
     </ul>
   </nav>
 `;
 
 const MOBILE_SOCIAL_QUERY = window.matchMedia("(max-width:600px)");
+
 const FINE_POINTER_QUERY = window.matchMedia(
   "(hover:hover) and (pointer:fine)",
+);
+
+const REDUCED_MOTION_QUERY = window.matchMedia(
+  "(prefers-reduced-motion:reduce)",
 );
 
 export function loadHeaderScriptDirect() {
@@ -209,11 +206,14 @@ export function loadHeaderScriptDirect() {
   const reseauxMenu = header.querySelector(".header__nav__menu__reseaux");
   const reseauxButton = header.querySelector(".header__reseauxButton");
   const reseauxPopup = header.querySelector(".header__reseauxPopup");
+
   const reseauxPopupLinks = [
     ...header.querySelectorAll(".header__reseauxPopupLink"),
   ];
 
   let scrollAnimationFrameId = null;
+  let navigationAnimationFrameId = null;
+  let navigationRequestId = 0;
   let desktopPopupClickedOpen = false;
 
   // ---------------------------------------------------------------------------
@@ -423,36 +423,130 @@ export function loadHeaderScriptDirect() {
   // SCROLL VERS LES SECTIONS
   // ---------------------------------------------------------------------------
 
-  function scrollToSection(sectionName) {
+  function getSectionTargetPosition(sectionName) {
     if (sectionName === "home") {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-
-      setActiveLink("home");
-
-      return;
+      return 0;
     }
 
     const target = getSectionNavigationTarget(sectionName);
 
     if (!target) {
+      return null;
+    }
+
+    const headerHeight = header.getBoundingClientRect().height;
+
+    const targetPosition =
+      target.getBoundingClientRect().top + window.scrollY - headerHeight - 12;
+
+    return Math.max(0, Math.round(targetPosition));
+  }
+
+  function cancelNavigationScroll() {
+    navigationRequestId += 1;
+
+    if (navigationAnimationFrameId !== null) {
+      cancelAnimationFrame(navigationAnimationFrameId);
+      navigationAnimationFrameId = null;
+    }
+  }
+
+  function scrollToSection(sectionName) {
+    const initialTargetPosition = getSectionTargetPosition(sectionName);
+
+    if (initialTargetPosition === null) {
       console.warn(`La section #${sectionName} est introuvable.`);
 
       return;
     }
 
-    const headerHeight = header.offsetHeight;
-    const targetPosition =
-      target.getBoundingClientRect().top + window.scrollY - headerHeight - 12;
+    cancelNavigationScroll();
 
-    window.scrollTo({
-      top: Math.max(0, targetPosition),
-      behavior: "smooth",
-    });
+    const requestId = navigationRequestId;
+    const startPosition = window.scrollY;
+    const initialDistance = Math.abs(initialTargetPosition - startPosition);
 
     setActiveLink(sectionName);
+
+    if (REDUCED_MOTION_QUERY.matches || initialDistance < 2) {
+      window.scrollTo({
+        top: initialTargetPosition,
+        left: 0,
+        behavior: "auto",
+      });
+
+      return;
+    }
+
+    const duration = Math.min(800, Math.max(350, initialDistance * 0.35));
+
+    const startTime = performance.now();
+
+    function animateNavigationScroll(currentTime) {
+      if (requestId !== navigationRequestId) {
+        return;
+      }
+
+      const currentTargetPosition = getSectionTargetPosition(sectionName);
+
+      if (currentTargetPosition === null) {
+        navigationAnimationFrameId = null;
+
+        return;
+      }
+
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(1, elapsed / duration);
+
+      const easedProgress = 1 - Math.pow(1 - progress, 4);
+
+      const nextPosition =
+        startPosition + (currentTargetPosition - startPosition) * easedProgress;
+
+      window.scrollTo({
+        top: nextPosition,
+        left: 0,
+        behavior: "auto",
+      });
+
+      if (progress < 1) {
+        navigationAnimationFrameId = requestAnimationFrame(
+          animateNavigationScroll,
+        );
+
+        return;
+      }
+
+      navigationAnimationFrameId = null;
+
+      requestAnimationFrame(() => {
+        if (requestId !== navigationRequestId) {
+          return;
+        }
+
+        requestAnimationFrame(() => {
+          if (requestId !== navigationRequestId) {
+            return;
+          }
+
+          const finalTargetPosition = getSectionTargetPosition(sectionName);
+
+          if (finalTargetPosition === null) {
+            return;
+          }
+
+          window.scrollTo({
+            top: finalTargetPosition,
+            left: 0,
+            behavior: "auto",
+          });
+
+          setActiveLink(sectionName);
+        });
+      });
+    }
+
+    navigationAnimationFrameId = requestAnimationFrame(animateNavigationScroll);
   }
 
   function handleNavigationClick(event) {
@@ -475,6 +569,34 @@ export function loadHeaderScriptDirect() {
       scrollToSection("home");
     });
   }
+
+  // ---------------------------------------------------------------------------
+  // ANNULATION DU SCROLL AUTOMATIQUE EN CAS DE SCROLL MANUEL
+  // ---------------------------------------------------------------------------
+
+  window.addEventListener(
+    "wheel",
+    () => {
+      if (navigationAnimationFrameId !== null) {
+        cancelNavigationScroll();
+      }
+    },
+    {
+      passive: true,
+    },
+  );
+
+  window.addEventListener(
+    "touchstart",
+    () => {
+      if (navigationAnimationFrameId !== null) {
+        cancelNavigationScroll();
+      }
+    },
+    {
+      passive: true,
+    },
+  );
 
   // ---------------------------------------------------------------------------
   // DÉTECTION DE LA SECTION ACTIVE
@@ -502,6 +624,7 @@ export function loadHeaderScriptDirect() {
   function updateActiveLinkOnScroll() {
     const scrollPosition = window.scrollY;
     const headerHeight = header.offsetHeight;
+
     const activationLine =
       headerHeight + Math.min(80, window.innerHeight * 0.08);
 

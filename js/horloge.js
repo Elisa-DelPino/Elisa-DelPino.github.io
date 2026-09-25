@@ -1,9 +1,13 @@
 // horloge.js
 
+import * as THREE from "https://esm.sh/three@0.180.0";
+
 let horlogeAnimationFrameId = null;
 let horlogeResizeObserver = null;
 let horlogeRenderer = null;
 let horlogeScene = null;
+let horlogeAnimationLoop = null;
+let horlogeAnimationRunning = false;
 
 export function initHorloge() {
   const container = document.getElementById("horloge-container");
@@ -13,12 +17,9 @@ export function initHorloge() {
     return;
   }
 
-  if (typeof THREE === "undefined") {
-    console.error("Three.js n'est pas chargé.");
-    return;
-  }
-
   if (container.querySelector("canvas")) {
+    startHorloge();
+
     return;
   }
 
@@ -57,7 +58,7 @@ export function initHorloge() {
   const lightGray = 0xe8e8e8;
   const mediumGray = 0xa8a8a8;
   const darkGray = 0x2a2a2a;
-  const blueGray = 0x070b15;
+  const blueGray = 0x000000;
 
   // ------------------------------------------------ FOND DE L'HORLOGE
 
@@ -67,8 +68,8 @@ export function initHorloge() {
     color: blueGray,
     emissive: darkGray,
     emissiveIntensity: 0.35,
-    transparent: true,
-    opacity: 0.24,
+    transparent: false,
+    opacity: 1,
     shininess: 80,
     side: THREE.DoubleSide,
   });
@@ -375,29 +376,61 @@ export function initHorloge() {
   // ------------------------------------------------ ANIMATION
 
   function animate() {
-    horlogeAnimationFrameId = requestAnimationFrame(animate);
+    if (!horlogeAnimationRunning || !horlogeRenderer || !horlogeScene) {
+      horlogeAnimationFrameId = null;
+
+      return;
+    }
 
     updateClock();
 
     horlogeRenderer.render(scene, camera);
+
+    horlogeAnimationFrameId = requestAnimationFrame(animate);
   }
+
+  horlogeAnimationLoop = animate;
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       resizeHorloge();
       updateClock();
-      animate();
+
+      if (horlogeRenderer && horlogeScene) {
+        horlogeRenderer.render(scene, camera);
+      }
     });
   });
+}
+
+export function startHorloge() {
+  if (
+    horlogeAnimationRunning ||
+    !horlogeRenderer ||
+    !horlogeScene ||
+    typeof horlogeAnimationLoop !== "function"
+  ) {
+    return;
+  }
+
+  horlogeAnimationRunning = true;
+
+  horlogeAnimationFrameId = requestAnimationFrame(horlogeAnimationLoop);
+}
+
+export function stopHorloge() {
+  horlogeAnimationRunning = false;
+
+  if (horlogeAnimationFrameId !== null) {
+    cancelAnimationFrame(horlogeAnimationFrameId);
+    horlogeAnimationFrameId = null;
+  }
 }
 
 // ------------------------------------------------ DESTRUCTION
 
 export function destroyHorloge() {
-  if (horlogeAnimationFrameId !== null) {
-    cancelAnimationFrame(horlogeAnimationFrameId);
-    horlogeAnimationFrameId = null;
-  }
+  stopHorloge();
 
   if (horlogeResizeObserver) {
     horlogeResizeObserver.disconnect();
@@ -415,4 +448,5 @@ export function destroyHorloge() {
   }
 
   horlogeScene = null;
+  horlogeAnimationLoop = null;
 }

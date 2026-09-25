@@ -1,4 +1,5 @@
 let carouselIsSliding = false;
+let carouselVideoPlaybackEnabled = false;
 const managedCarouselVideos = new Set();
 
 let videoObserver = null;
@@ -10,6 +11,20 @@ export function setCarouselSliding(isSliding) {
 
 export function isCarouselSliding() {
   return carouselIsSliding;
+}
+
+export function setCarouselVideoPlaybackEnabled(isEnabled) {
+  carouselVideoPlaybackEnabled = Boolean(isEnabled);
+
+  if (!carouselVideoPlaybackEnabled) {
+    pauseAllCarouselVideos();
+
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    updateVisibleCarouselVideos();
+  });
 }
 
 /* =========================================================
@@ -28,20 +43,42 @@ function pauseVideo(video) {
   }
 }
 
+function ensureVideoSource(video) {
+  if (!video || video.getAttribute("src")) {
+    return;
+  }
+
+  const source = video.dataset.src;
+
+  if (!source) {
+    return;
+  }
+
+  video.src = source;
+
+  try {
+    video.load();
+  } catch {}
+}
+
 function playVideo(video) {
   if (!video) {
     return;
   }
 
   if (
+    !carouselVideoPlaybackEnabled ||
     document.hidden ||
     document.querySelector(".overlay") ||
-    carouselIsSliding
+    carouselIsSliding ||
+    !isVideoVisible(video)
   ) {
     pauseVideo(video);
 
     return;
   }
+
+  ensureVideoSource(video);
 
   const playPromise = video.play();
 
@@ -51,7 +88,17 @@ function playVideo(video) {
 }
 
 function isVideoVisible(video) {
-  if (!video) {
+  if (!video || !video.isConnected) {
+    return false;
+  }
+
+  const styles = window.getComputedStyle(video);
+
+  if (
+    styles.display === "none" ||
+    styles.visibility === "hidden" ||
+    Number(styles.opacity) === 0
+  ) {
     return false;
   }
 
@@ -61,15 +108,20 @@ function isVideoVisible(video) {
     return false;
   }
 
-  const visibleWidth =
-    Math.min(rect.right, window.innerWidth) - Math.max(rect.left, 0);
-
-  const visibleHeight =
-    Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
-
-  return (
-    visibleWidth >= rect.width * 0.5 && visibleHeight >= rect.height * 0.35
+  const visibleWidth = Math.max(
+    0,
+    Math.min(rect.right, window.innerWidth) - Math.max(rect.left, 0),
   );
+
+  const visibleHeight = Math.max(
+    0,
+    Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0),
+  );
+
+  const visibleArea = visibleWidth * visibleHeight;
+  const totalArea = rect.width * rect.height;
+
+  return totalArea > 0 && visibleArea / totalArea >= 0.6;
 }
 
 function createVideoObserver() {
@@ -83,11 +135,13 @@ function createVideoObserver() {
         const video = entry.target;
 
         if (
+          carouselVideoPlaybackEnabled &&
           entry.isIntersecting &&
-          entry.intersectionRatio >= 0.35 &&
+          entry.intersectionRatio >= 0.6 &&
           !document.hidden &&
           !document.querySelector(".overlay") &&
-          !carouselIsSliding
+          !carouselIsSliding &&
+          isVideoVisible(video)
         ) {
           playVideo(video);
         } else {
@@ -96,17 +150,21 @@ function createVideoObserver() {
       });
     },
     {
-      threshold: [0, 0.35, 0.5, 0.75],
-      rootMargin: "40px 0px",
+      threshold: [0, 0.25, 0.6, 0.8, 1],
+      rootMargin: "0px",
     },
   );
 
   return videoObserver;
 }
 
-export function registerCarouselVideo(video) {
+export function registerCarouselVideo(video, source = "") {
   if (!video) {
     return;
+  }
+
+  if (source) {
+    video.dataset.src = source;
   }
 
   managedCarouselVideos.add(video);
@@ -136,6 +194,7 @@ export function pauseAllCarouselVideos() {
 
 export function updateVisibleCarouselVideos() {
   if (
+    !carouselVideoPlaybackEnabled ||
     document.hidden ||
     document.querySelector(".overlay") ||
     carouselIsSliding
@@ -156,6 +215,7 @@ export function updateVisibleCarouselVideos() {
 
 export function restartVisibleCarouselVideosFromStart() {
   if (
+    !carouselVideoPlaybackEnabled ||
     document.hidden ||
     document.querySelector(".overlay") ||
     carouselIsSliding
@@ -172,8 +232,11 @@ export function restartVisibleCarouselVideosFromStart() {
       return;
     }
 
+    ensureVideoSource(video);
+
     const restartAndPlay = () => {
       if (
+        !carouselVideoPlaybackEnabled ||
         document.hidden ||
         document.querySelector(".overlay") ||
         carouselIsSliding ||
@@ -210,6 +273,7 @@ export function cleanupVideosInside(element) {
     unregisterCarouselVideo(video);
 
     video.removeAttribute("src");
+    delete video.dataset.src;
 
     try {
       video.load();

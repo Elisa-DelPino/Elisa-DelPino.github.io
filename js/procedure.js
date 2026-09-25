@@ -19,691 +19,8 @@ export function initProcedure() {
 
   section.dataset.procedureReady = "true";
 
-  injectProcedureCSS();
   createProcedureHTML(section);
   startProcedureAnimation(section);
-}
-
-/* =====================================================
-   CSS
-===================================================== */
-
-function injectProcedureCSS() {
-  if (document.getElementById("procedureStyle")) {
-    return;
-  }
-
-  const style = document.createElement("style");
-
-  style.id = "procedureStyle";
-
-  style.textContent = `
-    /* =====================================================
-       SECTION COMPLÈTE
-    ===================================================== */
-
-    .procedure {
-      position:relative;
-      width:var(--w-container-size);
-      height:auto;
-      margin:0 auto var(--section-gap);
-      margin-bottom:calc(var(--section-gap) * 0.3);
-      padding:clamp(55px,4vw,65px) clamp(18px,3vw,38px) clamp(30px,3vw,45px);
-      background:black;
-      overflow:visible;
-    }
-
-    .procedure__inner {
-      width:100%;
-      height:auto;
-      margin:0 auto;
-    }
-
-    /* =====================================================
-       TIMELINE
-    ===================================================== */
-
-    .procedure__timeline {
-      position:relative;
-      width:100%;
-      height:clamp(500px,48vw,600px);
-      overflow:visible;
-    }
-
-    /* =====================================================
-       AXE HORIZONTAL
-    ===================================================== */
-
-    .procedure__axis {
-      position:absolute;
-      top:50%;
-      left:2%;
-      width:96%;
-      height:3px;
-      transform:translateY(-50%);
-      z-index:2;
-    }
-
-    /* =====================================================
-       LIGNE BLANCHE DE BASE
-    ===================================================== */
-
-    .procedure__lineBase {
-      position:absolute;
-      inset:0;
-      background:rgba(79,73,73,.49);
-      box-shadow:0 0 4px rgba(255,255,255,.18);
-    }
-
-    /* =====================================================
-       LIGNE GRISE
-    ===================================================== */
-
-    .procedure__lineProgress {
-      position:absolute;
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
-      background:#b8b8b8;
-      transform:scaleX(0);
-      transform-origin:left center;
-      box-shadow:0 0 4px rgba(242,242,242,1),0 0 10px rgba(184,184,184,.8),0 0 20px rgba(184,184,184,.35);
-      will-change:transform;
-    }
-
-    /* =====================================================
-       POINTE DE LA FLÈCHE
-    ===================================================== */
-
-    .procedure__arrow {
-      position:absolute;
-      top:50%;
-      right:-2px;
-      width:18px;
-      height:18px;
-      border-top:3px solid rgba(255,255,255,.82);
-      border-right:3px solid rgba(255,255,255,.82);
-      transform:translateY(-50%) rotate(45deg);
-      transition:border-color 250ms ease,filter 250ms ease;
-    }
-
-    .procedure__axis.is-complete .procedure__arrow {
-      border-color:#f2f2f2;
-      filter:drop-shadow(0 0 7px rgba(184,184,184,.95));
-    }
-
-    /* =====================================================
-       ÉTAPES
-    ===================================================== */
-
-    .procedure__step {
-      position:absolute;
-      left:var(--step-x);
-      width:clamp(215px,20vw,285px);
-      transform:translateX(-50%) scale(1);
-      z-index:6;
-      transition:transform 450ms cubic-bezier(.22,1,.36,1);
-    }
-
-    /* =====================================================
-       CARTES DU HAUT
-    ===================================================== */
-
-    .procedure__step--top {
-      bottom:calc(50% + clamp(42px,4vw,58px));
-    }
-
-    /* =====================================================
-       CARTES DU BAS
-    ===================================================== */
-
-    .procedure__step--bottom {
-      top:calc(50% + clamp(42px,4vw,58px));
-    }
-
-    /* =====================================================
-       CARTE
-    ===================================================== */
-
-    .procedure__card {
-      position:relative;
-      width:100%;
-      height:clamp(150px,15vw,200px);
-      padding:clamp(17px,1.8vw,25px);
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      background:radial-gradient(circle at 50% 0%,rgba(255,255,255,.035),transparent 45%),#050507;
-      border:1px solid rgba(255,255,255,.55);
-      border-radius:clamp(6px,.7vw,10px);
-      box-shadow:0 0 6px rgba(255,255,255,.05),inset 0 0 18px rgba(255,255,255,.015);
-      overflow:hidden;
-      transition:border-color 400ms ease,box-shadow 400ms ease,background 400ms ease;
-    }
-
-    /* =====================================================
-       REFLET DE LA CARTE
-    ===================================================== */
-
-    .procedure__card::before {
-      content:"";
-      position:absolute;
-      top:-45%;
-      left:-70%;
-      width:65%;
-      height:190%;
-      background:linear-gradient(105deg,transparent,rgba(242,242,242,.16),transparent);
-      transform:skewX(-18deg);
-      opacity:0;
-      pointer-events:none;
-    }
-
-    /* =====================================================
-       CARTE ACTIVE
-    ===================================================== */
-
-    .procedure__step.is-active {
-      transform:translateX(-50%) scale(1.045);
-    }
-
-    .procedure__step.is-active .procedure__card {
-      border-color:rgba(242,242,242,1);
-      background:radial-gradient(circle at 50% 0%,rgba(184,184,184,.15),transparent 50%),#07070a;
-      box-shadow:0 0 6px rgba(242,242,242,.95),0 0 18px rgba(184,184,184,.42),0 0 34px rgba(184,184,184,.13),inset 0 0 23px rgba(184,184,184,.09);
-    }
-
-    .procedure__step.is-active .procedure__card::before {
-      opacity:1;
-      animation:procedureCardSweep 700ms ease forwards;
-    }
-
-    @keyframes procedureCardSweep {
-      from {
-        left:-70%;
-      }
-
-      to {
-        left:135%;
-      }
-    }
-
-    /* =====================================================
-       SVG + TITRE
-    ===================================================== */
-
-    .procedure__cardHeader {
-      width:100%;
-      margin-bottom:clamp(13px,1.5vw,19px);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:clamp(10px,1.2vw,15px);
-    }
-
-    /* =====================================================
-       ICÔNE
-    ===================================================== */
-
-    .procedure__icon {
-      width:clamp(38px,3.8vw,50px);
-      height:clamp(38px,3.8vw,50px);
-      flex-shrink:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      border:1px solid rgba(184,184,184,.7);
-      border-radius:50%;
-      color:rgba(255,255,255,.88);
-      box-shadow:0 0 7px rgba(184,184,184,.18);
-      transition:color 350ms ease,border-color 350ms ease,box-shadow 350ms ease;
-    }
-
-    .procedure__step.is-active .procedure__icon {
-      color:#f2f2f2;
-      border-color:#f2f2f2;
-      box-shadow:0 0 7px rgba(242,242,242,.8),0 0 15px rgba(184,184,184,.35);
-    }
-
-    .procedure__icon svg {
-      width:52%;
-      height:52%;
-      fill:none;
-      stroke:currentColor;
-      stroke-width:1.7;
-      stroke-linecap:round;
-      stroke-linejoin:round;
-    }
-
-    /* =====================================================
-       TITRE DES CARTES
-    ===================================================== */
-
-    .procedure__cardTitle {
-      min-width:0;
-      margin:0;
-      color:rgba(255,255,255,.94);
-      font-family:"Montserrat",Arial,sans-serif;
-      font-size:clamp(13px,1.4vw,19px);
-      font-weight:650;
-      line-height:1.2;
-      text-align:left;
-    }
-
-    /* =====================================================
-       DESCRIPTION
-    ===================================================== */
-
-    .procedure__cardText {
-      width:100%;
-      margin:0;
-      color:rgba(255,255,255,.67);
-      font-family:"Montserrat",Arial,sans-serif;
-      font-size:clamp(8px,.95vw,12px);
-      font-weight:400;
-      line-height:1.55;
-      text-align:left;
-    }
-
-    /* =====================================================
-       CONNECTEURS
-    ===================================================== */
-
-    .procedure__connector {
-      position:absolute;
-      left:50%;
-      width:1px;
-      height:clamp(42px,4vw,58px);
-      background:rgba(255,255,255,.48);
-      transform:translateX(-50%);
-      transition:background 300ms ease,box-shadow 300ms ease;
-    }
-
-    .procedure__step--top .procedure__connector {
-      top:100%;
-    }
-
-    .procedure__step--bottom .procedure__connector {
-      bottom:100%;
-    }
-
-    /* =====================================================
-       POINT DE CHAQUE ÉTAPE
-    ===================================================== */
-
-    .procedure__marker {
-      position:absolute;
-      left:50%;
-      width:14px;
-      height:14px;
-      border:2px solid rgba(255,255,255,.84);
-      border-radius:50%;
-      background:black;
-      transform:translateX(-50%);
-      transition:border-color 300ms ease,box-shadow 300ms ease,transform 300ms ease;
-    }
-
-    .procedure__step--top .procedure__marker {
-      top:calc(100% + clamp(42px,4vw,58px) - 7px);
-    }
-
-    .procedure__step--bottom .procedure__marker {
-      bottom:calc(100% + clamp(42px,4vw,58px) - 7px);
-    }
-
-    /* =====================================================
-       ÉTAT ACTIF DU CONNECTEUR
-    ===================================================== */
-
-    .procedure__step.is-active .procedure__connector {
-      background:#b8b8b8;
-      box-shadow:0 0 8px rgba(184,184,184,.75);
-    }
-
-    .procedure__step.is-active .procedure__marker {
-      border-color:#f2f2f2;
-      transform:translateX(-50%) scale(1.15);
-      box-shadow:0 0 5px rgba(242,242,242,1),0 0 14px rgba(184,184,184,.75);
-    }
-
-    /* =====================================================
-       DÉLAIS
-    ===================================================== */
-
-    .procedure__delay {
-      position:absolute;
-      top:50%;
-      left:var(--delay-x);
-      transform:translate(-50%,-50%);
-      z-index:8;
-      padding:7px 12px;
-      background:black;
-      border:1px solid rgba(255,255,255,.32);
-      border-radius:999px;
-      color:rgba(255,255,255,.8);
-      font-family:"Montserrat",Arial,sans-serif;
-      font-size:clamp(7px,.82vw,11px);
-      font-weight:550;
-      white-space:nowrap;
-      box-shadow:0 0 6px rgba(0,0,0,.9);
-    }
-
-    .procedure__delay--large {
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:3px;
-      padding:7px 13px;
-    }
-
-    .procedure__delaySecondary {
-      color:rgba(255,255,255,.5);
-      font-size:clamp(6px,.7vw,9px);
-      font-weight:400;
-    }
-
-    /* =====================================================
-       HOVER MANUEL
-    ===================================================== */
-
-    @media (hover:hover) and (pointer:fine) {
-      .procedure__step:hover {
-        transform:translateX(-50%) scale(1.045);
-      }
-
-      .procedure__step:hover .procedure__card {
-        border-color:rgba(242,242,242,1);
-        box-shadow:0 0 6px rgba(242,242,242,.9),0 0 18px rgba(184,184,184,.38),inset 0 0 22px rgba(184,184,184,.08);
-      }
-    }
-
-    /* =====================================================
-       VERSION VERTICALE
-       1000PX ET MOINS
-    ===================================================== */
-
-    @media screen and (max-width:1000px) {
-      .procedure {
-        width:var(--w-container-size);
-        height:auto;
-        padding:clamp(55px,7vw,65px) clamp(12px,3vw,25px) clamp(40px,7vw,60px);
-        overflow:visible;
-      }
-
-      .procedure__inner {
-        width:100%;
-        height:auto;
-        margin:0 auto;
-      }
-
-      /* =====================================================
-         TIMELINE VERTICALE
-      ===================================================== */
-
-      .procedure__timeline {
-        position:relative;
-        width:100%;
-        height:clamp(950px,135vw,1250px);
-        overflow:visible;
-      }
-
-      /* =====================================================
-         AXE VERTICAL
-      ===================================================== */
-
-      .procedure__axis {
-        top:2%;
-        left:50%;
-        width:3px;
-        height:96%;
-        transform:translateX(-50%);
-      }
-
-      .procedure__lineBase {
-        width:100%;
-        height:100%;
-      }
-
-      .procedure__lineProgress {
-        top:0;
-        left:0;
-        width:100%;
-        height:100%;
-        transform:scaleY(0);
-        transform-origin:center top;
-      }
-
-      /* =====================================================
-         FLÈCHE VERS LE BAS
-      ===================================================== */
-
-      .procedure__arrow {
-        top:auto;
-        right:auto;
-        bottom:-2px;
-        left:50%;
-        width:18px;
-        height:18px;
-        border-top:none;
-        border-right:3px solid rgba(255,255,255,.82);
-        border-bottom:3px solid rgba(255,255,255,.82);
-        transform:translateX(-50%) rotate(45deg);
-      }
-
-      .procedure__axis.is-complete .procedure__arrow {
-        border-right-color:#f2f2f2;
-        border-bottom-color:#f2f2f2;
-      }
-
-      /* =====================================================
-         CARTES
-      ===================================================== */
-
-      .procedure__step {
-        top:var(--step-x);
-        bottom:auto;
-        width:calc(50% - clamp(30px,5vw,55px));
-        transform:translateY(-50%) scale(1);
-      }
-
-      /* =====================================================
-         ANCIENNES CARTES DU HAUT
-         → GAUCHE
-      ===================================================== */
-
-      .procedure__step--top {
-        top:var(--step-x);
-        right:auto;
-        bottom:auto;
-        left:0;
-      }
-
-      /* =====================================================
-         ANCIENNES CARTES DU BAS
-         → DROITE
-      ===================================================== */
-
-      .procedure__step--bottom {
-        top:var(--step-x);
-        right:0;
-        bottom:auto;
-        left:auto;
-      }
-
-      /* =====================================================
-         CARTE ACTIVE
-      ===================================================== */
-
-      .procedure__step.is-active {
-        transform:translateY(-50%) scale(1.045);
-      }
-
-      /* =====================================================
-         HOVER VERSION VERTICALE
-      ===================================================== */
-
-      @media (hover:hover) and (pointer:fine) {
-        .procedure__step:hover {
-          transform:translateY(-50%) scale(1.045);
-        }
-      }
-
-      /* =====================================================
-         TAILLE DES CARTES
-      ===================================================== */
-
-      .procedure__card {
-        width:100%;
-        height:clamp(170px,25vw,220px);
-        padding:clamp(13px,2.5vw,22px);
-      }
-
-      /* =====================================================
-         SVG + TITRE
-      ===================================================== */
-
-      .procedure__cardHeader {
-        gap:clamp(7px,1.8vw,13px);
-        margin-bottom:clamp(9px,2vw,15px);
-      }
-
-      .procedure__icon {
-        width:clamp(30px,5vw,44px);
-        height:clamp(30px,5vw,44px);
-      }
-
-      .procedure__cardTitle {
-        font-size:clamp(10px,2.3vw,16px);
-      }
-
-      .procedure__cardText {
-        font-size:clamp(7px,1.8vw,11px);
-        line-height:1.45;
-      }
-
-      /* =====================================================
-         CONNECTEURS HORIZONTAUX
-      ===================================================== */
-
-      .procedure__connector {
-        top:50%;
-        width:clamp(30px,5vw,55px);
-        height:1px;
-        transform:translateY(-50%);
-      }
-
-      /* =====================================================
-         CARTE GAUCHE
-         TRAIT VERS LA DROITE
-      ===================================================== */
-
-      .procedure__step--top .procedure__connector {
-        top:50%;
-        right:auto;
-        bottom:auto;
-        left:100%;
-      }
-
-      /* =====================================================
-         CARTE DROITE
-         TRAIT VERS LA GAUCHE
-      ===================================================== */
-
-      .procedure__step--bottom .procedure__connector {
-        top:50%;
-        right:100%;
-        bottom:auto;
-        left:auto;
-      }
-
-      /* =====================================================
-         BILLES FIXES
-      ===================================================== */
-
-      .procedure__marker {
-        top:50%;
-        bottom:auto;
-        width:14px;
-        height:14px;
-      }
-
-      /* =====================================================
-         BILLE CARTE GAUCHE
-      ===================================================== */
-
-      .procedure__step--top .procedure__marker {
-        top:50%;
-        right:auto;
-        bottom:auto;
-        left:calc(100% + clamp(30px,5vw,55px));
-        transform:translate(-50%,-50%);
-      }
-
-      /* =====================================================
-         BILLE CARTE DROITE
-      ===================================================== */
-
-      .procedure__step--bottom .procedure__marker {
-        top:50%;
-        bottom:auto;
-        left:auto;
-        right:calc(100% + clamp(30px,5vw,55px));
-        transform:translate(50%,-50%);
-      }
-
-      /* =====================================================
-         BILLE ACTIVE GAUCHE
-      ===================================================== */
-
-      .procedure__step--top.is-active .procedure__marker {
-        transform:translate(-50%,-50%) scale(1.15);
-      }
-
-      /* =====================================================
-         BILLE ACTIVE DROITE
-      ===================================================== */
-
-      .procedure__step--bottom.is-active .procedure__marker {
-        transform:translate(50%,-50%) scale(1.15);
-      }
-
-      /* =====================================================
-         DÉLAIS
-      ===================================================== */
-
-      .procedure__delay {
-        top:var(--delay-x);
-        left:50%;
-        transform:translate(-50%,-50%);
-        padding:6px clamp(7px,1.5vw,11px);
-        font-size:clamp(6px,1.6vw,10px);
-      }
-
-      .procedure__delay--large {
-        width:max-content;
-        max-width:clamp(160px,30vw,250px);
-        text-align:center;
-      }
-
-      .procedure__delaySecondary {
-        font-size:clamp(5px,1.3vw,8px);
-        white-space:normal;
-        text-align:center;
-      }
-    }
-
-    /* =====================================================
-       RÉDUCTION DES ANIMATIONS
-    ===================================================== */
-
-    @media (prefers-reduced-motion:reduce) {
-      .procedure__step {
-        transition:none;
-      }
-    }
-  `;
-
-  document.head.appendChild(style);
 }
 
 /* =====================================================
@@ -714,7 +31,7 @@ function createProcedureHTML(section) {
   section.innerHTML = `
 
     <div class="div-title__demo section-title">
-      <h1 class="h1__demo">VOTRE PROJET, ÉTAPE PAR ÉTAPE</h1>
+      <h2 class="h2__demo">VOTRE PROJET, ÉTAPE PAR ÉTAPE</h2>
     </div>
 
     <div class="procedure__inner">
@@ -1060,7 +377,11 @@ function startProcedureAnimation(section) {
      ÉTAT DE L'ANIMATION
   ===================================================== */
 
-  let isVisible = false;
+  let isSectionVisible = false;
+  let isRunning = false;
+  let hasStarted = false;
+  let pausedAt = null;
+
   let progress = 0;
   let targetIndex = 0;
   let segmentStartProgress = 0;
@@ -1136,6 +457,24 @@ function startProcedureAnimation(section) {
 
     updateLine();
     updateStepStates();
+  }
+
+  /* =====================================================
+     DÉCALAGE DES TEMPS APRÈS UNE PAUSE
+  ===================================================== */
+
+  function shiftAnimationTimes(pausedDuration) {
+    if (segmentStartTime !== null) {
+      segmentStartTime += pausedDuration;
+    }
+
+    if (pauseStartTime !== null) {
+      pauseStartTime += pausedDuration;
+    }
+
+    if (endPauseStartTime !== null) {
+      endPauseStartTime += pausedDuration;
+    }
   }
 
   /* =====================================================
@@ -1235,7 +574,7 @@ function startProcedureAnimation(section) {
   ===================================================== */
 
   function render(now) {
-    if (!isVisible) {
+    if (!isRunning) {
       procedureAnimationFrame = null;
 
       return;
@@ -1261,13 +600,21 @@ function startProcedureAnimation(section) {
   ===================================================== */
 
   function start() {
-    if (isVisible) {
+    if (!isSectionVisible || document.hidden || isRunning) {
       return;
     }
 
-    isVisible = true;
+    const now = performance.now();
 
-    resetCycle(performance.now());
+    if (!hasStarted) {
+      resetCycle(now);
+      hasStarted = true;
+    } else if (pausedAt !== null) {
+      shiftAnimationTimes(now - pausedAt);
+    }
+
+    pausedAt = null;
+    isRunning = true;
 
     if (procedureAnimationFrame === null) {
       procedureAnimationFrame = requestAnimationFrame(render);
@@ -1279,7 +626,12 @@ function startProcedureAnimation(section) {
   ===================================================== */
 
   function stop() {
-    isVisible = false;
+    if (!isRunning) {
+      return;
+    }
+
+    isRunning = false;
+    pausedAt = performance.now();
 
     if (procedureAnimationFrame !== null) {
       cancelAnimationFrame(procedureAnimationFrame);
@@ -1303,6 +655,20 @@ function startProcedureAnimation(section) {
   );
 
   /* =====================================================
+     VISIBILITÉ DE L'ONGLET
+  ===================================================== */
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      stop();
+
+      return;
+    }
+
+    start();
+  });
+
+  /* =====================================================
      OBSERVER
   ===================================================== */
 
@@ -1310,14 +676,18 @@ function startProcedureAnimation(section) {
     (entries) => {
       const entry = entries[0];
 
-      if (entry.isIntersecting) {
+      isSectionVisible = Boolean(
+        entry?.isIntersecting && entry.intersectionRatio >= 0.15,
+      );
+
+      if (isSectionVisible) {
         start();
       } else {
         stop();
       }
     },
     {
-      threshold: 0.15,
+      threshold: [0, 0.15],
     },
   );
 

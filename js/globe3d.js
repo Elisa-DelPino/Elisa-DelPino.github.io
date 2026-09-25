@@ -1,9 +1,14 @@
 // globe3d.js
 
+import * as THREE from "https://esm.sh/three@0.180.0";
+
 let animationFrameId = null;
 let resizeObserver = null;
 let renderer = null;
 let globeScene = null;
+let globeAnimationLoop = null;
+let globeAnimationRunning = false;
+let globeLastFrameTime = null;
 
 export function initGlobe() {
   const container = document.getElementById("globe-container");
@@ -13,13 +18,10 @@ export function initGlobe() {
     return;
   }
 
-  if (typeof THREE === "undefined") {
-    console.error("Three.js n'est pas chargé.");
-    return;
-  }
-
   // Évite de créer plusieurs globes.
   if (container.querySelector("canvas")) {
+    startGlobe();
+
     return;
   }
 
@@ -57,19 +59,19 @@ export function initGlobe() {
   // ------------------------------------------------ COULEURS
 
   const purple = 0xb8b8b8;
-  const darkPurple = 0x2a2a2a;
-  const darkBlue = 0x070b15;
+  const darkGray = 0x2a2a2a;
+  const blueGray = 0x000000;
 
   // ------------------------------------------------ SPHÈRE CENTRALE
 
   const sphereGeometry = new THREE.SphereGeometry(1, 64, 64);
 
   const sphereMaterial = new THREE.MeshPhongMaterial({
-    color: darkBlue,
-    emissive: darkPurple,
+    color: blueGray,
+    emissive: darkGray,
     emissiveIntensity: 0.35,
-    transparent: true,
-    opacity: 0.2,
+    transparent: false,
+    opacity: 1,
     shininess: 80,
     side: THREE.DoubleSide,
   });
@@ -299,7 +301,6 @@ export function initGlobe() {
   }
 
   resizeObserver = new ResizeObserver(() => {
-    console.count("resize globe");
     resizeGlobe();
   });
 
@@ -307,32 +308,69 @@ export function initGlobe() {
 
   // ------------------------------------------------ ANIMATION
 
-  const clock = new THREE.Clock();
+  function animate(now) {
+    if (!globeAnimationRunning || !renderer || !globeScene) {
+      animationFrameId = null;
 
-  function animate() {
-    animationFrameId = requestAnimationFrame(animate);
+      return;
+    }
 
-    const delta = clock.getDelta();
+    const delta =
+      globeLastFrameTime === null
+        ? 0
+        : Math.min((now - globeLastFrameTime) / 1000, 0.1);
+
+    globeLastFrameTime = now;
 
     globeGroup.rotation.y += delta * 0.35;
 
     renderer.render(scene, camera);
+
+    animationFrameId = requestAnimationFrame(animate);
   }
+
+  globeAnimationLoop = animate;
 
   // Attend que le conteneur visible ait ses dimensions.
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       resizeGlobe();
-      animate();
+
+      if (renderer && globeScene) {
+        renderer.render(scene, camera);
+      }
     });
   });
 }
 
-export function destroyGlobe() {
+export function startGlobe() {
+  if (
+    globeAnimationRunning ||
+    !renderer ||
+    !globeScene ||
+    typeof globeAnimationLoop !== "function"
+  ) {
+    return;
+  }
+
+  globeAnimationRunning = true;
+  globeLastFrameTime = null;
+
+  animationFrameId = requestAnimationFrame(globeAnimationLoop);
+}
+
+export function stopGlobe() {
+  globeAnimationRunning = false;
+  globeLastFrameTime = null;
+
   if (animationFrameId !== null) {
     cancelAnimationFrame(animationFrameId);
     animationFrameId = null;
   }
+}
+
+export function destroyGlobe() {
+  stopGlobe();
 
   if (resizeObserver) {
     resizeObserver.disconnect();
@@ -350,4 +388,5 @@ export function destroyGlobe() {
   }
 
   globeScene = null;
+  globeAnimationLoop = null;
 }

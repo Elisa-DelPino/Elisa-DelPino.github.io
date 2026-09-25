@@ -23,6 +23,29 @@ function scrollDemo1ToTop(element, behavior = "smooth") {
   });
 }
 
+function scrollDemo1ToPrestationSection(element, sectionIndex) {
+  if (!element) return;
+
+  requestAnimationFrame(() => {
+    const sections = element.querySelectorAll(".prestationCategory__demo1");
+    const targetSection = sections[sectionIndex];
+
+    if (!targetSection) return;
+
+    const elementRect = element.getBoundingClientRect();
+    const sectionRect = targetSection.getBoundingClientRect();
+
+    const targetTop =
+      element.scrollTop + sectionRect.top - elementRect.top - 20;
+
+    element.scrollTo({
+      top: Math.max(0, targetTop),
+      left: 0,
+      behavior: "smooth",
+    });
+  });
+}
+
 function scrollDemo1ToResponse(element, responseValidate) {
   if (!element || !responseValidate) {
     return;
@@ -189,6 +212,15 @@ function createHomeHTML(element) {
 
     </div>
   `;
+
+  const serviceCards = element.querySelectorAll(".divService__demo1");
+
+  serviceCards.forEach((card, index) => {
+    card.addEventListener("click", () => {
+      createPrestationHTML(element);
+      scrollDemo1ToPrestationSection(element, index);
+    });
+  });
 
   element.querySelector(".buttonSuite")?.addEventListener("click", () => {
     createPrestationHTML(element);
@@ -871,6 +903,7 @@ function validateRdv(element) {
       <div class="responseDetails">
 
         <div class="responseDetail">
+
           <span class="responseDetailLabel">
             PRESTATION
           </span>
@@ -878,9 +911,11 @@ function validateRdv(element) {
           <strong>
             ${escapeHtml(prestation)}
           </strong>
+
         </div>
 
         <div class="responseDetail">
+
           <span class="responseDetailLabel">
             AVEC
           </span>
@@ -888,9 +923,11 @@ function validateRdv(element) {
           <strong>
             ${escapeHtml(collaborator)}
           </strong>
+
         </div>
 
         <div class="responseDetail">
+
           <span class="responseDetailLabel">
             DATE
           </span>
@@ -898,9 +935,11 @@ function validateRdv(element) {
           <strong>
             ${escapeHtml(day)} ${escapeHtml(month)}
           </strong>
+
         </div>
 
         <div class="responseDetail">
+
           <span class="responseDetailLabel">
             HORAIRE
           </span>
@@ -908,6 +947,7 @@ function validateRdv(element) {
           <strong>
             ${escapeHtml(hour)}
           </strong>
+
         </div>
 
       </div>

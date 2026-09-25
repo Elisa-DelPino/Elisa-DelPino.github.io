@@ -1,8 +1,15 @@
 // circuit3d.js
 
+import * as THREE from "https://esm.sh/three@0.180.0";
+
 let circuitAnimationFrameId = null;
 let circuitResizeObserver = null;
 let circuitRenderer = null;
+let circuitScene = null;
+let circuitAnimationLoop = null;
+let circuitAnimationRunning = false;
+let circuitRunStartedAt = null;
+let circuitElapsedBeforePause = 0;
 
 export function initCircuit3D() {
   const container = document.getElementById("circuit-container");
@@ -12,18 +19,17 @@ export function initCircuit3D() {
     return;
   }
 
-  if (typeof THREE === "undefined") {
-    console.error("Three.js n'est pas chargé.");
-    return;
-  }
-
   if (container.querySelector("canvas")) {
+    startCircuit3D();
+
     return;
   }
 
   // ---------------------------------------------------------------- SCÈNE
 
   const scene = new THREE.Scene();
+
+  circuitScene = scene;
 
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
 
@@ -508,7 +514,6 @@ export function initCircuit3D() {
   }
 
   circuitResizeObserver = new ResizeObserver(() => {
-    console.count("resize circuit");
     resizeCircuit();
   });
 
@@ -516,12 +521,20 @@ export function initCircuit3D() {
 
   // ---------------------------------------------------------------- ANIMATION
 
-  const clock = new THREE.Clock();
+  function animate(now) {
+    if (
+      !circuitAnimationRunning ||
+      !circuitRenderer ||
+      !circuitScene ||
+      circuitRunStartedAt === null
+    ) {
+      circuitAnimationFrameId = null;
 
-  function animate() {
-    circuitAnimationFrameId = requestAnimationFrame(animate);
+      return;
+    }
 
-    const elapsed = clock.getElapsedTime();
+    const elapsed =
+      circuitElapsedBeforePause + (now - circuitRunStartedAt) / 1000;
 
     circuitGroup.rotation.set(0, 0, 0);
 
@@ -583,24 +596,58 @@ export function initCircuit3D() {
     });
 
     circuitRenderer.render(scene, camera);
+
+    circuitAnimationFrameId = requestAnimationFrame(animate);
   }
+
+  circuitAnimationLoop = animate;
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       resizeCircuit();
-      animate();
+
+      if (circuitRenderer && circuitScene) {
+        circuitRenderer.render(scene, camera);
+      }
     });
   });
+}
+
+export function startCircuit3D() {
+  if (
+    circuitAnimationRunning ||
+    !circuitRenderer ||
+    !circuitScene ||
+    typeof circuitAnimationLoop !== "function"
+  ) {
+    return;
+  }
+
+  circuitAnimationRunning = true;
+  circuitRunStartedAt = performance.now();
+
+  circuitAnimationFrameId = requestAnimationFrame(circuitAnimationLoop);
+}
+
+export function stopCircuit3D() {
+  if (circuitAnimationRunning && circuitRunStartedAt !== null) {
+    circuitElapsedBeforePause +=
+      (performance.now() - circuitRunStartedAt) / 1000;
+  }
+
+  circuitAnimationRunning = false;
+  circuitRunStartedAt = null;
+
+  if (circuitAnimationFrameId !== null) {
+    cancelAnimationFrame(circuitAnimationFrameId);
+    circuitAnimationFrameId = null;
+  }
 }
 
 // ---------------------------------------------------------------- DESTRUCTION
 
 export function destroyCircuit3D() {
-  if (circuitAnimationFrameId !== null) {
-    cancelAnimationFrame(circuitAnimationFrameId);
-
-    circuitAnimationFrameId = null;
-  }
+  stopCircuit3D();
 
   if (circuitResizeObserver) {
     circuitResizeObserver.disconnect();
@@ -617,4 +664,8 @@ export function destroyCircuit3D() {
 
     circuitRenderer = null;
   }
+
+  circuitScene = null;
+  circuitAnimationLoop = null;
+  circuitElapsedBeforePause = 0;
 }

@@ -1,8 +1,54 @@
-import { startCakeAnimation, stopCakeAnimation } from "./cakeAnimation.js";
 import { startCakeCarousel, stopCakeCarousel } from "./cakeCarousel.js";
 import { demo2Cakes } from "./dataDemo2.js";
 
 let demo2RootElement = null;
+let cakeAnimationModule = null;
+let cakeAnimationModulePromise = null;
+let cakeAnimationRequestId = 0;
+
+/* =====================================================
+   ANIMATION GÂTEAU
+===================================================== */
+
+async function loadCakeAnimationModule() {
+  if (cakeAnimationModule) {
+    return cakeAnimationModule;
+  }
+
+  if (!cakeAnimationModulePromise) {
+    cakeAnimationModulePromise = import("./cakeAnimation.js");
+  }
+
+  cakeAnimationModule = await cakeAnimationModulePromise;
+
+  return cakeAnimationModule;
+}
+
+async function startCakeAnimationFor(container) {
+  if (!container) {
+    return;
+  }
+
+  const requestId = ++cakeAnimationRequestId;
+
+  try {
+    const module = await loadCakeAnimationModule();
+
+    if (requestId !== cakeAnimationRequestId || !container.isConnected) {
+      return;
+    }
+
+    module.startCakeAnimation(container);
+  } catch (error) {
+    console.error("Impossible de charger l’animation du gâteau :", error);
+  }
+}
+
+function stopCakeAnimationIfLoaded() {
+  cakeAnimationRequestId += 1;
+
+  cakeAnimationModule?.stopCakeAnimation?.();
+}
 
 /* =====================================================
    POLICES
@@ -55,7 +101,7 @@ function scrollDemo2ToTop(element, behavior = "auto") {
 ===================================================== */
 
 function stopDemo2Components(element) {
-  stopCakeAnimation();
+  stopCakeAnimationIfLoaded();
 
   const carousel = element?.querySelector(".cake-carousel");
 
@@ -265,7 +311,7 @@ function createHomeHTML(element) {
 
           </div>
 
-                    <div class="demo2__benefit">
+          <div class="demo2__benefit">
 
             <span class="demo2__benefitIcon">
               ♧
@@ -547,7 +593,7 @@ function createHomeHTML(element) {
 
   const cakeContainer = element.querySelector(".cake-animation");
 
-  startCakeAnimation(cakeContainer);
+  startCakeAnimationFor(cakeContainer);
 }
 
 /* =====================================================

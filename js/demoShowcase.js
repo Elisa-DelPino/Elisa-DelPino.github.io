@@ -1,5 +1,4 @@
-import { openLogicielStockDemo } from "./logicielStock.js";
-import { addLigthBox } from "./demoLightbox.js";
+import { loadStylesheet } from "./resourceLoader.js";
 
 const WEBSITE_SHOWCASE_AUTOPLAY_DELAY = 4200;
 const SOFTWARE_SHOWCASE_AUTOPLAY_DELAY = 4200;
@@ -321,7 +320,11 @@ function createShowcaseFeatures(features) {
     .join("");
 }
 
-function createShowcaseMarkup(slides, ariaLabel) {
+function createShowcaseMarkup(
+  slides,
+  ariaLabel,
+  buttonLabel = "TESTER LA DÉMO",
+) {
   const firstSlide = slides[0];
 
   if (!firstSlide) {
@@ -344,7 +347,7 @@ function createShowcaseMarkup(slides, ariaLabel) {
       </div>
 
       <div class="websites-showcase__content">
-        <h2 class="websites-showcase__title">
+        <h2 class="websites-showcase__title shared-h3">
           ${firstSlide.title}
         </h2>
 
@@ -365,7 +368,7 @@ function createShowcaseMarkup(slides, ariaLabel) {
           class="websites-showcase__button shared-button shared-button--arrow"
           type="button"
         >
-          <span>TESTER LA DÉMO</span>
+          <span>${buttonLabel}</span>
 
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -508,15 +511,30 @@ function animateShowcaseTransition({
   }, SHOWCASE_OUT_DURATION);
 }
 
-function initializeShowcase({ showcase, slides, autoplayDelay, onOpen }) {
+function initializeShowcase({
+  showcase,
+  slides,
+  autoplayDelay,
+  onOpen,
+  desktopButtonLabel = "TESTER LA DÉMO",
+  mobileButtonLabel = desktopButtonLabel,
+}) {
   if (!showcase || !Array.isArray(slides) || slides.length === 0) {
-    return;
+    return null;
   }
 
   showcase.className = "websites-showcase";
+
+  const mobileButtonMediaQuery = window.matchMedia("(max-width: 900px)");
+
+  const initialButtonLabel = mobileButtonMediaQuery.matches
+    ? mobileButtonLabel
+    : desktopButtonLabel;
+
   showcase.innerHTML = createShowcaseMarkup(
     slides,
     "Choisir une démonstration",
+    initialButtonLabel,
   );
 
   const visual = showcase.querySelector(".websites-showcase__visual");
@@ -525,6 +543,7 @@ function initializeShowcase({ showcase, slides, autoplayDelay, onOpen }) {
   const title = showcase.querySelector(".websites-showcase__title");
   const features = showcase.querySelector(".websites-showcase__features");
   const button = showcase.querySelector(".websites-showcase__button");
+  const buttonText = button?.querySelector("span") ?? null;
   const dots = [...showcase.querySelectorAll(".websites-showcase__dot")];
 
   if (
@@ -534,15 +553,34 @@ function initializeShowcase({ showcase, slides, autoplayDelay, onOpen }) {
     !title ||
     !features ||
     !button ||
+    !buttonText ||
     dots.length === 0
   ) {
-    return;
+    return null;
   }
 
   let currentIndex = 0;
   let autoplayInterval = null;
   let transitionTimeout = null;
+  let isRunning = false;
 
+  visual.setAttribute("role", "button");
+  visual.setAttribute("tabindex", "0");
+  visual.style.cursor = "pointer";
+
+  function openCurrentSlide() {
+    onOpen?.(currentIndex, slides[currentIndex]);
+  }
+
+  function updateButtonLabel() {
+    buttonText.textContent = mobileButtonMediaQuery.matches
+      ? mobileButtonLabel
+      : desktopButtonLabel;
+  }
+
+  mobileButtonMediaQuery.addEventListener("change", updateButtonLabel);
+
+  updateButtonLabel();
   preloadShowcaseImages(slides);
 
   function renderSlide(index, animate = true) {
@@ -566,6 +604,11 @@ function initializeShowcase({ showcase, slides, autoplayDelay, onOpen }) {
       image.alt = slide.alt;
       title.textContent = slide.title;
       features.innerHTML = createShowcaseFeatures(slide.features);
+
+      visual.setAttribute(
+        "aria-label",
+        `Ouvrir la démonstration ${slide.title}`,
+      );
 
       updateShowcaseDots(dots, index);
 
@@ -607,13 +650,31 @@ function initializeShowcase({ showcase, slides, autoplayDelay, onOpen }) {
   function startAutoSlide() {
     stopAutoSlide();
 
-    if (slides.length <= 1) {
+    if (!isRunning || slides.length <= 1) {
       return;
     }
 
     autoplayInterval = window.setInterval(() => {
+      if (document.hidden || document.querySelector(".overlay")) {
+        return;
+      }
+
       goToSlide(currentIndex + 1);
     }, autoplayDelay);
+  }
+
+  function start() {
+    if (isRunning) {
+      return;
+    }
+
+    isRunning = true;
+    startAutoSlide();
+  }
+
+  function stop() {
+    isRunning = false;
+    stopAutoSlide();
   }
 
   dots.forEach((dot) => {
@@ -625,16 +686,32 @@ function initializeShowcase({ showcase, slides, autoplayDelay, onOpen }) {
       }
 
       goToSlide(index);
-      startAutoSlide();
+
+      if (isRunning) {
+        startAutoSlide();
+      }
     });
   });
 
-  button.addEventListener("click", () => {
-    onOpen?.(currentIndex, slides[currentIndex]);
+  visual.addEventListener("click", openCurrentSlide);
+
+  visual.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    event.preventDefault();
+    openCurrentSlide();
   });
 
+  button.addEventListener("click", openCurrentSlide);
+
   renderSlide(0, false);
-  startAutoSlide();
+
+  return {
+    start,
+    stop,
+  };
 }
 
 function prepareSoftwareShowcaseData() {
@@ -654,8 +731,34 @@ function prepareSoftwareShowcaseData() {
   });
 }
 
-export function initializeUnifiedShowcases() {
+let websiteShowcaseController = null;
+let softwareShowcaseController = null;
+
+export function initializeWebsiteShowcase() {
+  if (websiteShowcaseController) {
+    return websiteShowcaseController;
+  }
+
   const websiteShowcase = document.querySelector("#demos .websites-showcase");
+
+  websiteShowcaseController = initializeShowcase({
+    showcase: websiteShowcase,
+    slides: webDemoCardsData,
+    autoplayDelay: WEBSITE_SHOWCASE_AUTOPLAY_DELAY,
+    onOpen: async (index) => {
+      const { addLigthBox } = await import("./demoLightbox.js");
+
+      await addLigthBox(webDemoLightboxTrigger, index);
+    },
+  });
+
+  return websiteShowcaseController;
+}
+
+export function initializeSoftwareShowcase() {
+  if (softwareShowcaseController) {
+    return softwareShowcaseController;
+  }
 
   const softwareShowcase = document.querySelector(
     ".section__demo--softwares .demo-softwares__grid",
@@ -663,52 +766,57 @@ export function initializeUnifiedShowcases() {
 
   prepareSoftwareShowcaseData();
 
-  initializeShowcase({
-    showcase: websiteShowcase,
-    slides: webDemoCardsData,
-    autoplayDelay: WEBSITE_SHOWCASE_AUTOPLAY_DELAY,
-    onOpen: (index) => {
-      addLigthBox(webDemoLightboxTrigger, index);
-    },
-  });
-
-  initializeShowcase({
+  softwareShowcaseController = initializeShowcase({
     showcase: softwareShowcase,
     slides: softwareDemoCardsData,
     autoplayDelay: SOFTWARE_SHOWCASE_AUTOPLAY_DELAY,
-    onOpen: (index, slide) => {
+    desktopButtonLabel: "TESTER LA DÉMO",
+    mobileButtonLabel: "VOIR L'APERÇU",
+    onOpen: async (index, slide) => {
       if (!slide) {
         return;
       }
 
-      openSoftwareDemo(slide.key);
+      await openSoftwareDemo(slide.key);
     },
   });
+
+  return softwareShowcaseController;
+}
+
+export function initializeUnifiedShowcases() {
+  return {
+    website: initializeWebsiteShowcase(),
+    software: initializeSoftwareShowcase(),
+  };
 }
 
 /* =========================================================
    OUVERTURE DES DÉMOS LOGICIELS
 ========================================================= */
 
-function openSoftwareDemo(software) {
+async function openSoftwareDemo(software) {
   if (!software) {
     return;
   }
 
   if (software === "stock") {
-    openLogicielStockDemo();
+    const [, module] = await Promise.all([
+      loadStylesheet("./css/logicielStock.css", "logiciel-stock-styles"),
+      import("./logicielStock.js"),
+    ]);
+
+    module.openLogicielStockDemo();
 
     return;
   }
 
-  if (
-    software === "quotes" &&
-    typeof window.openLogicielDevisDemo === "function"
-  ) {
-    window.openLogicielDevisDemo();
+  if (software === "quotes") {
+    const [, module] = await Promise.all([
+      loadStylesheet("./css/logicielDevis.css", "logiciel-devis-styles"),
+      import("./logicielDevis.js"),
+    ]);
 
-    return;
+    module.openLogicielDevisDemo();
   }
-
-  console.info("La démonstration Clients & devis sera ajoutée prochainement.");
 }

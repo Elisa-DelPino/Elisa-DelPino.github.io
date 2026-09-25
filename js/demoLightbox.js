@@ -3,14 +3,90 @@ import {
   pauseAllCarouselVideos,
   updateVisibleCarouselVideos,
 } from "./demoVideos.js";
+import { loadScript, loadStylesheet } from "./resourceLoader.js";
+import { openOverlayHistory, closeOverlayHistory } from "./overlayHistory.js";
+
+/* =========================================================
+   VARIABLES GLOBALES
+========================================================= */
 
 let lightboxAnimationInterval = null;
 let lightboxScrollFrame = null;
 const lightboxScrollTimeouts = new Set();
 let lightboxAutoScrollCancelled = false;
+let lightboxRenderToken = 0;
+let lightboxOpening = false;
+
+const FOCUSABLE_SELECTOR =
+  'a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
 /* =========================================================
-   PETIT MOUVEMENT AUTOMATIQUE DE LA DÉMO WEB
+   PRÉFÉRENCE DE RÉDUCTION DES MOUVEMENTS
+========================================================= */
+
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+/* =========================================================
+   GESTION DU FOCUS DANS LA LIGHTBOX
+========================================================= */
+
+function getFocusableElements(container) {
+  if (!container) {
+    return [];
+  }
+
+  return [...container.querySelectorAll(FOCUSABLE_SELECTOR)].filter(
+    (element) => {
+      const style = window.getComputedStyle(element);
+
+      return (
+        !element.closest('[hidden], [aria-hidden="true"]') &&
+        style.display !== "none" &&
+        style.visibility !== "hidden"
+      );
+    },
+  );
+}
+
+function trapFocus(event, container) {
+  if (event.key !== "Tab" || !container) {
+    return;
+  }
+
+  const focusableElements = getFocusableElements(container);
+
+  if (focusableElements.length === 0) {
+    event.preventDefault();
+    container.focus();
+    return;
+  }
+
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+  const activeElement = document.activeElement;
+
+  if (!container.contains(activeElement)) {
+    event.preventDefault();
+    (event.shiftKey ? lastElement : firstElement).focus();
+    return;
+  }
+
+  if (event.shiftKey && activeElement === firstElement) {
+    event.preventDefault();
+    lastElement.focus();
+    return;
+  }
+
+  if (!event.shiftKey && activeElement === lastElement) {
+    event.preventDefault();
+    firstElement.focus();
+  }
+}
+
+/* =========================================================
+   ARRÊT DU PETIT SCROLL AUTOMATIQUE
 ========================================================= */
 
 function clearLightboxScrollAnimation() {
@@ -28,6 +104,10 @@ function clearLightboxScrollAnimation() {
 
   lightboxScrollTimeouts.clear();
 }
+
+/* =========================================================
+   ARRÊT DU SCROLL AUTO SI L'UTILISATEUR INTERAGIT
+========================================================= */
 
 function stopLightboxAutoScrollOnUserInteraction(overlay) {
   if (!overlay) {
@@ -58,6 +138,10 @@ function stopLightboxAutoScrollOnUserInteraction(overlay) {
   });
 }
 
+/* =========================================================
+   TIMEOUTS DU SCROLL AUTOMATIQUE
+========================================================= */
+
 function lightboxTimeout(callback, delay) {
   const timeoutId = window.setTimeout(() => {
     lightboxScrollTimeouts.delete(timeoutId);
@@ -74,11 +158,19 @@ function lightboxTimeout(callback, delay) {
   return timeoutId;
 }
 
+/* =========================================================
+   COURBE D'ANIMATION DU SCROLL AUTO
+========================================================= */
+
 function easeInOutCubic(progress) {
   return progress < 0.5
     ? 4 * progress * progress * progress
     : 1 - Math.pow(-2 * progress + 2, 3) / 2;
 }
+
+/* =========================================================
+   ANIMATION DU SCROLL AUTOMATIQUE
+========================================================= */
 
 function animateLightboxScroll(element, target, duration) {
   return new Promise((resolve) => {
@@ -128,6 +220,10 @@ function animateLightboxScroll(element, target, duration) {
   });
 }
 
+/* =========================================================
+   PETIT MOUVEMENT AUTOMATIQUE À L'OUVERTURE
+========================================================= */
+
 function launchWebPreviewNudge(scrollContainer) {
   clearLightboxScrollAnimation();
 
@@ -139,11 +235,7 @@ function launchWebPreviewNudge(scrollContainer) {
 
   scrollContainer.scrollTop = 0;
 
-  const reducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
-
-  if (reducedMotion) {
+  if (prefersReducedMotion()) {
     return;
   }
 
@@ -182,17 +274,47 @@ function launchWebPreviewNudge(scrollContainer) {
 }
 
 /* =========================================================
-   LIGHTBOX
+   OUVERTURE ET CRÉATION DE LA LIGHTBOX
 ========================================================= */
 
-export function addLigthBox(item, index) {
-  if (document.querySelector(".overlay")) {
+export async function addLigthBox(item, index) {
+  if (document.querySelector(".overlay") || lightboxOpening) {
     return;
   }
 
+  lightboxOpening = true;
+
+  /* =========================================================
+     CHARGEMENT DU CSS DE LA LIGHTBOX
+  ========================================================= */
+
+  try {
+    await loadStylesheet("./css/demoLightbox.css", "demo-lightbox-styles");
+  } catch (error) {
+    console.error(error);
+    lightboxOpening = false;
+
+    return;
+  }
+
+  if (document.querySelector(".overlay")) {
+    lightboxOpening = false;
+
+    return;
+  }
+
+  /* =========================================================
+     INDEX DE LA DÉMO ACTUELLEMENT AFFICHÉE
+  ========================================================= */
+
   let currentIndex = index;
+  const lastFocusedElement = document.activeElement;
 
   pauseAllCarouselVideos();
+
+  /* =========================================================
+     CRÉATION DE L'OVERLAY
+  ========================================================= */
 
   const overlay = document.createElement("div");
 
@@ -206,9 +328,19 @@ export function addLigthBox(item, index) {
     overlay.classList.add("overlay--animation");
   }
 
+  /* =========================================================
+     HTML LIGHTBOX SITE WEB OU ANIMATION
+  ========================================================= */
+
   overlay.innerHTML = isWebPreview
     ? `
-        <div class="lightbox__frame">
+        <div
+          class="lightbox__frame"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Aperçu interactif d'un site web"
+          tabindex="-1"
+        >
 
           <div class="lightbox__topbar">
 
@@ -298,7 +430,13 @@ export function addLigthBox(item, index) {
         </div>
       `
     : `
-        <div class="lightbox__frame">
+        <div
+          class="lightbox__frame"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Personnalisation d'une animation"
+          tabindex="-1"
+        >
 
           <div class="lightbox__topbar">
 
@@ -367,43 +505,136 @@ export function addLigthBox(item, index) {
 
   document.body.appendChild(overlay);
 
+  lightboxOpening = false;
+
+  /* =========================================================
+     BOUTON RETOUR DU NAVIGATEUR
+  ========================================================= */
+
+  openOverlayHistory(() => {
+    closeLightbox(true);
+  });
+
+  /* =========================================================
+     DÉTECTION DES INTERACTIONS DE SCROLL
+  ========================================================= */
+
   if (isWebPreview) {
     stopLightboxAutoScrollOnUserInteraction(overlay);
   }
 
-  addDataLigthBox(item, currentIndex);
+  /* =========================================================
+     RÉCUPÉRATION DES BOUTONS DE LA LIGHTBOX
+  ========================================================= */
 
+  const lightboxFrame = overlay.querySelector(".lightbox__frame");
   const arrowRight = overlay.querySelector(".arrow.right");
   const arrowLeft = overlay.querySelector(".arrow.left");
   const closeButton = overlay.querySelector(".closeButton");
 
   blockScroll();
 
-  const data = item.classList.contains("div-fakeWeb__demo")
-    ? getDataWeb()
-    : getDataAnim();
+  const data = isWebPreview ? getDataWeb() : getDataAnim();
 
-  arrowRight.addEventListener("click", () => {
+  /* =========================================================
+     AFFICHAGE DE LA DÉMO ACTUELLE
+  ========================================================= */
+
+  async function renderCurrentData() {
+    await addDataLigthBox(item, currentIndex);
+  }
+
+  /* =========================================================
+     FLÈCHES DE NAVIGATION
+  ========================================================= */
+
+  arrowRight.addEventListener("click", async () => {
     currentIndex++;
 
     if (currentIndex > data.length - 1) {
       currentIndex = 0;
     }
 
-    addDataLigthBox(item, currentIndex);
+    await renderCurrentData();
   });
 
-  arrowLeft.addEventListener("click", () => {
+  arrowLeft.addEventListener("click", async () => {
     currentIndex--;
 
     if (currentIndex < 0) {
       currentIndex = data.length - 1;
     }
 
-    addDataLigthBox(item, currentIndex);
+    await renderCurrentData();
   });
 
+  /* =========================================================
+     CONTRÔLES AU CLAVIER
+  ========================================================= */
+
   function handleKeyboard(event) {
+    /* =========================================================
+       TAB RESTE À L'INTÉRIEUR DE LA LIGHTBOX
+    ========================================================= */
+
+    if (event.key === "Tab") {
+      trapFocus(event, lightboxFrame);
+      return;
+    }
+
+    /* =========================================================
+       NE PAS INTERCEPTER ← / → DANS LES CHAMPS DE SAISIE
+    ========================================================= */
+
+    const keyboardTarget = event.target;
+    const isEditableTarget =
+      keyboardTarget instanceof HTMLElement &&
+      (keyboardTarget.matches("input, textarea, select") ||
+        keyboardTarget.isContentEditable ||
+        keyboardTarget.closest('[contenteditable="true"]'));
+
+    if (
+      !isWebPreview &&
+      isEditableTarget &&
+      (event.key === "ArrowLeft" || event.key === "ArrowRight")
+    ) {
+      return;
+    }
+
+    /* =========================================================
+       FLÈCHES HAUT ET BAS : SCROLL DES SITES WEB
+    ========================================================= */
+
+    if (
+      isWebPreview &&
+      (event.key === "ArrowDown" || event.key === "ArrowUp")
+    ) {
+      const scrollContainer = overlay.querySelector(".divImg");
+
+      if (!scrollContainer) {
+        return;
+      }
+
+      event.preventDefault();
+
+      clearLightboxScrollAnimation();
+
+      const scrollDistance = event.repeat
+        ? 55
+        : Math.max(90, scrollContainer.clientHeight * 0.14);
+
+      scrollContainer.scrollBy({
+        top: event.key === "ArrowDown" ? scrollDistance : -scrollDistance,
+        behavior: event.repeat || prefersReducedMotion() ? "auto" : "smooth",
+      });
+
+      return;
+    }
+
+    /* =========================================================
+       AUTRES TOUCHES DU CLAVIER
+    ========================================================= */
+
     switch (event.key) {
       case "ArrowRight":
         arrowRight.click();
@@ -424,7 +655,11 @@ export function addLigthBox(item, index) {
 
   document.addEventListener("keydown", handleKeyboard);
 
-  function closeLightbox() {
+  /* =========================================================
+     FERMETURE DE LA LIGHTBOX
+  ========================================================= */
+
+  function closeLightbox(fromHistory = false) {
     clearLightboxScrollAnimation();
 
     clearInterval(lightboxAnimationInterval);
@@ -436,6 +671,14 @@ export function addLigthBox(item, index) {
     overlay.remove();
 
     restoreScroll();
+
+    if (!fromHistory) {
+      closeOverlayHistory();
+    }
+
+    if (lastFocusedElement instanceof HTMLElement) {
+      lastFocusedElement.focus();
+    }
 
     requestAnimationFrame(() => {
       updateVisibleCarouselVideos();
@@ -449,19 +692,35 @@ export function addLigthBox(item, index) {
       closeLightbox();
     }
   });
+
+  /* =========================================================
+     PREMIER AFFICHAGE
+  ========================================================= */
+
+  await renderCurrentData();
+
+  if (overlay.isConnected) {
+    requestAnimationFrame(() => {
+      closeButton?.focus();
+    });
+  }
 }
 
-function addDataLigthBox(item, index) {
+/* =========================================================
+   CHARGEMENT DU CONTENU DE LA DÉMO
+========================================================= */
+
+async function addDataLigthBox(item, index) {
+  const renderToken = ++lightboxRenderToken;
+
   clearLightboxScrollAnimation();
 
   clearInterval(lightboxAnimationInterval);
 
   lightboxAnimationInterval = null;
 
-  const data = item.classList.contains("div-fakeWeb__demo")
-    ? getDataWeb()
-    : getDataAnim();
-
+  const isWebPreview = item.classList.contains("div-fakeWeb__demo");
+  const data = isWebPreview ? getDataWeb() : getDataAnim();
   const currentData = data[index];
 
   if (!currentData) {
@@ -476,6 +735,14 @@ function addDataLigthBox(item, index) {
 
   const divImg = overlay.querySelector(".divImg");
 
+  if (!divImg) {
+    return;
+  }
+
+  /* =========================================================
+     REMISE À ZÉRO DE LA ZONE D'AFFICHAGE
+  ========================================================= */
+
   divImg.innerHTML = "";
   divImg.style.background = "";
   divImg.style.border = "";
@@ -483,18 +750,73 @@ function addDataLigthBox(item, index) {
   divImg.style.alignItems = "";
   divImg.style.justifyContent = "";
 
-  if (typeof currentData.img === "function") {
-    currentData.img(divImg);
+  /* =========================================================
+     CHARGEMENT D'UNE DÉMO DE SITE WEB
+  ========================================================= */
+
+  if (isWebPreview) {
+    let renderWebDemo = null;
+
+    try {
+      if (typeof currentData.loadImg === "function") {
+        renderWebDemo = await currentData.loadImg();
+      } else if (typeof currentData.img === "function") {
+        renderWebDemo = currentData.img;
+      }
+    } catch (error) {
+      console.error(error);
+
+      return;
+    }
+
+    if (
+      renderToken !== lightboxRenderToken ||
+      !overlay.isConnected ||
+      typeof renderWebDemo !== "function"
+    ) {
+      return;
+    }
+
+    renderWebDemo(divImg);
 
     webData(currentData);
-  } else {
-    divImg.style.background = "";
-    divImg.style.border = "";
-    divImg.style.overflow = "hidden";
 
-    animData(currentData);
+    return;
   }
+
+  /* =========================================================
+     CHARGEMENT D'IRO.JS POUR LES ANIMATIONS
+  ========================================================= */
+
+  if (!window.iro) {
+    try {
+      await loadScript(
+        "https://cdn.jsdelivr.net/npm/@jaames/iro@5",
+        "iro-color-picker-script",
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  if (renderToken !== lightboxRenderToken || !overlay.isConnected) {
+    return;
+  }
+
+  /* =========================================================
+     AFFICHAGE D'UNE ANIMATION
+  ========================================================= */
+
+  divImg.style.background = "";
+  divImg.style.border = "";
+  divImg.style.overflow = "hidden";
+
+  animData(currentData);
 }
+
+/* =========================================================
+   CONFIGURATION D'UNE DÉMO DE SITE WEB
+========================================================= */
 
 function webData(currentData) {
   const overlay = document.querySelector(".overlay");
@@ -516,12 +838,20 @@ function webData(currentData) {
     return;
   }
 
+  /* =========================================================
+     LANCEMENT DU PETIT SCROLL D'INDICATION
+  ========================================================= */
+
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       launchWebPreviewNudge(divImg);
     });
   });
 }
+
+/* =========================================================
+   CONFIGURATION D'UNE DÉMO D'ANIMATION
+========================================================= */
 
 function animData(currentData) {
   const overlay = document.querySelector(".overlay");
@@ -538,8 +868,12 @@ function animData(currentData) {
     return;
   }
 
+  /* =========================================================
+     VALEURS PAR DÉFAUT
+  ========================================================= */
+
   const DEFAULT_TEXT = "ANIMATION";
-  const DEFAULT_COLOR = "#b8b8b8";
+  const DEFAULT_COLOR = "#E09E35";
 
   let currentText = DEFAULT_TEXT;
   let currentColor = DEFAULT_COLOR;
@@ -547,6 +881,10 @@ function animData(currentData) {
   let colorPicker = null;
 
   overlay.style.setProperty("--animation-accent", currentColor);
+
+  /* =========================================================
+     CLASSES ET DIMENSIONS DE L'ANIMATION
+  ========================================================= */
 
   containerLightbox.classList.add("containerLigthBox--animation");
   divImg.classList.add("animation-preview");
@@ -559,16 +897,11 @@ function animData(currentData) {
   divText.style.height = "";
   divText.style.display = "";
 
-  divImg.innerHTML = `
-    <div
-      class="animation-preview__particles"
-      aria-hidden="true"
-    >
-      <span
-        class="animation-preview__stars"
-      ></span>
-    </div>
+  /* =========================================================
+     ZONE D'APERÇU DE L'ANIMATION
+  ========================================================= */
 
+  divImg.innerHTML = `
     <div class="animation-preview__content">
 
       <h1
@@ -577,6 +910,10 @@ function animData(currentData) {
 
     </div>
   `;
+
+  /* =========================================================
+     CONTRÔLES DE PERSONNALISATION
+  ========================================================= */
 
   divText.innerHTML = `
     <div class="animation-control-group">
@@ -636,6 +973,10 @@ function animData(currentData) {
     </button>
   `;
 
+  /* =========================================================
+     RECRÉATION DU TITRE ANIMÉ
+  ========================================================= */
+
   function createFreshH1() {
     const content = divImg.querySelector(".animation-preview__content");
 
@@ -658,6 +999,10 @@ function animData(currentData) {
     content.prepend(h1);
   }
 
+  /* =========================================================
+     LANCEMENT ET RELANCE DE L'ANIMATION
+  ========================================================= */
+
   function launchAnimation() {
     if (typeof currentData.anim !== "function") {
       return;
@@ -669,6 +1014,10 @@ function animData(currentData) {
 
     currentData.anim(h1);
 
+    if (prefersReducedMotion()) {
+      return;
+    }
+
     lightboxAnimationInterval = window.setInterval(() => {
       createFreshH1();
 
@@ -676,10 +1025,21 @@ function animData(currentData) {
     }, 5000);
   }
 
+  /* =========================================================
+     RÉCUPÉRATION DES CONTRÔLES
+  ========================================================= */
+
   const inputText = divText.querySelector("#animationTextInput");
   const colorValue = divText.querySelector(".colorValue");
   const colorSwatch = divText.querySelector(".animation-color-swatch");
   const resetButton = divText.querySelector(".animation-reset-button");
+  const labelDot = overlay.querySelector(".lightbox__label-dot");
+  const arrowButtons = overlay.querySelectorAll(".arrow");
+  const closeButton = overlay.querySelector(".closeButton");
+
+  /* =========================================================
+     APPLICATION DE LA COULEUR
+  ========================================================= */
 
   function applyColor(color) {
     currentColor = color;
@@ -694,10 +1054,36 @@ function animData(currentData) {
       colorSwatch.style.background = currentColor;
     }
 
+    if (resetButton) {
+      resetButton.style.setProperty("border-color", currentColor, "important");
+    }
+
+    if (labelDot) {
+      labelDot.style.setProperty("background-color", currentColor, "important");
+
+      labelDot.style.setProperty(
+        "box-shadow",
+        `0 0 10px ${currentColor}`,
+        "important",
+      );
+    }
+
+    arrowButtons.forEach((arrow) => {
+      arrow.style.setProperty("color", currentColor, "important");
+    });
+
+    if (closeButton) {
+      closeButton.style.setProperty("color", currentColor, "important");
+    }
+
     if (h1) {
       h1.style.color = currentColor;
     }
   }
+
+  /* =========================================================
+     VALIDATION D'UNE COULEUR HEXADÉCIMALE
+  ========================================================= */
 
   function normalizeHexColor(value) {
     let hex = value.trim();
@@ -711,11 +1097,19 @@ function animData(currentData) {
     return isValidHex ? hex.toUpperCase() : null;
   }
 
+  /* =========================================================
+     MODIFICATION DU TEXTE
+  ========================================================= */
+
   inputText?.addEventListener("input", () => {
     currentText = inputText.value.trim() || DEFAULT_TEXT;
 
     launchAnimation();
   });
+
+  /* =========================================================
+     RÉINITIALISATION
+  ========================================================= */
 
   resetButton?.addEventListener("click", () => {
     currentText = DEFAULT_TEXT;
@@ -734,7 +1128,11 @@ function animData(currentData) {
     launchAnimation();
   });
 
-  if (typeof iro === "undefined") {
+  /* =========================================================
+     SÉCURITÉ SI IRO.JS N'EST PAS DISPONIBLE
+  ========================================================= */
+
+  if (!window.iro) {
     console.error("iro.js n'est pas chargé.");
 
     applyColor(DEFAULT_COLOR);
@@ -744,11 +1142,19 @@ function animData(currentData) {
     return;
   }
 
+  /* =========================================================
+     TAILLE DU SÉLECTEUR DE COULEUR
+  ========================================================= */
+
   const colorPickerWidth = window.matchMedia("(max-width:600px)").matches
     ? 105
     : 140;
 
-  colorPicker = new iro.ColorPicker("#colorPicker", {
+  /* =========================================================
+     CRÉATION DU SÉLECTEUR DE COULEUR
+  ========================================================= */
+
+  colorPicker = new window.iro.ColorPicker("#colorPicker", {
     width: colorPickerWidth,
     color: DEFAULT_COLOR,
     borderWidth: 1,
@@ -756,16 +1162,20 @@ function animData(currentData) {
 
     layout: [
       {
-        component: iro.ui.Box,
+        component: window.iro.ui.Box,
       },
       {
-        component: iro.ui.Slider,
+        component: window.iro.ui.Slider,
         options: {
           sliderType: "hue",
         },
       },
     ],
   });
+
+  /* =========================================================
+     CHANGEMENT DE COULEUR
+  ========================================================= */
 
   colorPicker.on("color:change", (color) => {
     applyColor(color.hexString);
@@ -778,6 +1188,10 @@ function animData(currentData) {
   applyColor(DEFAULT_COLOR);
 
   launchAnimation();
+
+  /* =========================================================
+     SAISIE MANUELLE DU CODE HEXADÉCIMAL
+  ========================================================= */
 
   colorValue?.addEventListener("input", () => {
     const validColor = normalizeHexColor(colorValue.value);
@@ -799,6 +1213,10 @@ function animData(currentData) {
     }
   });
 
+  /* =========================================================
+     VALIDATION À LA PERTE DU FOCUS
+  ========================================================= */
+
   colorValue?.addEventListener("blur", () => {
     const validColor = normalizeHexColor(colorValue.value);
 
@@ -811,6 +1229,10 @@ function animData(currentData) {
 
     colorValue.value = validColor;
   });
+
+  /* =========================================================
+     VALIDATION AVEC ENTRÉE
+  ========================================================= */
 
   colorValue?.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
@@ -834,6 +1256,10 @@ function blockScroll() {
   document.body.style.left = "0";
   document.body.style.width = "100%";
 }
+
+/* =========================================================
+   RESTAURATION DU SCROLL
+========================================================= */
 
 function restoreScroll() {
   const scrollY = document.body.dataset.scrollY || "0";

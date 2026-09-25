@@ -1,5 +1,7 @@
 // logicielStock.js
 
+import { openOverlayHistory, closeOverlayHistory } from "./overlayHistory.js";
+
 /* =====================================================
    PRODUITS DE DÉMONSTRATION
 ===================================================== */
@@ -85,6 +87,10 @@ let lastFocusedElement = null;
 let previousBodyOverflow = "";
 let isInitialized = false;
 let stockOperation = null;
+let quantityLastFocusedElement = null;
+
+const FOCUSABLE_SELECTOR =
+  'a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),video[controls],[tabindex]:not([tabindex="-1"])';
 
 /* =====================================================
    RÉFÉRENCES DOM
@@ -93,6 +99,8 @@ let stockOperation = null;
 let overlay = null;
 let dialog = null;
 let mobilePreviewOverlay = null;
+let mobilePreviewVideo = null;
+let mobilePreviewDialog = null;
 let tableBody = null;
 let emptyState = null;
 let pageTitle = null;
@@ -106,12 +114,75 @@ let newCategoryField = null;
 let newCategoryInput = null;
 let formMessage = null;
 let quantityBackdrop = null;
+let quantityDialog = null;
 let quantityTitle = null;
 let quantityProductName = null;
 let quantityForm = null;
 let quantityInput = null;
 let quantityMessage = null;
 let quantitySubmit = null;
+
+/* =====================================================
+   ACCESSIBILITÉ ET RÉDUCTION DES MOUVEMENTS
+===================================================== */
+
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function getFocusableElements(container) {
+  if (!container) {
+    return [];
+  }
+
+  return [...container.querySelectorAll(FOCUSABLE_SELECTOR)].filter(
+    (element) => {
+      const style = window.getComputedStyle(element);
+
+      return (
+        !element.closest('[hidden], [aria-hidden="true"]') &&
+        style.display !== "none" &&
+        style.visibility !== "hidden" &&
+        element.getClientRects().length > 0
+      );
+    },
+  );
+}
+
+function trapFocus(event, container) {
+  if (event.key !== "Tab" || !container) {
+    return;
+  }
+
+  const focusableElements = getFocusableElements(container);
+
+  if (focusableElements.length === 0) {
+    event.preventDefault();
+    container.focus();
+    return;
+  }
+
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+  const activeElement = document.activeElement;
+
+  if (!container.contains(activeElement)) {
+    event.preventDefault();
+    (event.shiftKey ? lastElement : firstElement).focus();
+    return;
+  }
+
+  if (event.shiftKey && activeElement === firstElement) {
+    event.preventDefault();
+    lastElement.focus();
+    return;
+  }
+
+  if (!event.shiftKey && activeElement === lastElement) {
+    event.preventDefault();
+    firstElement.focus();
+  }
+}
 
 /* =====================================================
    ICÔNES
@@ -239,6 +310,7 @@ function createDemoHTML() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="stock-demo-dialog-title"
+        tabindex="-1"
       >
 
         <!-- ==================================================
@@ -303,8 +375,6 @@ function createDemoHTML() {
 
             <nav class="stock-demo__nav">
 
-              <!-- PRODUITS -->
-
               <button
                 class="stock-demo__nav-button is-active"
                 type="button"
@@ -325,8 +395,6 @@ function createDemoHTML() {
 
               </button>
 
-              <!-- CATÉGORIES -->
-
               <button
                 class="stock-demo__nav-button"
                 type="button"
@@ -346,8 +414,6 @@ function createDemoHTML() {
                 </span>
 
               </button>
-
-              <!-- ALERTES -->
 
               <button
                 class="stock-demo__nav-button"
@@ -379,10 +445,6 @@ function createDemoHTML() {
               </button>
 
             </nav>
-
-            <!-- ==================================================
-                 LÉGENDE
-            =================================================== -->
 
             <div class="stock-demo__legend">
 
@@ -479,10 +541,6 @@ function createDemoHTML() {
 
             </div>
 
-            <!-- ==================================================
-                 FILTRE CATÉGORIE
-            =================================================== -->
-
             <div
               class="stock-demo__category-filter"
               data-stock-category-filter
@@ -503,10 +561,6 @@ function createDemoHTML() {
               ></select>
 
             </div>
-
-            <!-- ==================================================
-                 TABLE
-            =================================================== -->
 
             <div class="stock-demo__table-card">
 
@@ -610,8 +664,6 @@ function createDemoHTML() {
               novalidate
             >
 
-              <!-- NOM -->
-
               <div class="stock-demo__field">
 
                 <label
@@ -633,8 +685,6 @@ function createDemoHTML() {
 
               </div>
 
-              <!-- CATÉGORIE -->
-
               <div class="stock-demo__field">
 
                 <label
@@ -653,8 +703,6 @@ function createDemoHTML() {
                 ></select>
 
               </div>
-
-              <!-- NOUVELLE CATÉGORIE -->
 
               <div
                 class="stock-demo__field"
@@ -681,8 +729,6 @@ function createDemoHTML() {
 
               </div>
 
-              <!-- STOCK ACTUEL -->
-
               <div class="stock-demo__field">
 
                 <label
@@ -704,8 +750,6 @@ function createDemoHTML() {
                 />
 
               </div>
-
-              <!-- SEUILS -->
 
               <div class="stock-demo__thresholds">
 
@@ -798,6 +842,7 @@ function createDemoHTML() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="stock-demo-quantity-title"
+            tabindex="-1"
           >
 
             <button
@@ -880,7 +925,7 @@ function createDemoHTML() {
 }
 
 /* =====================================================
-   APERÇU NOIR POUR ÉCRANS <= 900 PX
+   APERÇU VIDÉO POUR ÉCRANS <= 900 PX
 ===================================================== */
 
 function createMobilePreviewHTML() {
@@ -900,13 +945,19 @@ function createMobilePreviewHTML() {
         role="dialog"
         aria-modal="true"
         aria-label="Aperçu vidéo du logiciel de gestion de stock"
+        tabindex="-1"
       >
 
-        <div
+        <video
           class="logiciel-stock-preview__media"
-          data-stock-preview-media
-          aria-hidden="true"
-        ></div>
+          data-stock-preview-video
+          data-src="./video/demoStock.mp4"
+          muted
+          loop
+          playsinline
+          preload="none"
+          aria-label="Aperçu vidéo du logiciel de gestion de stock"
+        ></video>
 
         <button
           class="logiciel-stock-preview__close"
@@ -932,6 +983,59 @@ function createMobilePreviewHTML() {
 
 function isSmallStockScreen() {
   return window.matchMedia("(max-width: 900px)").matches;
+}
+
+/* =====================================================
+   VIDÉO MOBILE
+===================================================== */
+
+function playMobilePreviewVideo() {
+  if (!mobilePreviewVideo) {
+    return;
+  }
+
+  if (!mobilePreviewVideo.getAttribute("src")) {
+    const source = mobilePreviewVideo.dataset.src;
+
+    if (source) {
+      mobilePreviewVideo.src = source;
+      mobilePreviewVideo.load();
+    }
+  }
+
+  try {
+    mobilePreviewVideo.currentTime = 0;
+  } catch {}
+
+  if (prefersReducedMotion()) {
+    mobilePreviewVideo.pause();
+    mobilePreviewVideo.controls = true;
+    mobilePreviewVideo.loop = false;
+    mobilePreviewVideo.removeAttribute("loop");
+    return;
+  }
+
+  mobilePreviewVideo.controls = false;
+  mobilePreviewVideo.loop = true;
+  mobilePreviewVideo.setAttribute("loop", "");
+
+  const playPromise = mobilePreviewVideo.play();
+
+  if (playPromise && typeof playPromise.catch === "function") {
+    playPromise.catch(() => {});
+  }
+}
+
+function stopMobilePreviewVideo() {
+  if (!mobilePreviewVideo) {
+    return;
+  }
+
+  mobilePreviewVideo.pause();
+
+  try {
+    mobilePreviewVideo.currentTime = 0;
+  } catch {}
 }
 
 /* =====================================================
@@ -1218,8 +1322,6 @@ function createProductRow(product) {
       "
     >
 
-      <!-- PRODUIT -->
-
       <td>
 
         <strong class="stock-demo__product-name">
@@ -1230,8 +1332,6 @@ function createProductRow(product) {
 
       </td>
 
-      <!-- CATÉGORIE -->
-
       <td>
 
         <span class="stock-demo__category-chip">
@@ -1241,8 +1341,6 @@ function createProductRow(product) {
         </span>
 
       </td>
-
-      <!-- STOCK -->
 
       <td>
 
@@ -1287,23 +1385,17 @@ function createProductRow(product) {
 
       </td>
 
-      <!-- ALERTE -->
-
       <td>
 
         ${product.alertStock}
 
       </td>
 
-      <!-- LIMITE -->
-
       <td>
 
         ${product.limitStock}
 
       </td>
-
-      <!-- STATUT -->
 
       <td>
 
@@ -1323,8 +1415,6 @@ function createProductRow(product) {
         </span>
 
       </td>
-
-      <!-- SUPPRESSION -->
 
       <td>
 
@@ -1397,7 +1487,7 @@ function updateNewCategoryField() {
    POPUP DE MODIFICATION DU STOCK
 ===================================================== */
 
-function openStockQuantityDialog(productId, direction) {
+function openStockQuantityDialog(productId, direction, trigger = null) {
   if (
     !quantityBackdrop ||
     !quantityTitle ||
@@ -1419,6 +1509,9 @@ function openStockQuantityDialog(productId, direction) {
     productId,
     direction,
   };
+
+  quantityLastFocusedElement =
+    trigger instanceof HTMLElement ? trigger : document.activeElement;
 
   const isIncrease = direction === "increase";
 
@@ -1442,10 +1535,14 @@ function openStockQuantityDialog(productId, direction) {
    FERMER LE POPUP DE STOCK
 ===================================================== */
 
-function closeStockQuantityDialog() {
+function closeStockQuantityDialog(restoreFocus = true) {
   if (!quantityBackdrop) {
     return;
   }
+
+  const returnProductId = stockOperation?.productId ?? null;
+  const returnDirection = stockOperation?.direction ?? null;
+  const elementToFocus = quantityLastFocusedElement;
 
   quantityBackdrop.hidden = true;
   stockOperation = null;
@@ -1453,6 +1550,31 @@ function closeStockQuantityDialog() {
   if (quantityMessage) {
     quantityMessage.textContent = "";
   }
+
+  if (restoreFocus) {
+    requestAnimationFrame(() => {
+      if (elementToFocus instanceof HTMLElement && elementToFocus.isConnected) {
+        elementToFocus.focus();
+        return;
+      }
+
+      if (!returnProductId || !returnDirection || !overlay) {
+        return;
+      }
+
+      const replacementButton = [
+        ...overlay.querySelectorAll("[data-stock-action]"),
+      ].find(
+        (button) =>
+          button.dataset.productId === returnProductId &&
+          button.dataset.stockAction === returnDirection,
+      );
+
+      replacementButton?.focus();
+    });
+  }
+
+  quantityLastFocusedElement = null;
 }
 
 /* =====================================================
@@ -1583,18 +1705,10 @@ function handleAddProduct(event) {
     category = String(formData.get("newCategory") ?? "").trim();
   }
 
-  /* -----------------------------------------------------
-     NOM OBLIGATOIRE
-  ------------------------------------------------------ */
-
   if (!name) {
     showFormMessage("Indiquez le nom du produit.");
     return;
   }
-
-  /* -----------------------------------------------------
-     PRODUIT DÉJÀ EXISTANT
-  ------------------------------------------------------ */
 
   const normalizedName = normalizeProductName(name);
 
@@ -1611,27 +1725,15 @@ function handleAddProduct(event) {
     return;
   }
 
-  /* -----------------------------------------------------
-     CATÉGORIE
-  ------------------------------------------------------ */
-
   if (!category) {
     showFormMessage("Choisissez ou créez une catégorie.");
     return;
   }
 
-  /* -----------------------------------------------------
-     VALEURS NUMÉRIQUES
-  ------------------------------------------------------ */
-
   if (stock === null || alertStock === null || limitStock === null) {
     showFormMessage("Les valeurs de stock doivent être des nombres positifs.");
     return;
   }
-
-  /* -----------------------------------------------------
-     COHÉRENCE DES SEUILS
-  ------------------------------------------------------ */
 
   if (limitStock > alertStock) {
     showFormMessage(
@@ -1641,10 +1743,6 @@ function handleAddProduct(event) {
     return;
   }
 
-  /* -----------------------------------------------------
-     AJOUT
-  ------------------------------------------------------ */
-
   products.push({
     id: createProductId(),
     name,
@@ -1653,10 +1751,6 @@ function handleAddProduct(event) {
     alertStock,
     limitStock,
   });
-
-  /* -----------------------------------------------------
-     RESET DU FORMULAIRE
-  ------------------------------------------------------ */
 
   addProductForm.reset();
 
@@ -1693,6 +1787,66 @@ function handleAddProduct(event) {
 }
 
 /* =====================================================
+   RÉINITIALISATION DE LA DÉMO
+===================================================== */
+
+function resetStockDemo() {
+  products = INITIAL_PRODUCTS.map((product) => ({
+    ...product,
+  }));
+
+  activeView = "products";
+  selectedCategory = "";
+  stockOperation = null;
+  quantityLastFocusedElement = null;
+
+  if (addProductForm) {
+    addProductForm.reset();
+  }
+
+  if (newCategoryInput) {
+    newCategoryInput.value = "";
+  }
+
+  if (quantityInput) {
+    quantityInput.value = "1";
+  }
+
+  if (quantityMessage) {
+    quantityMessage.textContent = "";
+  }
+
+  clearFormMessage();
+  render();
+
+  if (formCategorySelect) {
+    const categories = getCategories();
+
+    formCategorySelect.value = categories[0] ?? "__new__";
+  }
+
+  if (addProductForm) {
+    const stockInput = addProductForm.elements.namedItem("stock");
+    const alertInput = addProductForm.elements.namedItem("alertStock");
+    const limitInput = addProductForm.elements.namedItem("limitStock");
+
+    if (stockInput) {
+      stockInput.value = "0";
+    }
+
+    if (alertInput) {
+      alertInput.value = "10";
+    }
+
+    if (limitInput) {
+      limitInput.value = "3";
+    }
+  }
+
+  updateNewCategoryField();
+}
+
+/* =====================================================
    AFFICHAGE DU VRAI LOGICIEL
 ===================================================== */
 
@@ -1700,6 +1854,8 @@ function showFullDemo() {
   if (!overlay) {
     return;
   }
+
+  stopMobilePreviewVideo();
 
   mobilePreviewOverlay?.classList.remove("is-open");
   mobilePreviewOverlay?.setAttribute("aria-hidden", "true");
@@ -1715,7 +1871,7 @@ function showFullDemo() {
 }
 
 /* =====================================================
-   AFFICHAGE DE L'APERÇU NOIR <= 900PX
+   AFFICHAGE DE L'APERÇU VIDÉO <= 900PX
 ===================================================== */
 
 function showMobilePreview() {
@@ -1723,13 +1879,15 @@ function showMobilePreview() {
     return;
   }
 
-  closeStockQuantityDialog();
+  closeStockQuantityDialog(false);
 
   overlay?.classList.remove("is-open");
   overlay?.setAttribute("aria-hidden", "true");
 
   mobilePreviewOverlay.classList.add("is-open");
   mobilePreviewOverlay.setAttribute("aria-hidden", "false");
+
+  playMobilePreviewVideo();
 
   requestAnimationFrame(() => {
     mobilePreviewOverlay?.querySelector("[data-stock-preview-close]")?.focus();
@@ -1798,10 +1956,6 @@ function handleQuantityBackdropClick(event) {
 ===================================================== */
 
 function handleDocumentClick(event) {
-  /* -----------------------------------------------------
-     OUVRIR LA DÉMO
-  ------------------------------------------------------ */
-
   const openTrigger = event.target.closest("[data-open-stock-demo]");
 
   if (openTrigger) {
@@ -1812,10 +1966,6 @@ function handleDocumentClick(event) {
     return;
   }
 
-  /* -----------------------------------------------------
-     FERMER LE VRAI LOGICIEL
-  ------------------------------------------------------ */
-
   const closeTrigger = event.target.closest("[data-stock-close]");
 
   if (closeTrigger) {
@@ -1823,20 +1973,12 @@ function handleDocumentClick(event) {
     return;
   }
 
-  /* -----------------------------------------------------
-     FERMER L'APERÇU MOBILE
-  ------------------------------------------------------ */
-
   const mobileCloseTrigger = event.target.closest("[data-stock-preview-close]");
 
   if (mobileCloseTrigger) {
     closeLogicielStockDemo();
     return;
   }
-
-  /* -----------------------------------------------------
-     FERMER LE POPUP QUANTITÉ
-  ------------------------------------------------------ */
 
   const quantityCloseTrigger = event.target.closest(
     "[data-stock-quantity-close]",
@@ -1847,20 +1989,12 @@ function handleDocumentClick(event) {
     return;
   }
 
-  /* -----------------------------------------------------
-     PRODUITS / CATÉGORIES / ALERTES
-  ------------------------------------------------------ */
-
   const viewButton = event.target.closest("[data-stock-view]");
 
   if (viewButton && overlay?.contains(viewButton)) {
     setActiveView(viewButton.dataset.stockView);
     return;
   }
-
-  /* -----------------------------------------------------
-     SUPPRIMER UN PRODUIT
-  ------------------------------------------------------ */
 
   const deleteButton = event.target.closest("[data-stock-delete]");
 
@@ -1869,25 +2003,44 @@ function handleDocumentClick(event) {
     return;
   }
 
-  /* -----------------------------------------------------
-     AJOUTER / RETIRER DU STOCK
-  ------------------------------------------------------ */
-
   const stockButton = event.target.closest("[data-stock-action]");
 
   if (stockButton && overlay?.contains(stockButton)) {
     openStockQuantityDialog(
       stockButton.dataset.productId,
       stockButton.dataset.stockAction,
+      stockButton,
     );
   }
 }
 
 /* =====================================================
-   TOUCHE ÉCHAP
+   CLAVIER
 ===================================================== */
 
 function handleDocumentKeydown(event) {
+  if (!isDemoOpen()) {
+    return;
+  }
+
+  if (event.key === "Tab") {
+    if (quantityBackdrop && !quantityBackdrop.hidden) {
+      trapFocus(event, quantityDialog);
+      return;
+    }
+
+    if (mobilePreviewOverlay?.classList.contains("is-open")) {
+      trapFocus(event, mobilePreviewDialog);
+      return;
+    }
+
+    if (overlay?.classList.contains("is-open")) {
+      trapFocus(event, dialog);
+    }
+
+    return;
+  }
+
   if (event.key !== "Escape") {
     return;
   }
@@ -1897,9 +2050,7 @@ function handleDocumentKeydown(event) {
     return;
   }
 
-  if (isDemoOpen()) {
-    closeLogicielStockDemo();
-  }
+  closeLogicielStockDemo();
 }
 
 /* =====================================================
@@ -1914,6 +2065,12 @@ function cacheElements() {
   mobilePreviewOverlay = document.getElementById(
     "logiciel-stock-preview-overlay",
   );
+
+  mobilePreviewDialog =
+    mobilePreviewOverlay?.querySelector(".logiciel-stock-preview") ?? null;
+
+  mobilePreviewVideo =
+    mobilePreviewOverlay?.querySelector("[data-stock-preview-video]") ?? null;
 
   tableBody = overlay?.querySelector("[data-stock-table-body]") ?? null;
   emptyState = overlay?.querySelector("[data-stock-empty]") ?? null;
@@ -1943,6 +2100,9 @@ function cacheElements() {
   quantityBackdrop =
     overlay?.querySelector("[data-stock-quantity-backdrop]") ?? null;
 
+  quantityDialog =
+    quantityBackdrop?.querySelector(".stock-demo__quantity-dialog") ?? null;
+
   quantityTitle = overlay?.querySelector("[data-stock-quantity-title]") ?? null;
 
   quantityProductName =
@@ -1964,81 +2124,36 @@ function cacheElements() {
 ===================================================== */
 
 function bindEvents() {
-  /* -----------------------------------------------------
-     CLICS DU DOCUMENT
-  ------------------------------------------------------ */
-
   document.addEventListener("click", handleDocumentClick);
-
-  /* -----------------------------------------------------
-     CLAVIER
-  ------------------------------------------------------ */
 
   document.addEventListener("keydown", handleDocumentKeydown);
 
-  /* -----------------------------------------------------
-     FOND LIGHTBOX DESKTOP
-  ------------------------------------------------------ */
-
   overlay?.addEventListener("click", handleOverlayClick);
-
-  /* -----------------------------------------------------
-     FOND LIGHTBOX <= 900PX
-  ------------------------------------------------------ */
 
   mobilePreviewOverlay?.addEventListener(
     "click",
     handleMobilePreviewOverlayClick,
   );
 
-  /* -----------------------------------------------------
-     FOND POPUP QUANTITÉ
-  ------------------------------------------------------ */
-
   quantityBackdrop?.addEventListener("click", handleQuantityBackdropClick);
-
-  /* -----------------------------------------------------
-     FILTRE CATÉGORIE
-  ------------------------------------------------------ */
 
   categoryFilterSelect?.addEventListener("change", (event) => {
     selectedCategory = event.target.value;
     renderTable();
   });
 
-  /* -----------------------------------------------------
-     CATÉGORIE DU NOUVEAU PRODUIT
-  ------------------------------------------------------ */
-
   formCategorySelect?.addEventListener("change", () => {
     updateNewCategoryField();
     clearFormMessage();
   });
 
-  /* -----------------------------------------------------
-     AJOUT DU PRODUIT
-  ------------------------------------------------------ */
-
   addProductForm?.addEventListener("submit", handleAddProduct);
-
-  /* -----------------------------------------------------
-     EFFACE LE MESSAGE D'ERREUR
-     QUAND L'UTILISATEUR RETAPE
-  ------------------------------------------------------ */
 
   addProductForm?.addEventListener("input", () => {
     clearFormMessage();
   });
 
-  /* -----------------------------------------------------
-     VALIDATION POPUP QUANTITÉ
-  ------------------------------------------------------ */
-
   quantityForm?.addEventListener("submit", handleQuantitySubmit);
-
-  /* -----------------------------------------------------
-     CHANGEMENT DE TAILLE
-  ------------------------------------------------------ */
 
   window.addEventListener("resize", switchOpenDemoForViewport);
 }
@@ -2078,6 +2193,10 @@ export function openLogicielStockDemo() {
   if (!isDemoOpen()) {
     lastFocusedElement = document.activeElement;
     previousBodyOverflow = document.body.style.overflow;
+
+    openOverlayHistory(() => {
+      closeLogicielStockDemo(true);
+    });
   }
 
   document.body.style.overflow = "hidden";
@@ -2093,12 +2212,13 @@ export function openLogicielStockDemo() {
    FERMER LA DÉMO
 ===================================================== */
 
-export function closeLogicielStockDemo() {
+export function closeLogicielStockDemo(fromHistory = false) {
   if (!isInitialized) {
     return;
   }
 
-  closeStockQuantityDialog();
+  closeStockQuantityDialog(false);
+  stopMobilePreviewVideo();
 
   overlay?.classList.remove("is-open");
   overlay?.setAttribute("aria-hidden", "true");
@@ -2106,7 +2226,13 @@ export function closeLogicielStockDemo() {
   mobilePreviewOverlay?.classList.remove("is-open");
   mobilePreviewOverlay?.setAttribute("aria-hidden", "true");
 
+  resetStockDemo();
+
   document.body.style.overflow = previousBodyOverflow;
+
+  if (!fromHistory) {
+    closeOverlayHistory();
+  }
 
   if (lastFocusedElement instanceof HTMLElement) {
     lastFocusedElement.focus();

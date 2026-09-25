@@ -64,9 +64,9 @@ export function anim2(textElement) {
   const content = textElement.textContent;
 
   const isWhite =
-    initialColor === "white" || initialColor.toLowerCase() === "black";
+    initialColor === "black" || initialColor.toLowerCase() === "white";
 
-  const backGroundColor = isWhite ? "#383d52" : "white";
+  const backGroundColor = isWhite ? "white" : "black";
 
   textElement.dataset.text = content;
 
@@ -87,7 +87,7 @@ export function anim2(textElement) {
       position: relative;
       display: inline-block;
       color: ${backGroundColor};
-      -webkit-text-stroke: 0.05vw #383d52;
+      -webkit-text-stroke: 0.05vw black;
       text-transform: uppercase;
     }
 
@@ -197,7 +197,7 @@ export function anim3(textElement) {
       }
 
       to {
-        color: white;
+        color: black;
       }
     }
   `;
@@ -228,7 +228,7 @@ export function anim4(textElement) {
       --bg-size: 250%;
       color: transparent;
       -webkit-text-fill-color: transparent;
-      background-image: linear-gradient(90deg, white 0%, ${initialColor} 25%, white 50%, ${initialColor} 75%, white 100%);
+      background-image: linear-gradient(90deg, black 0%, ${initialColor} 25%, black 50%, ${initialColor} 75%, black 100%);
       background-size: var(--bg-size) 100%;
       background-position: 0% center;
       -webkit-background-clip: text;
@@ -547,7 +547,7 @@ export function anim8(textElement) {
     }
 
     .anim8__base {
-      color: white;
+      color: black;
     }
 
     .anim8__wave {

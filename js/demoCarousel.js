@@ -1,12 +1,13 @@
 import { getDataAnim } from "./dataDemo.js";
-import { addLigthBox } from "./demoLightbox.js";
 import {
   cleanupVideosInside,
+  initializeVideoVisibilityHandling,
   isCarouselSliding,
   pauseAllCarouselVideos,
   registerCarouselVideo,
   restartVisibleCarouselVideosFromStart,
   setCarouselSliding,
+  setCarouselVideoPlaybackEnabled,
   updateVisibleCarouselVideos,
 } from "./demoVideos.js";
 
@@ -69,14 +70,16 @@ function bindClickInteractions(elements) {
 
     item.dataset.clickBound = "true";
 
-    item.addEventListener("click", () => {
+    item.addEventListener("click", async () => {
       const realIndex = Number(item.dataset.index);
 
       if (!Number.isFinite(realIndex)) {
         return;
       }
 
-      addLigthBox(item, realIndex);
+      const { addLigthBox } = await import("./demoLightbox.js");
+
+      await addLigthBox(item, realIndex);
     });
   });
 }
@@ -123,6 +126,7 @@ const animationPages = buildAnimationPages(items);
 
 let animationCarouselPageIndex = 0;
 let animationCarouselAutoInterval = null;
+let animationCarouselActive = false;
 
 /* =========================================================
    INTERVALLES DES APERÇUS
@@ -189,22 +193,21 @@ function createAnimationCardElement(item, pageElement) {
     video.loop = true;
     video.playsInline = true;
     video.autoplay = false;
-    video.preload = "auto";
+    video.preload = "none";
     video.controls = false;
 
     video.setAttribute("muted", "");
     video.setAttribute("loop", "");
     video.setAttribute("playsinline", "");
-    video.setAttribute("preload", "auto");
+    video.setAttribute("preload", "none");
     video.setAttribute("aria-hidden", "true");
     video.setAttribute("tabindex", "-1");
 
     video.disablePictureInPicture = true;
-    video.src = item.video;
 
     mediaContainer.insertBefore(video, shine);
 
-    registerCarouselVideo(video);
+    registerCarouselVideo(video, item.video);
   } else if (typeof item.anim === "function") {
     let previewText = null;
 
@@ -239,6 +242,7 @@ function createAnimationCardElement(item, pageElement) {
 
     const intervalId = window.setInterval(() => {
       if (
+        !animationCarouselActive ||
         document.hidden ||
         document.querySelector(".overlay") ||
         isCarouselSliding()
@@ -433,7 +437,7 @@ function stopAnimationCarouselAutoSlide() {
 function startAnimationCarouselAutoSlide() {
   stopAnimationCarouselAutoSlide();
 
-  if (animationPages.length <= 1) {
+  if (!animationCarouselActive || animationPages.length <= 1) {
     return;
   }
 
@@ -486,12 +490,6 @@ function initCarousel() {
   track.style.transform = "translateX(0)";
 
   createAnimationCarouselDots();
-
-  requestAnimationFrame(() => {
-    restartVisibleCarouselVideosFromStart();
-  });
-
-  startAnimationCarouselAutoSlide();
 }
 
 /* =========================================================
@@ -678,25 +676,97 @@ function goToAnimationPage(pageIndex) {
 }
 
 /* =========================================================
+   CONTRÔLE DU CARROUSEL
+========================================================= */
+
+function startAnimationCarousel() {
+  if (animationCarouselActive) {
+    return;
+  }
+
+  animationCarouselActive = true;
+
+  setCarouselVideoPlaybackEnabled(true);
+  startAnimationCarouselAutoSlide();
+
+  requestAnimationFrame(() => {
+    updateVisibleCarouselVideos();
+  });
+}
+
+function stopAnimationCarousel() {
+  if (!animationCarouselActive) {
+    return;
+  }
+
+  animationCarouselActive = false;
+
+  stopAnimationCarouselAutoSlide();
+  setCarouselVideoPlaybackEnabled(false);
+  pauseAllCarouselVideos();
+}
+
+/* =========================================================
    INITIALISATION
 ========================================================= */
 
 let animationCarouselInitialized = false;
+let animationCarouselController = null;
 
 export function initializeAnimationCarousel() {
-  if (animationCarouselInitialized) {
-    return;
+  if (animationCarouselController) {
+    return animationCarouselController;
   }
 
-  animationCarouselInitialized = true;
+  if (!track || animationPages.length === 0) {
+    return null;
+  }
 
-  window.addEventListener("resize", () => {
-    clearTimeout(resizeTimeout);
+  if (!animationCarouselInitialized) {
+    animationCarouselInitialized = true;
 
-    resizeTimeout = window.setTimeout(() => {
-      updateVisibleCarouselVideos();
-    }, 200);
-  });
+    initializeVideoVisibilityHandling();
 
-  initCarousel();
+    const previousButton = document.getElementById("prevBtn");
+    const nextButton = document.getElementById("nextBtn");
+
+    previousButton?.addEventListener("click", () => {
+      slidePrev(false);
+
+      if (animationCarouselActive) {
+        restartAnimationCarouselAutoSlide();
+      }
+    });
+
+    nextButton?.addEventListener("click", () => {
+      slideNext(false);
+
+      if (animationCarouselActive) {
+        restartAnimationCarouselAutoSlide();
+      }
+    });
+
+    window.addEventListener(
+      "resize",
+      () => {
+        clearTimeout(resizeTimeout);
+
+        resizeTimeout = window.setTimeout(() => {
+          updateVisibleCarouselVideos();
+        }, 200);
+      },
+      {
+        passive: true,
+      },
+    );
+
+    initCarousel();
+  }
+
+  animationCarouselController = {
+    start: startAnimationCarousel,
+    stop: stopAnimationCarousel,
+  };
+
+  return animationCarouselController;
 }

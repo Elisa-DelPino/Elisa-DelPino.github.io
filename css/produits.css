@@ -1,0 +1,347 @@
+/* =====================================================
+   PRODUITS
+===================================================== */
+
+#products {
+  scroll-margin-top:16vh;
+}
+
+/* =====================================================
+   SECTION
+===================================================== */
+
+.section__products {
+  width:var(--w-container-size);
+  margin:0 auto var(--section-gap);
+  display:flex;
+  flex-direction:column;
+  gap:clamp(22px,2.5vw,34px);
+  background:transparent;
+  overflow:visible;
+}
+
+/* =====================================================
+   CARTES
+===================================================== */
+
+.wrapper__products {
+  position:relative;
+  width:100%;
+  min-height:clamp(390px,32vw,550px);
+  display:grid;
+  grid-template-columns:minmax(260px,.9fr) minmax(0,1.55fr);
+  align-items:center;
+  gap:clamp(50px,7vw,120px);
+  padding:clamp(45px,5vw,80px) clamp(45px,6vw,100px);
+  background:#000;
+  border:1px solid var(--border-color);
+  overflow:hidden;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity 800ms ease,transform 900ms cubic-bezier(.22,1,.36,1),visibility 0s linear 900ms;
+  will-change:opacity,transform;
+}
+
+.wrapper__products[data-reveal="left"] {
+  transform:translateX(-100px);
+}
+
+.wrapper__products[data-reveal="right"] {
+  transform:translateX(100px);
+}
+
+.wrapper__products.is-card-visible {
+  opacity:1;
+  visibility:visible;
+  transform:translateX(0);
+  pointer-events:auto;
+  transition:opacity 800ms ease,transform 900ms cubic-bezier(.22,1,.36,1),visibility 0s;
+}
+
+/* =====================================================
+   CARTE INVERSÉE
+===================================================== */
+
+.wrapper__products--reverse {
+  grid-template-columns:minmax(0,1.55fr) minmax(260px,.9fr);
+}
+
+/* =====================================================
+   PETIT TITRE EN HAUT
+===================================================== */
+
+.products-card__label {
+  position:absolute;
+  top:clamp(28px,3vw,48px);
+  right:clamp(28px,3vw,48px);
+  margin:0;
+  color:var(--text-color);
+  font-family:"Montserrat",Arial,sans-serif;
+  font-size:clamp(9px,.8vw,14px);
+  font-weight:500;
+  line-height:1;
+  letter-spacing:clamp(4px,.45vw,8px);
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+/* =====================================================
+   VISUEL
+===================================================== */
+
+.products-card__visual {
+  width:100%;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#globe-container,
+#horloge-container,
+#circuit-container {
+  position:relative;
+  width:clamp(190px,25vw,560px);
+  height:auto;
+  max-width:100%;
+  aspect-ratio:1/1;
+  margin:auto;
+  overflow:hidden;
+}
+
+#globe-container canvas,
+#horloge-container canvas,
+#circuit-container canvas {
+  display:block;
+  width:100%!important;
+  height:100%!important;
+  max-width:100%;
+  max-height:100%;
+}
+
+/* =====================================================
+   TEXTE
+===================================================== */
+
+.div-text__products {
+  width:100%;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+}
+
+/* =====================================================
+   TITRE
+===================================================== */
+
+.h3__products {
+  width:100%;
+  max-width:850px;
+  margin:0 0 clamp(25px,2.5vw,38px);
+  padding:0;
+  font-size:clamp(25px,3vw,55px);
+
+}
+
+.h3__products span {
+  display:block;
+  color:var(--other-color);
+}
+
+/* =====================================================
+   INTRODUCTION
+===================================================== */
+
+.products-card__intro {
+  width:100%;
+  max-width:850px;
+  margin:0 0 clamp(30px,3vw,45px);
+  padding:0;
+  color:var(--text-color);
+  font-family:"Montserrat",Arial,sans-serif;
+  font-size:clamp(15px,1.45vw,24px);
+  font-weight:400;
+  line-height:1.55;
+}
+
+/* =====================================================
+   LISTE
+===================================================== */
+
+.products-card__list {
+  width:100%;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:clamp(16px,1.7vw,24px);
+  list-style:none;
+}
+
+.products-card__list li {
+  position:relative;
+  min-height:32px;
+  display:flex;
+  align-items:center;
+  padding-left:clamp(48px,4vw,60px);
+  color:var(--text-color);
+  font-family:"Montserrat",Arial,sans-serif;
+  font-size:clamp(15px,1.45vw,24px);
+  font-weight:400;
+  line-height:1.35;
+}
+
+.products-card__list li::before {
+  content:"✓";
+  position:absolute;
+  top:50%;
+  left:0;
+  width:clamp(28px,2.2vw,36px);
+  height:clamp(28px,2.2vw,36px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--other-color);
+  border-radius:50%;
+  color:var(--other-color);
+  font-size:clamp(13px,1.1vw,18px);
+  font-weight:500;
+  line-height:1;
+  transform:translateY(-50%);
+}
+
+/* =====================================================
+   RESPONSIVE TABLETTE
+===================================================== */
+
+@media screen and (max-width:1000px) {
+  .wrapper__products {
+    min-height:clamp(330px,42vw,460px);
+    grid-template-columns:minmax(180px,.8fr) minmax(0,1.5fr);
+    gap:clamp(25px,4vw,50px);
+    padding:clamp(35px,5vw,55px) clamp(30px,5vw,60px);
+  }
+
+  .wrapper__products--reverse {
+    grid-template-columns:minmax(0,1.5fr) minmax(180px,.8fr);
+  }
+
+  #globe-container,
+  #circuit-container,
+  #horloge-container {
+    width:clamp(160px,25vw,260px);
+  }
+
+  .h2__products {
+    font-size:clamp(28px,4vw,42px);
+  }
+
+  .products-card__intro {
+    font-size:clamp(13px,1.8vw,18px);
+  }
+
+  .products-card__list li {
+    font-size:clamp(13px,1.8vw,18px);
+  }
+}
+
+/* =====================================================
+   RESPONSIVE MOBILE
+===================================================== */
+
+@media screen and (max-width:700px) {
+  .section__products {
+    gap:clamp(18px,5vw,28px);
+  }
+
+  .wrapper__products,
+  .wrapper__products--reverse {
+    min-height:0;
+    grid-template-columns:1fr;
+    gap:clamp(20px,6vw,32px);
+    padding:clamp(55px,13vw,75px) clamp(20px,6vw,32px) clamp(30px,8vw,45px);
+  }
+
+  .wrapper__products .products-card__visual {
+    grid-column:1;
+    grid-row:1;
+  }
+
+  .wrapper__products .div-text__products {
+    grid-column:1;
+    grid-row:2;
+  }
+
+  .wrapper__products--reverse .products-card__visual {
+    grid-column:1;
+    grid-row:1;
+  }
+
+  .wrapper__products--reverse .div-text__products {
+    grid-column:1;
+    grid-row:2;
+  }
+
+  .products-card__label {
+    top:22px;
+    right:22px;
+    font-size:8px;
+    letter-spacing:3px;
+  }
+
+  #globe-container,
+  #circuit-container,
+  #horloge-container {
+    width:clamp(155px,50vw,230px);
+  }
+
+  .div-text__products {
+    align-items:flex-start;
+  }
+
+  .h2__products {
+    margin-bottom:18px;
+    font-size:clamp(24px,7vw,34px);
+    line-height:1.1;
+  }
+
+  .products-card__intro {
+    margin-bottom:25px;
+    font-size:clamp(12px,3.5vw,15px);
+    line-height:1.5;
+  }
+
+  .products-card__list {
+    gap:14px;
+  }
+
+  .products-card__list li {
+    min-height:25px;
+    padding-left:35px;
+    font-size:clamp(12px,3.4vw,15px);
+  }
+
+  .products-card__list li::before {
+    width:22px;
+    height:22px;
+    font-size:11px;
+  }
+}
+
+/* =====================================================
+   ACCESSIBILITÉ
+===================================================== */
+
+@media (prefers-reduced-motion:reduce) {
+  .wrapper__products,
+  .wrapper__products[data-reveal="left"],
+  .wrapper__products[data-reveal="right"] {
+    opacity:1;
+    visibility:visible;
+    transform:none;
+    transition:none;
+  }
+}

@@ -2,7 +2,6 @@
 
 import { AddLoader } from "./loadingPage.js";
 import { initTextRotator } from "./animationHome.js";
-import { initSkillsFakeVSCode } from "./codeAuto.js";
 
 // -----------------------------------------------------------------------------
 // NAVIGATION VERS LES PRESTATIONS
@@ -62,5 +61,3 @@ initTextRotator(".text-rotator", 2500);
 // -----------------------------------------------------------------------------
 
 initProductsNavigation();
-
-initSkillsFakeVSCode("#skills-code-editor");

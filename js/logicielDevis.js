@@ -1,5 +1,7 @@
 // logicielDevis.js
 
+import { openOverlayHistory, closeOverlayHistory } from "./overlayHistory.js";
+
 /* =====================================================
    CLIENTS DE DÉMONSTRATION
 ===================================================== */
@@ -62,6 +64,10 @@ let selectedClientId = clients[0]?.id ?? null;
 let lastFocusedElement = null;
 let previousBodyOverflow = "";
 let isInitialized = false;
+let clientModalLastFocusedElement = null;
+
+const FOCUSABLE_SELECTOR =
+  'a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),video[controls],[tabindex]:not([tabindex="-1"])';
 
 /* =====================================================
    RÉFÉRENCES DOM
@@ -70,6 +76,8 @@ let isInitialized = false;
 let overlay = null;
 let dialog = null;
 let mobilePreviewOverlay = null;
+let mobilePreviewVideo = null;
+let mobilePreviewDialog = null;
 let clientList = null;
 let selectedClientContainer = null;
 let serviceForm = null;
@@ -84,8 +92,71 @@ let quoteTotal = null;
 let quoteNumber = null;
 let quoteDate = null;
 let clientModal = null;
+let clientModalDialog = null;
 let clientForm = null;
 let clientFormMessage = null;
+
+/* =====================================================
+   ACCESSIBILITÉ ET RÉDUCTION DES MOUVEMENTS
+===================================================== */
+
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function getFocusableElements(container) {
+  if (!container) {
+    return [];
+  }
+
+  return [...container.querySelectorAll(FOCUSABLE_SELECTOR)].filter(
+    (element) => {
+      const style = window.getComputedStyle(element);
+
+      return (
+        !element.closest('[hidden], [aria-hidden="true"]') &&
+        style.display !== "none" &&
+        style.visibility !== "hidden" &&
+        element.getClientRects().length > 0
+      );
+    },
+  );
+}
+
+function trapFocus(event, container) {
+  if (event.key !== "Tab" || !container) {
+    return;
+  }
+
+  const focusableElements = getFocusableElements(container);
+
+  if (focusableElements.length === 0) {
+    event.preventDefault();
+    container.focus();
+    return;
+  }
+
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+  const activeElement = document.activeElement;
+
+  if (!container.contains(activeElement)) {
+    event.preventDefault();
+    (event.shiftKey ? lastElement : firstElement).focus();
+    return;
+  }
+
+  if (event.shiftKey && activeElement === firstElement) {
+    event.preventDefault();
+    lastElement.focus();
+    return;
+  }
+
+  if (!event.shiftKey && activeElement === lastElement) {
+    event.preventDefault();
+    firstElement.focus();
+  }
+}
 
 /* =====================================================
    HTML PRINCIPAL
@@ -103,6 +174,7 @@ function createDemoHTML() {
         role="dialog"
         aria-modal="true"
         aria-label="Logiciel de gestion clients et création de devis"
+        tabindex="-1"
       >
         <button
           class="devis-demo__close"
@@ -328,8 +400,17 @@ function createDemoHTML() {
           data-devis-client-modal
           aria-hidden="true"
         >
-          <div class="devis-demo__client-form-card">
-            <h3 class="devis-demo__client-form-title">
+          <div
+            class="devis-demo__client-form-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="devis-client-modal-title"
+            tabindex="-1"
+          >
+            <h3
+              class="devis-demo__client-form-title"
+              id="devis-client-modal-title"
+            >
               Nouveau client
             </h3>
 
@@ -423,7 +504,7 @@ function createDemoHTML() {
 }
 
 /* =====================================================
-   APERÇU NOIR POUR ÉCRANS <= 900 PX
+   APERÇU VIDÉO POUR ÉCRANS <= 900 PX
 ===================================================== */
 
 function createMobilePreviewHTML() {
@@ -441,12 +522,18 @@ function createMobilePreviewHTML() {
         role="dialog"
         aria-modal="true"
         aria-label="Aperçu vidéo du logiciel de gestion clients et devis"
+        tabindex="-1"
       >
-        <div
+        <video
           class="logiciel-devis-preview__media"
-          data-devis-preview-media
-          aria-hidden="true"
-        ></div>
+          data-devis-preview-video
+          data-src="./video/demoDevis.mp4"
+          muted
+          loop
+          playsinline
+          preload="none"
+          aria-label="Aperçu vidéo du logiciel de gestion clients et devis"
+        ></video>
 
         <button
           class="logiciel-devis-preview__close"
@@ -467,6 +554,59 @@ function createMobilePreviewHTML() {
 
 function isSmallDevisScreen() {
   return window.matchMedia("(max-width: 900px)").matches;
+}
+
+/* =====================================================
+   VIDÉO MOBILE
+===================================================== */
+
+function playMobilePreviewVideo() {
+  if (!mobilePreviewVideo) {
+    return;
+  }
+
+  if (!mobilePreviewVideo.getAttribute("src")) {
+    const source = mobilePreviewVideo.dataset.src;
+
+    if (source) {
+      mobilePreviewVideo.src = source;
+      mobilePreviewVideo.load();
+    }
+  }
+
+  try {
+    mobilePreviewVideo.currentTime = 0;
+  } catch {}
+
+  if (prefersReducedMotion()) {
+    mobilePreviewVideo.pause();
+    mobilePreviewVideo.controls = true;
+    mobilePreviewVideo.loop = false;
+    mobilePreviewVideo.removeAttribute("loop");
+    return;
+  }
+
+  mobilePreviewVideo.controls = false;
+  mobilePreviewVideo.loop = true;
+  mobilePreviewVideo.setAttribute("loop", "");
+
+  const playPromise = mobilePreviewVideo.play();
+
+  if (playPromise && typeof playPromise.catch === "function") {
+    playPromise.catch(() => {});
+  }
+}
+
+function stopMobilePreviewVideo() {
+  if (!mobilePreviewVideo) {
+    return;
+  }
+
+  mobilePreviewVideo.pause();
+
+  try {
+    mobilePreviewVideo.currentTime = 0;
+  } catch {}
 }
 
 /* =====================================================
@@ -1012,13 +1152,57 @@ function resetCurrentQuote() {
 }
 
 /* =====================================================
+   RÉINITIALISATION COMPLÈTE DE LA DÉMO
+===================================================== */
+
+function resetDevisDemo() {
+  clients = INITIAL_CLIENTS.map((client) => ({
+    ...client,
+    services: client.services.map((service) => ({
+      ...service,
+    })),
+  }));
+
+  selectedClientId = clients[0]?.id ?? null;
+  clientModalLastFocusedElement = null;
+
+  if (serviceForm) {
+    serviceForm.reset();
+  }
+
+  if (serviceQuantityInput) {
+    serviceQuantityInput.value = "1";
+  }
+
+  clearServiceMessage();
+
+  if (clientForm) {
+    clientForm.reset();
+  }
+
+  if (clientFormMessage) {
+    clientFormMessage.textContent = "";
+  }
+
+  if (clientModal) {
+    clientModal.classList.remove("is-open");
+    clientModal.setAttribute("aria-hidden", "true");
+  }
+
+  render();
+}
+
+/* =====================================================
    NOUVEAU CLIENT
 ===================================================== */
 
-function openClientModal() {
+function openClientModal(trigger = null) {
   if (!clientModal || !clientForm) {
     return;
   }
+
+  clientModalLastFocusedElement =
+    trigger instanceof HTMLElement ? trigger : document.activeElement;
 
   clientForm.reset();
 
@@ -1035,10 +1219,12 @@ function openClientModal() {
   });
 }
 
-function closeClientModal() {
+function closeClientModal(restoreFocus = true) {
   if (!clientModal) {
     return;
   }
+
+  const elementToFocus = clientModalLastFocusedElement;
 
   clientModal.classList.remove("is-open");
 
@@ -1047,6 +1233,16 @@ function closeClientModal() {
   if (clientFormMessage) {
     clientFormMessage.textContent = "";
   }
+
+  if (restoreFocus) {
+    requestAnimationFrame(() => {
+      if (elementToFocus instanceof HTMLElement && elementToFocus.isConnected) {
+        elementToFocus.focus();
+      }
+    });
+  }
+
+  clientModalLastFocusedElement = null;
 }
 
 function handleClientSubmit(event) {
@@ -1105,6 +1301,8 @@ function showFullDemo() {
     return;
   }
 
+  stopMobilePreviewVideo();
+
   mobilePreviewOverlay?.classList.remove("is-open");
 
   mobilePreviewOverlay?.setAttribute("aria-hidden", "true");
@@ -1121,7 +1319,7 @@ function showFullDemo() {
 }
 
 /* =====================================================
-   AFFICHAGE DE L'APERÇU NOIR <= 900PX
+   AFFICHAGE DE L'APERÇU VIDÉO <= 900PX
 ===================================================== */
 
 function showMobilePreview() {
@@ -1129,7 +1327,7 @@ function showMobilePreview() {
     return;
   }
 
-  closeClientModal();
+  closeClientModal(false);
 
   overlay?.classList.remove("is-open");
 
@@ -1138,6 +1336,8 @@ function showMobilePreview() {
   mobilePreviewOverlay.classList.add("is-open");
 
   mobilePreviewOverlay.setAttribute("aria-hidden", "false");
+
+  playMobilePreviewVideo();
 
   requestAnimationFrame(() => {
     mobilePreviewOverlay?.querySelector("[data-devis-preview-close]")?.focus();
@@ -1230,7 +1430,7 @@ function handleDocumentClick(event) {
   const newClientButton = event.target.closest("[data-devis-new-client]");
 
   if (newClientButton && overlay?.contains(newClientButton)) {
-    openClientModal();
+    openClientModal(newClientButton);
     return;
   }
 
@@ -1265,10 +1465,32 @@ function handleDocumentClick(event) {
 }
 
 /* =====================================================
-   TOUCHE ÉCHAP
+   CLAVIER
 ===================================================== */
 
 function handleDocumentKeydown(event) {
+  if (!isDemoOpen()) {
+    return;
+  }
+
+  if (event.key === "Tab") {
+    if (clientModal?.classList.contains("is-open")) {
+      trapFocus(event, clientModalDialog);
+      return;
+    }
+
+    if (mobilePreviewOverlay?.classList.contains("is-open")) {
+      trapFocus(event, mobilePreviewDialog);
+      return;
+    }
+
+    if (overlay?.classList.contains("is-open")) {
+      trapFocus(event, dialog);
+    }
+
+    return;
+  }
+
   if (event.key !== "Escape") {
     return;
   }
@@ -1278,9 +1500,7 @@ function handleDocumentKeydown(event) {
     return;
   }
 
-  if (isDemoOpen()) {
-    closeLogicielDevisDemo();
-  }
+  closeLogicielDevisDemo();
 }
 
 /* =====================================================
@@ -1295,6 +1515,12 @@ function cacheElements() {
   mobilePreviewOverlay = document.getElementById(
     "logiciel-devis-preview-overlay",
   );
+
+  mobilePreviewDialog =
+    mobilePreviewOverlay?.querySelector(".logiciel-devis-preview") ?? null;
+
+  mobilePreviewVideo =
+    mobilePreviewOverlay?.querySelector("[data-devis-preview-video]") ?? null;
 
   clientList = overlay?.querySelector("[data-devis-client-list]") ?? null;
 
@@ -1328,6 +1554,9 @@ function cacheElements() {
   quoteDate = overlay?.querySelector("[data-devis-date]") ?? null;
 
   clientModal = overlay?.querySelector("[data-devis-client-modal]") ?? null;
+
+  clientModalDialog =
+    clientModal?.querySelector(".devis-demo__client-form-card") ?? null;
 
   clientForm = overlay?.querySelector("[data-devis-client-form]") ?? null;
 
@@ -1399,8 +1628,11 @@ export function openLogicielDevisDemo() {
 
   if (!isDemoOpen()) {
     lastFocusedElement = document.activeElement;
-
     previousBodyOverflow = document.body.style.overflow;
+
+    openOverlayHistory(() => {
+      closeLogicielDevisDemo(true);
+    });
   }
 
   document.body.style.overflow = "hidden";
@@ -1416,22 +1648,27 @@ export function openLogicielDevisDemo() {
    FERMER LA DÉMO
 ===================================================== */
 
-export function closeLogicielDevisDemo() {
+export function closeLogicielDevisDemo(fromHistory = false) {
   if (!isInitialized) {
     return;
   }
 
-  closeClientModal();
+  closeClientModal(false);
+  stopMobilePreviewVideo();
 
   overlay?.classList.remove("is-open");
-
   overlay?.setAttribute("aria-hidden", "true");
 
   mobilePreviewOverlay?.classList.remove("is-open");
-
   mobilePreviewOverlay?.setAttribute("aria-hidden", "true");
 
+  resetDevisDemo();
+
   document.body.style.overflow = previousBodyOverflow;
+
+  if (!fromHistory) {
+    closeOverlayHistory();
+  }
 
   if (lastFocusedElement instanceof HTMLElement) {
     lastFocusedElement.focus();

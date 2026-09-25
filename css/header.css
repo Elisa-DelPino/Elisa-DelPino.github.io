@@ -54,8 +54,8 @@ LOGO
   display:block;
   width:auto;
   height:auto;
-  max-width:clamp(80px,12vw,120px);
-  max-height:clamp(80px,12vw,120px);
+  max-width:clamp(110px,15vw,180px);
+  max-height:clamp(110px,15vw,180px);
 }
 
 /* -----------------------------------------------------------------------
@@ -80,7 +80,7 @@ TITRE
 .header__neon-title {
   position:relative;
   display:inline-block;
-  color:var(--text-color);
+  color:var(--other-color);
   font-family:"Montserrat",sans-serif;
   font-size:clamp(20px,2vw,30px);
   font-weight:100;
@@ -133,8 +133,8 @@ NAVIGATION
   right:0;
   bottom:-5px;
   width:0;
-  height:2px;
-  background:var(--text-color);
+  height:1px;
+  background:var(--other-color);
   transition:width 200ms ease-in-out;
 }
 
@@ -205,7 +205,7 @@ POPUP RÉSEAUX
   display:flex;
   flex-direction:column;
   background:#050505;
-  border:1px solid var(--text-color);
+  border:1px solid var(--other-color);
   border-radius:6px;
   opacity:0;
   visibility:hidden;
