@@ -1,7 +1,16 @@
 // index.js
 
+import { loadHeaderScriptDirect } from "./header.js";
+import { loadFooterScriptDirect } from "./footer.js";
 import { AddLoader } from "./loadingPage.js";
 import { initTextRotator } from "./animationHome.js";
+
+// -----------------------------------------------------------------------------
+// STRUCTURE COMMUNE
+// -----------------------------------------------------------------------------
+
+loadHeaderScriptDirect();
+loadFooterScriptDirect();
 
 // -----------------------------------------------------------------------------
 // NAVIGATION VERS LES PRESTATIONS

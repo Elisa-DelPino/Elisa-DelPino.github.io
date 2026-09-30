@@ -4,6 +4,9 @@ let cartItems = [];
 let demo3Element = null;
 let pricePanier = 0;
 let demo3ResizeObserver = null;
+let demo3ScrollLocked = false;
+let demo3LockedScrollTop = 0;
+let demo3PreviousOverflowY = "";
 
 if (!document.getElementById("demo3Fonts")) {
   const font = document.createElement("link");
@@ -276,7 +279,13 @@ function createHeader(element) {
   const panier = element.querySelector(".cart-container");
 
   panier?.addEventListener("click", () => {
-    showPanier();
+    const panierContainer = element.querySelector(".panier__demo3");
+
+    if (panierContainer?.classList.contains("open")) {
+      hidePanier();
+    } else {
+      showPanier();
+    }
   });
 
   const overlay = element.querySelector(".overlay__demo3");
@@ -360,7 +369,6 @@ function createHomeHTML(element) {
 
       </section>
 
-
       <!-- AVANTAGES -->
 
       <section class="demo3__benefits">
@@ -434,17 +442,13 @@ function createHomeHTML(element) {
 
       </section>
 
-      
       <!-- PRODUITS -->
 
       <section class="demo3__favorite">
 
         <div class="demo3__sectionHeader">
-
           <h2>PRODUITS POPULAIRES</h2>
-
           <span class="demo3__sectionLine"></span>
-
         </div>
 
         <div class="products__list">
@@ -456,7 +460,6 @@ function createHomeHTML(element) {
                   class="product__item"
                   data-product-index="${index}"
                 >
-
                   <div
                     class="product__item__img"
                     style="
@@ -467,15 +470,12 @@ function createHomeHTML(element) {
                   ></div>
 
                   <div class="product__item__text">
-
                     <h3>${product.title}</h3>
-
                     <h4>${product.price}</h4>
 
                     <span class="demo3__rating">
                       ★★★★★
                     </span>
-
                   </div>
 
                 </article>
@@ -522,16 +522,13 @@ function createHomeHTML(element) {
         </div>
 
         <div class="demo3__featureImage">
-
           <img
             src="./img/decoNouveaute.png"
             alt="Vase vert et décoration naturelle"
           >
-
         </div>
 
       </section>
-
 
       <!-- FOOTER VISUEL -->
 
@@ -648,7 +645,7 @@ function afficherHeroShop(category = "all") {
 
         <h1>
           ${currentHero.title}
-                  </h1>
+        </h1>
 
       </div>
 
@@ -665,6 +662,7 @@ function createShopHTML(category = "all") {
     <div class="heroShop__demo3"></div>
 
     <div class="divFilter__demo3">
+
       <input
         class="inputSearch__demo3"
         type="text"
@@ -677,6 +675,7 @@ function createShopHTML(category = "all") {
         <option value="Encens">Encens</option>
         <option value="Vases">Vases</option>
       </select>
+
     </div>
 
     <div class="gridProducts__demo3"></div>
@@ -764,7 +763,6 @@ function createPageShop(objet) {
 
       </div>
 
-
       <!-- COLONNE DROITE : INFORMATIONS -->
 
       <div class="demo3__productInformation">
@@ -790,7 +788,6 @@ function createPageShop(objet) {
             ${objet.description}
           </p>
         </div>
-
 
         <!-- ACTIONS EN BAS DE LA COLONNE -->
 
@@ -845,7 +842,6 @@ function createPageShop(objet) {
 
     </div>
 
-
     <!-- ==================================================
          DEUXIÈME LIGNE : RECOMMANDATIONS + GARANTIES
     =================================================== -->
@@ -871,7 +867,6 @@ function createPageShop(objet) {
                   data-related-index="${index}"
                   aria-label="Afficher ${product.title}"
                 >
-
                   <div
                     class="demo3__relatedImage"
                     style="background-image:url('${product.img}')"
@@ -889,7 +884,6 @@ function createPageShop(objet) {
         </div>
 
       </aside>
-
 
       <!-- COLONNE DROITE : GARANTIES -->
 
@@ -928,6 +922,7 @@ function createPageShop(objet) {
         <div class="demo3__productReassuranceItem">
 
           <svg viewBox="0 0 24 24" aria-hidden="true">
+
             <rect
               x="5"
               y="9"
@@ -937,6 +932,7 @@ function createPageShop(objet) {
             ></rect>
 
             <path d="M8 9V6a4 4 0 0 1 8 0v3"></path>
+
           </svg>
 
           <div>
@@ -987,11 +983,13 @@ function createPageShop(objet) {
     if (quantity <= 1) return;
 
     quantity -= 1;
+
     quantityValue.textContent = quantity;
   });
 
   plusButton.addEventListener("click", () => {
     quantity += 1;
+
     quantityValue.textContent = quantity;
   });
 
@@ -1002,13 +1000,17 @@ function createPageShop(objet) {
   const addButton = wrapper.querySelector(".btnaddProduct");
 
   addButton.addEventListener("click", () => {
+    animateProductToCart(objet, addButton);
+
     addProductPanier(objet, quantity);
 
     addButton.textContent = "AJOUTÉ AU PANIER";
+
     addButton.disabled = true;
 
     window.setTimeout(() => {
       addButton.textContent = "AJOUTER AU PANIER";
+
       addButton.disabled = false;
     }, 1200);
   });
@@ -1026,6 +1028,7 @@ function createPageShop(objet) {
       if (!selectedProduct) return;
 
       createPageShop(selectedProduct);
+
       scrollTopDemo(demo3Element);
     });
   });
@@ -1059,6 +1062,7 @@ function createCardProduct(category = "all", search = "") {
           class="product__item"
           data-index="${index}"
         >
+
           <div
             class="product__item__img"
             style="
@@ -1069,9 +1073,13 @@ function createCardProduct(category = "all", search = "") {
           ></div>
 
           <div class="product__item__text">
+
             <h3>${objet.title}</h3>
+
             <h4>${objet.price}</h4>
+
           </div>
+
         </div>
       `,
     )
@@ -1080,11 +1088,13 @@ function createCardProduct(category = "all", search = "") {
   grid.querySelectorAll(".product__item").forEach((card) => {
     card.addEventListener("click", () => {
       const index = Number(card.dataset.index);
+
       const product = objets[index];
 
       if (!product) return;
 
       createPageShop(product);
+
       scrollTopDemo(demo3Element);
     });
   });
@@ -1104,6 +1114,36 @@ function filteredDataProducts(category = "all", search = "") {
   });
 }
 
+function updatePanierPosition() {
+  const panier = demo3Element?.querySelector(".panier__demo3");
+
+  if (!panier || !demo3Element) return;
+
+  panier.style.top = `${demo3Element.scrollTop}px`;
+}
+
+function lockDemo3Scroll() {
+  if (!demo3Element || demo3ScrollLocked) return;
+
+  demo3LockedScrollTop = demo3Element.scrollTop;
+
+  demo3PreviousOverflowY = demo3Element.style.overflowY;
+
+  demo3Element.style.overflowY = "hidden";
+
+  demo3ScrollLocked = true;
+}
+
+function unlockDemo3Scroll() {
+  if (!demo3Element || !demo3ScrollLocked) return;
+
+  demo3Element.style.overflowY = demo3PreviousOverflowY;
+
+  demo3Element.scrollTop = demo3LockedScrollTop;
+
+  demo3ScrollLocked = false;
+}
+
 function showPanier() {
   const overlay = demo3Element?.querySelector(".overlay__demo3");
 
@@ -1113,7 +1153,12 @@ function showPanier() {
 
   closeDemo3MobileMenu();
 
+  updatePanierPosition();
+
+  lockDemo3Scroll();
+
   panier.classList.add("open");
+
   overlay.classList.add("visible");
 }
 
@@ -1125,7 +1170,141 @@ function hidePanier() {
   if (!overlay || !panier) return;
 
   panier.classList.remove("open");
+
   overlay.classList.remove("visible");
+
+  unlockDemo3Scroll();
+}
+
+/* =========================================================
+   ANIMATION PRODUIT VERS PANIER
+========================================================= */
+
+function pulseDemo3Cart(cartButton) {
+  if (!cartButton) return;
+
+  cartButton.classList.remove("demo3__cartPulse");
+
+  void cartButton.offsetWidth;
+
+  cartButton.classList.add("demo3__cartPulse");
+
+  window.setTimeout(() => {
+    cartButton.classList.remove("demo3__cartPulse");
+  }, 450);
+}
+
+function animateProductToCart(product, sourceElement) {
+  const cartButton = demo3Element?.querySelector(".cart-container");
+
+  if (!product?.img || !sourceElement || !cartButton) return;
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    pulseDemo3Cart(cartButton);
+
+    return;
+  }
+
+  const sourceRect = sourceElement.getBoundingClientRect();
+
+  const cartRect = cartButton.getBoundingClientRect();
+
+  if (
+    sourceRect.width === 0 ||
+    sourceRect.height === 0 ||
+    cartRect.width === 0 ||
+    cartRect.height === 0
+  ) {
+    return;
+  }
+
+  const startX = sourceRect.left + sourceRect.width / 2;
+
+  const startY = sourceRect.top + sourceRect.height / 2;
+
+  const targetX = cartRect.left + cartRect.width / 2;
+
+  const targetY = cartRect.top + cartRect.height / 2;
+
+  const middleX = startX + (targetX - startX) * 0.55;
+
+  const middleY =
+    startY +
+    (targetY - startY) * 0.45 -
+    Math.min(70, Math.max(28, Math.abs(targetX - startX) * 0.08));
+
+  const flyingProduct = document.createElement("img");
+
+  flyingProduct.className = "demo3__flyingProduct";
+
+  flyingProduct.src = product.img;
+
+  flyingProduct.alt = "";
+
+  flyingProduct.setAttribute("aria-hidden", "true");
+
+  flyingProduct.style.left = `${startX}px`;
+
+  flyingProduct.style.top = `${startY}px`;
+
+  document.body.appendChild(flyingProduct);
+
+  if (typeof flyingProduct.animate !== "function") {
+    flyingProduct.remove();
+
+    pulseDemo3Cart(cartButton);
+
+    return;
+  }
+
+  const animation = flyingProduct.animate(
+    [
+      {
+        left: `${startX}px`,
+        top: `${startY}px`,
+        opacity: 1,
+        transform: "translate(-50%, -50%) scale(1)",
+      },
+
+      {
+        offset: 0.55,
+        left: `${middleX}px`,
+        top: `${middleY}px`,
+        opacity: 0.96,
+        transform: "translate(-50%, -50%) scale(.78)",
+      },
+
+      {
+        left: `${targetX}px`,
+        top: `${targetY}px`,
+        opacity: 0.12,
+        transform: "translate(-50%, -50%) scale(.2)",
+      },
+    ],
+    {
+      duration: 1500,
+      easing: "cubic-bezier(.22, 1, .36, 1)",
+      fill: "forwards",
+    },
+  );
+
+  animation.addEventListener(
+    "finish",
+    () => {
+      flyingProduct.remove();
+
+      pulseDemo3Cart(cartButton);
+    },
+    { once: true },
+  );
+
+  animation.addEventListener(
+    "cancel",
+    () => {
+      flyingProduct.remove();
+    },
+    { once: true },
+  );
 }
 
 /* =========================================================
@@ -1180,9 +1359,11 @@ function resetEmptyCart() {
   }
 
   cartItems = [];
+
   pricePanier = 0;
 
   qtePanier.textContent = "0";
+
   qtePanier.style.visibility = "hidden";
 
   buttonPanier.style.display = "none";
@@ -1297,7 +1478,8 @@ function resetEmptyCart() {
                 V103
               "
             ></path>
-                      </g>
+
+          </g>
 
           <g class="demo3__bagLogo">
 
@@ -1363,6 +1545,7 @@ function resetEmptyCart() {
           </svg>
 
           <strong>LIVRAISON OFFERTE</strong>
+
           <span>Dès 80 € d’achat</span>
 
         </div>
@@ -1375,6 +1558,7 @@ function resetEmptyCart() {
           </svg>
 
           <strong>RETOURS GRATUITS</strong>
+
           <span>Sous 30 jours</span>
 
         </div>
@@ -1396,6 +1580,7 @@ function resetEmptyCart() {
           </svg>
 
           <strong>PAIEMENT SÉCURISÉ</strong>
+
           <span>Transactions protégées</span>
 
         </div>
@@ -1409,7 +1594,9 @@ function resetEmptyCart() {
 
   emptyCartButton?.addEventListener("click", () => {
     createShopHTML();
+
     hidePanier();
+
     scrollTopDemo(demo3Element);
   });
 }
@@ -1421,6 +1608,7 @@ function resetEmptyCart() {
 function addProductPanier(product = null, quantityToAdd = 1) {
   if (!product) {
     resetEmptyCart();
+
     return;
   }
 
@@ -1449,6 +1637,12 @@ function addProductPanier(product = null, quantityToAdd = 1) {
 ========================================================= */
 
 function renderFilledCart() {
+  if (cartItems.length === 0) {
+    resetEmptyCart();
+
+    return;
+  }
+
   const divProducts = demo3Element?.querySelector(
     ".contentProductsPanier__demo3",
   );
@@ -1523,53 +1717,53 @@ function renderFilledCart() {
 
           <div class="productPanier__demo3__content">
 
-  <div class="productPanier__demo3__text">
+            <div class="productPanier__demo3__text">
 
-    <h3>${product.title}</h3>
+              <h3>${product.title}</h3>
 
-    <h4>
-      ${unitPrice.toFixed(2)} €
-    </h4>
+              <h4>
+                ${unitPrice.toFixed(2)} €
+              </h4>
 
-    <h5 class="demo3__cartProductQuantityText">
-      Qté : ${quantity}
-    </h5>
+              <h5 class="demo3__cartProductQuantityText">
+                Qté : ${quantity}
+              </h5>
 
-  </div>
+            </div>
 
-  <div class="demo3__cartProductActions">
+            <div class="demo3__cartProductActions">
 
-    <div class="demo3__cartQuantity">
+              <div class="demo3__cartQuantity">
 
-      <button
-        type="button"
-        data-cart-action="minus"
-        aria-label="Réduire la quantité"
-      >
-        −
-      </button>
+                <button
+                  type="button"
+                  data-cart-action="minus"
+                  aria-label="Réduire la quantité"
+                >
+                  −
+                </button>
 
-      <span class="demo3__cartQuantityValue">
-        ${quantity}
-      </span>
+                <span class="demo3__cartQuantityValue">
+                  ${quantity}
+                </span>
 
-      <button
-        type="button"
-        data-cart-action="plus"
-        aria-label="Augmenter la quantité"
-      >
-        +
-      </button>
+                <button
+                  type="button"
+                  data-cart-action="plus"
+                  aria-label="Augmenter la quantité"
+                >
+                  +
+                </button>
 
-    </div>
+              </div>
 
-    <p class="demo3__cartLinePrice">
-      ${linePrice.toFixed(2)} €
-    </p>
+              <p class="demo3__cartLinePrice">
+                ${linePrice.toFixed(2)} €
+              </p>
 
-  </div>
+            </div>
 
-</div>
+          </div>
 
         </article>
       `;
@@ -1734,9 +1928,11 @@ function validateCart() {
   `;
 
   cartItems = [];
+
   pricePanier = 0;
 
   qtePanier.textContent = "0";
+
   qtePanier.style.visibility = "hidden";
 
   if (continueShoppingButton) {
@@ -1749,8 +1945,11 @@ function validateCart() {
     panierContainer?.classList.remove("has-products");
 
     createShopHTML();
+
     hidePanier();
+
     resetEmptyCart();
+
     scrollTopDemo(demo3Element);
   };
 }
@@ -1763,7 +1962,9 @@ function closeDemo3MobileMenu() {
   if (!burgerButton || !mobileMenu) return;
 
   mobileMenu.classList.remove("open");
+
   burgerButton.classList.remove("open");
+
   burgerButton.setAttribute("aria-expanded", "false");
 }
 

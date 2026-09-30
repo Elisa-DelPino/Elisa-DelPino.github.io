@@ -2,139 +2,127 @@
    DATA — PÂTISSERIE DEMO 2
 ===================================================== */
 
+const demo2CakeDescription =
+  "Création fictive utilisée uniquement pour cette démonstration de site web, afin de présenter la mise en page et les fonctionnalités proposées.";
+
 export const demo2Cakes = [
   {
     img: "./img/gateaux1.png",
 
-    name: "Éclat Framboise",
+    name: "Tarte aux fraises",
 
-    description:
-      "Un entremets délicat aux notes fruitées de framboise, sublimé par une mousse légère et une finition raffinée.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux2.png",
 
-    name: "Douceur Vanille",
+    name: "Paris-Brest au praliné",
 
-    description:
-      "Une création tout en finesse où la douceur de la vanille rencontre des textures légères et fondantes.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux4.png",
 
-    name: "Mille-Feuille Signature",
+    name: "Mille-feuille à la vanille",
 
-    description:
-      "Un feuilletage délicatement croustillant garni d'une crème onctueuse, pour un classique élégant et gourmand.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux5.png",
 
-    name: "Velours Caramel",
+    name: "Tarte au citron meringuée",
 
-    description:
-      "Une pâtisserie généreuse mêlant caramel fondant, crème légère et textures délicatement croquantes.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux6.png",
 
-    name: "Délice Praliné",
+    name: "Macaron au praliné",
 
-    description:
-      "Une création intense et raffinée autour du praliné, équilibrée par une crème douce et un biscuit délicat.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux8.png",
 
-    name: "Passion Chocolat",
+    name: "Entremets tout chocolat",
 
-    description:
-      "Un dessert élégant au chocolat, imaginé pour révéler toute l'intensité du cacao dans une texture fondante.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux7.png",
 
-    name: "Jardin de Fruits",
+    name: "Chou meringué",
 
-    description:
-      "Une pâtisserie fraîche et colorée mettant à l'honneur des fruits délicatement associés à une crème légère.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux9.png",
 
-    name: "Nuage Citron",
+    name: "Entremets à la framboise",
 
-    description:
-      "Une création fraîche aux notes acidulées de citron, adoucies par une meringue aérienne et légèrement dorée.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux10.png",
 
-    name: "Élégance Pistache",
+    name: "Opéra au chocolat",
 
-    description:
-      "Une pâtisserie délicate à la pistache, aux saveurs douces et raffinées relevées par une texture généreuse.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux11.png",
 
-    name: "Rose Gourmande",
+    name: "Entremets au chocolat blanc",
 
-    description:
-      "Une création élégante aux nuances douces et florales, pensée comme une véritable pièce de haute pâtisserie.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux12.png",
 
-    name: "Perle de Vanille",
+    name: "Entremets aux fruits rouges",
 
-    description:
-      "Une pâtisserie fine et lumineuse où la vanille s'exprime dans une mousse soyeuse et délicatement parfumée.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux13.png",
 
-    name: "Cœur Chocolat",
+    name: "Entremets aux fruits de la passion",
 
-    description:
-      "Une création intensément chocolatée mêlant fondant, crémeux et croquant pour une dégustation riche en contrastes.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux14.png",
 
-    name: "Macarons Précieux",
+    name: "Entremets chocolat-noisette",
 
-    description:
-      "De délicates coques croustillantes au cœur moelleux, garnies de crèmes parfumées aux saveurs raffinées.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux15.png",
 
-    name: "Douceur Fleurie",
+    name: "Tartelette crème et cacao",
 
-    description:
-      "Une création délicate aux finitions florales, alliant élégance visuelle et gourmandise tout en légèreté.",
+    description: demo2CakeDescription,
   },
 
   {
     img: "./img/gateaux16.png",
 
-    name: "Création Signature",
+    name: "Entremets chocolat intense",
 
-    description:
-      "Une pâtisserie d'exception imaginée autour de textures contrastées et de saveurs délicates, pour une finition résolument élégante.",
+    description: demo2CakeDescription,
   },
 ];

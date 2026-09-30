@@ -12,6 +12,7 @@ import {
 } from "./demoVideos.js";
 
 let resizeTimeout = null;
+
 const carouselAnimationIntervals = new Set();
 
 const track = document.getElementById("demoTrack");
@@ -97,6 +98,12 @@ const ANIMATION_CAROUSEL_PAGE_SIZE = 3;
 const ANIMATION_CAROUSEL_AUTOPLAY_DELAY = 8000;
 const ANIMATION_CAROUSEL_TRANSITION_DURATION = 650;
 const ANIMATION_CAROUSEL_EASING = "cubic-bezier(.22,1,.36,1)";
+
+const ANIMATION_CAROUSEL_SWIPE_MIN_DISTANCE = 45;
+const ANIMATION_CAROUSEL_SWIPE_DIRECTION_RATIO = 1.15;
+const ANIMATION_CAROUSEL_SWIPE_CLICK_BLOCK_DURATION = 450;
+
+const ANIMATION_CAROUSEL_MOBILE_QUERY = window.matchMedia("(max-width: 900px)");
 
 function buildAnimationPages(data) {
   if (!Array.isArray(data) || data.length === 0) {
@@ -354,6 +361,10 @@ function getAnimationCarouselSection() {
   return track?.closest(".section__demo.animations") || null;
 }
 
+function getAnimationCarouselViewport() {
+  return track?.closest(".demo-carousel__viewport") || null;
+}
+
 function updateAnimationCarouselDots() {
   const section = getAnimationCarouselSection();
 
@@ -411,7 +422,7 @@ function createAnimationCarouselDots() {
     dotsContainer.appendChild(dot);
   });
 
-  const viewport = track?.closest(".demo-carousel__viewport");
+  const viewport = getAnimationCarouselViewport();
 
   if (viewport) {
     viewport.insertAdjacentElement("afterend", dotsContainer);
@@ -523,6 +534,7 @@ function slideToAnimationPage(targetIndex, direction = 1) {
     cleanupAnimationPage(currentPage);
 
     track.appendChild(newPage);
+
     track.style.transition = "none";
     track.style.transform = "translate3d(0,0,0)";
 
@@ -676,6 +688,143 @@ function goToAnimationPage(pageIndex) {
 }
 
 /* =========================================================
+   SWIPE MOBILE
+========================================================= */
+
+function initAnimationCarouselSwipe() {
+  const viewport = getAnimationCarouselViewport();
+
+  if (!viewport || viewport.dataset.swipeBound === "true") {
+    return;
+  }
+
+  viewport.dataset.swipeBound = "true";
+
+  viewport.style.touchAction = "pan-y pinch-zoom";
+
+  let touchStartX = null;
+  let touchStartY = null;
+  let suppressClickUntil = 0;
+
+  function resetTouchPosition() {
+    touchStartX = null;
+    touchStartY = null;
+  }
+
+  viewport.addEventListener(
+    "touchstart",
+    (event) => {
+      if (
+        !ANIMATION_CAROUSEL_MOBILE_QUERY.matches ||
+        event.touches.length !== 1
+      ) {
+        resetTouchPosition();
+
+        return;
+      }
+
+      const touch = event.touches[0];
+
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+
+      if (animationCarouselActive) {
+        stopAnimationCarouselAutoSlide();
+      }
+    },
+    {
+      passive: true,
+    },
+  );
+
+  viewport.addEventListener(
+    "touchend",
+    (event) => {
+      if (
+        touchStartX === null ||
+        touchStartY === null ||
+        event.changedTouches.length === 0
+      ) {
+        resetTouchPosition();
+
+        if (animationCarouselActive) {
+          restartAnimationCarouselAutoSlide();
+        }
+
+        return;
+      }
+
+      const touch = event.changedTouches[0];
+
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+
+      const horizontalDistance = Math.abs(deltaX);
+      const verticalDistance = Math.abs(deltaY);
+
+      resetTouchPosition();
+
+      const isHorizontalSwipe =
+        ANIMATION_CAROUSEL_MOBILE_QUERY.matches &&
+        horizontalDistance >= ANIMATION_CAROUSEL_SWIPE_MIN_DISTANCE &&
+        horizontalDistance >
+          verticalDistance * ANIMATION_CAROUSEL_SWIPE_DIRECTION_RATIO;
+
+      if (!isHorizontalSwipe) {
+        if (animationCarouselActive) {
+          restartAnimationCarouselAutoSlide();
+        }
+
+        return;
+      }
+
+      suppressClickUntil =
+        performance.now() + ANIMATION_CAROUSEL_SWIPE_CLICK_BLOCK_DURATION;
+
+      if (deltaX < 0) {
+        slideNext(false);
+      } else {
+        slidePrev(false);
+      }
+
+      if (animationCarouselActive) {
+        restartAnimationCarouselAutoSlide();
+      }
+    },
+    {
+      passive: true,
+    },
+  );
+
+  viewport.addEventListener(
+    "touchcancel",
+    () => {
+      resetTouchPosition();
+
+      if (animationCarouselActive) {
+        restartAnimationCarouselAutoSlide();
+      }
+    },
+    {
+      passive: true,
+    },
+  );
+
+  viewport.addEventListener(
+    "click",
+    (event) => {
+      if (performance.now() >= suppressClickUntil) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    true,
+  );
+}
+
+/* =========================================================
    CONTRÔLE DU CARROUSEL
 ========================================================= */
 
@@ -702,6 +851,7 @@ function stopAnimationCarousel() {
   animationCarouselActive = false;
 
   stopAnimationCarouselAutoSlide();
+
   setCarouselVideoPlaybackEnabled(false);
   pauseAllCarouselVideos();
 }
@@ -761,6 +911,7 @@ export function initializeAnimationCarousel() {
     );
 
     initCarousel();
+    initAnimationCarouselSwipe();
   }
 
   animationCarouselController = {

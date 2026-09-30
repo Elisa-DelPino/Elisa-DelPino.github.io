@@ -113,7 +113,7 @@ function createHomeHTML(element) {
 
           <div class="divService__demo1">
             <img class="img__coiffure" src="./img/coiffure2.png" alt="Coiffure événementielle">
-            <div class="divTextService__demo1">EVENEMENT</div>
+            <div class="divTextService__demo1">ÉVÉNEMENT</div>
           </div>
 
         </div>

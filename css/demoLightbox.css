@@ -1,5 +1,7 @@
 /* =========================================================
+
 LIGHTBOX
+
 ========================================================= */
 
 .overlay {
@@ -155,6 +157,13 @@ LIGHTBOX
   animation:scrollArrow 1.4s infinite;
 }
 
+@media (hover:hover) and (pointer:fine) {
+  .overlay--web .scrollIndicator {
+    pointer-events:auto;
+    cursor:s-resize;
+  }
+}
+
 @keyframes scrollArrow {
   0% {
     transform:translateY(0);
@@ -257,7 +266,9 @@ LIGHTBOX
 }
 
 /* =========================================================
+
 LIGHTBOX DES ANIMATIONS
+
 ========================================================= */
 
 .overlay--animation {
@@ -332,7 +343,9 @@ LIGHTBOX DES ANIMATIONS
 }
 
 /* ---------------------------------------------------------
+
 PRÉVISUALISATION
+
 ---------------------------------------------------------- */
 
 .animation-preview {
@@ -398,7 +411,9 @@ PRÉVISUALISATION
 }
 
 /* ---------------------------------------------------------
+
 PANNEAU DE PERSONNALISATION
+
 ---------------------------------------------------------- */
 
 .animation-controls {
@@ -493,7 +508,9 @@ PANNEAU DE PERSONNALISATION
 }
 
 /* =========================================================
+
 MOBILE ANIMATIONS
+
 ========================================================= */
 
 @media screen and (max-width:850px) {
@@ -667,7 +684,9 @@ MOBILE ANIMATIONS
 }
 
 /* =========================================================
+
 RÉDUCTION DES MOUVEMENTS
+
 ========================================================= */
 
 @media (prefers-reduced-motion:reduce) {

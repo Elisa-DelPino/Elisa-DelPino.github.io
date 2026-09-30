@@ -1,6 +1,7 @@
 // logicielStock.js
 
 import { openOverlayHistory, closeOverlayHistory } from "./overlayHistory.js";
+import { setupSoftwareDemoNavigation } from "./softwareDemoNavigation.js";
 
 /* =====================================================
    PRODUITS DE DÉMONSTRATION
@@ -2030,12 +2031,12 @@ function handleDocumentKeydown(event) {
     }
 
     if (mobilePreviewOverlay?.classList.contains("is-open")) {
-      trapFocus(event, mobilePreviewDialog);
+      trapFocus(event, mobilePreviewOverlay);
       return;
     }
 
     if (overlay?.classList.contains("is-open")) {
-      trapFocus(event, dialog);
+      trapFocus(event, overlay);
     }
 
     return;
@@ -2171,6 +2172,16 @@ export function initLogicielStock() {
   document.body.insertAdjacentHTML("beforeend", createMobilePreviewHTML());
 
   cacheElements();
+
+  setupSoftwareDemoNavigation({
+    currentSoftware: "stock",
+    desktopOverlay: overlay,
+    mobileOverlay: mobilePreviewOverlay,
+    mobilePreview: mobilePreviewDialog,
+    closeCurrentDemo: closeLogicielStockDemo,
+    getReturnFocusElement: () => lastFocusedElement,
+  });
+
   bindEvents();
   render();
 
@@ -2181,7 +2192,7 @@ export function initLogicielStock() {
    OUVRIR LA DÉMO
 ===================================================== */
 
-export function openLogicielStockDemo() {
+export function openLogicielStockDemo(returnFocusElement = null) {
   if (!isInitialized) {
     initLogicielStock();
   }
@@ -2191,7 +2202,10 @@ export function openLogicielStockDemo() {
   }
 
   if (!isDemoOpen()) {
-    lastFocusedElement = document.activeElement;
+    lastFocusedElement =
+      returnFocusElement instanceof HTMLElement
+        ? returnFocusElement
+        : document.activeElement;
     previousBodyOverflow = document.body.style.overflow;
 
     openOverlayHistory(() => {
@@ -2212,7 +2226,10 @@ export function openLogicielStockDemo() {
    FERMER LA DÉMO
 ===================================================== */
 
-export function closeLogicielStockDemo(fromHistory = false) {
+export function closeLogicielStockDemo(
+  fromHistory = false,
+  restoreFocus = true,
+) {
   if (!isInitialized) {
     return;
   }
@@ -2234,7 +2251,7 @@ export function closeLogicielStockDemo(fromHistory = false) {
     closeOverlayHistory();
   }
 
-  if (lastFocusedElement instanceof HTMLElement) {
+  if (restoreFocus && lastFocusedElement instanceof HTMLElement) {
     lastFocusedElement.focus();
   }
 }

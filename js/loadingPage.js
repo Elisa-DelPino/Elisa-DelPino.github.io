@@ -1,7 +1,6 @@
 // loadingPage.js
 
 import { addDecodeText } from "./animationHome.js";
-import { loadHeaderScriptDirect } from "./header.js";
 import { initAnimations } from "./animationProducts.js";
 import { initContactAnimation } from "./animationContact.js";
 import { initAboutAnimation } from "./animationAbout.js";
@@ -164,8 +163,6 @@ function observeLazyProcedure() {
 ===================================================== */
 
 function initPageContent() {
-  loadHeaderScriptDirect();
-
   showDiagonals();
 
   addDecodeText();

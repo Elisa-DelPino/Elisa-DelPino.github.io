@@ -2,9 +2,14 @@ import { loadStylesheet } from "./resourceLoader.js";
 
 const WEBSITE_SHOWCASE_AUTOPLAY_DELAY = 4200;
 const SOFTWARE_SHOWCASE_AUTOPLAY_DELAY = 4200;
+
 const SHOWCASE_OUT_DURATION = 220;
 const SHOWCASE_IN_DURATION = 420;
 const SHOWCASE_EASING = "cubic-bezier(.22,1,.36,1)";
+
+const SHOWCASE_SWIPE_MIN_DISTANCE = 45;
+const SHOWCASE_SWIPE_DIRECTION_RATIO = 1.15;
+const SHOWCASE_SWIPE_CLICK_BLOCK_DURATION = 450;
 
 const softwareDemoSources = [
   ...document.querySelectorAll(".software-demo-card"),
@@ -21,7 +26,7 @@ const webDemoCardsData = [
     alt: "Démonstration d'un site web pour un salon de coiffure",
     features: [
       {
-        name: "Prise de rdv",
+        name: "Prise de RDV",
         icon: "calendar",
       },
       {
@@ -564,9 +569,15 @@ function initializeShowcase({
   let transitionTimeout = null;
   let isRunning = false;
 
+  let touchStartX = null;
+  let touchStartY = null;
+  let suppressClickUntil = 0;
+
   visual.setAttribute("role", "button");
   visual.setAttribute("tabindex", "0");
   visual.style.cursor = "pointer";
+
+  showcase.style.touchAction = "pan-y pinch-zoom";
 
   function openCurrentSlide() {
     onOpen?.(currentIndex, slides[currentIndex]);
@@ -677,8 +688,118 @@ function initializeShowcase({
     stopAutoSlide();
   }
 
+  /* =========================================================
+     SWIPE MOBILE
+  ========================================================= */
+
+  function resetSwipePosition() {
+    touchStartX = null;
+    touchStartY = null;
+  }
+
+  function shouldSuppressClick() {
+    return performance.now() < suppressClickUntil;
+  }
+
+  function handleTouchStart(event) {
+    if (!mobileButtonMediaQuery.matches || event.touches.length !== 1) {
+      resetSwipePosition();
+
+      return;
+    }
+
+    const touch = event.touches[0];
+
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+
+    if (isRunning) {
+      stopAutoSlide();
+    }
+  }
+
+  function handleTouchEnd(event) {
+    if (
+      touchStartX === null ||
+      touchStartY === null ||
+      event.changedTouches.length === 0
+    ) {
+      resetSwipePosition();
+
+      if (isRunning) {
+        startAutoSlide();
+      }
+
+      return;
+    }
+
+    const touch = event.changedTouches[0];
+
+    const deltaX = touch.clientX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+
+    const horizontalDistance = Math.abs(deltaX);
+    const verticalDistance = Math.abs(deltaY);
+
+    resetSwipePosition();
+
+    const isHorizontalSwipe =
+      mobileButtonMediaQuery.matches &&
+      horizontalDistance >= SHOWCASE_SWIPE_MIN_DISTANCE &&
+      horizontalDistance > verticalDistance * SHOWCASE_SWIPE_DIRECTION_RATIO;
+
+    if (!isHorizontalSwipe) {
+      if (isRunning) {
+        startAutoSlide();
+      }
+
+      return;
+    }
+
+    suppressClickUntil =
+      performance.now() + SHOWCASE_SWIPE_CLICK_BLOCK_DURATION;
+
+    if (deltaX < 0) {
+      goToSlide(currentIndex + 1);
+    } else {
+      goToSlide(currentIndex - 1);
+    }
+
+    if (isRunning) {
+      startAutoSlide();
+    }
+  }
+
+  function handleTouchCancel() {
+    resetSwipePosition();
+
+    if (isRunning) {
+      startAutoSlide();
+    }
+  }
+
+  showcase.addEventListener("touchstart", handleTouchStart, {
+    passive: true,
+  });
+
+  showcase.addEventListener("touchend", handleTouchEnd, {
+    passive: true,
+  });
+
+  showcase.addEventListener("touchcancel", handleTouchCancel, {
+    passive: true,
+  });
+
+  /* =========================================================
+     NAVIGATION PAR LES POINTS
+  ========================================================= */
+
   dots.forEach((dot) => {
     dot.addEventListener("click", () => {
+      if (shouldSuppressClick()) {
+        return;
+      }
+
       const index = Number(dot.dataset.index);
 
       if (!Number.isFinite(index)) {
@@ -693,7 +814,19 @@ function initializeShowcase({
     });
   });
 
-  visual.addEventListener("click", openCurrentSlide);
+  /* =========================================================
+     OUVERTURE DES DÉMOS
+  ========================================================= */
+
+  visual.addEventListener("click", (event) => {
+    if (shouldSuppressClick()) {
+      event.preventDefault();
+
+      return;
+    }
+
+    openCurrentSlide();
+  });
 
   visual.addEventListener("keydown", (event) => {
     if (event.key !== "Enter" && event.key !== " ") {
@@ -704,7 +837,15 @@ function initializeShowcase({
     openCurrentSlide();
   });
 
-  button.addEventListener("click", openCurrentSlide);
+  button.addEventListener("click", (event) => {
+    if (shouldSuppressClick()) {
+      event.preventDefault();
+
+      return;
+    }
+
+    openCurrentSlide();
+  });
 
   renderSlide(0, false);
 

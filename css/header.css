@@ -335,8 +335,8 @@ RESPONSIVE <= 900PX
   }
 
   .header__logo img {
-    max-width:75px;
-    max-height:75px;
+    max-width:90px;
+    max-height:90px;
   }
 
   .header__left {
@@ -389,8 +389,8 @@ RESPONSIVE <= 600PX
   }
 
   .header__logo img {
-    max-width:62px;
-    max-height:62px;
+    max-width:85px;
+    max-height:85px;
   }
 
   .header__title {
@@ -484,8 +484,8 @@ RESPONSIVE <= 420PX
   }
 
   .header__logo img {
-    max-width:52px;
-    max-height:52px;
+    max-width:80px;
+    max-height:80px;
   }
 
   .header__nav__menu {
@@ -536,8 +536,8 @@ RESPONSIVE <= 360PX
 
 @media screen and (max-width:360px) {
   .header__logo img {
-    max-width:46px;
-    max-height:46px;
+    max-width:70px;
+    max-height:70px;
   }
 
   .header__nav__menu {
@@ -546,7 +546,7 @@ RESPONSIVE <= 360PX
   }
 
   .header__nav__menu__link a {
-    font-size:8px;
+    font-size:9px;
   }
 
   .header__nav__menu__reseaux {

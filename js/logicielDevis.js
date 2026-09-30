@@ -1,6 +1,7 @@
 // logicielDevis.js
 
 import { openOverlayHistory, closeOverlayHistory } from "./overlayHistory.js";
+import { setupSoftwareDemoNavigation } from "./softwareDemoNavigation.js";
 
 /* =====================================================
    CLIENTS DE DÉMONSTRATION
@@ -17,13 +18,13 @@ const INITIAL_CLIENTS = [
     services: [
       {
         id: "service-001",
-        label: "Café Arabica",
+        label: "Café arabica",
         quantity: 12,
         price: 2.99,
       },
       {
         id: "service-002",
-        label: "Chocolat en poudre Noir 70%",
+        label: "Chocolat en poudre noir 70%",
         quantity: 20,
         price: 1.75,
       },
@@ -1073,9 +1074,7 @@ function handleServiceSubmit(event) {
   });
 
   if (alreadyExists) {
-    showServiceMessage(
-      "Ce produit ou cette prestation a déjà été ajouté au devis.",
-    );
+    showServiceMessage("Cet élément a déjà été ajouté au devis.");
 
     serviceNameInput.focus();
     serviceNameInput.select();
@@ -1480,12 +1479,12 @@ function handleDocumentKeydown(event) {
     }
 
     if (mobilePreviewOverlay?.classList.contains("is-open")) {
-      trapFocus(event, mobilePreviewDialog);
+      trapFocus(event, mobilePreviewOverlay);
       return;
     }
 
     if (overlay?.classList.contains("is-open")) {
-      trapFocus(event, dialog);
+      trapFocus(event, overlay);
     }
 
     return;
@@ -1606,6 +1605,15 @@ export function initLogicielDevis() {
 
   cacheElements();
 
+  setupSoftwareDemoNavigation({
+    currentSoftware: "quotes",
+    desktopOverlay: overlay,
+    mobileOverlay: mobilePreviewOverlay,
+    mobilePreview: mobilePreviewDialog,
+    closeCurrentDemo: closeLogicielDevisDemo,
+    getReturnFocusElement: () => lastFocusedElement,
+  });
+
   bindEvents();
 
   render();
@@ -1617,7 +1625,7 @@ export function initLogicielDevis() {
    OUVRIR LA DÉMO
 ===================================================== */
 
-export function openLogicielDevisDemo() {
+export function openLogicielDevisDemo(returnFocusElement = null) {
   if (!isInitialized) {
     initLogicielDevis();
   }
@@ -1627,7 +1635,10 @@ export function openLogicielDevisDemo() {
   }
 
   if (!isDemoOpen()) {
-    lastFocusedElement = document.activeElement;
+    lastFocusedElement =
+      returnFocusElement instanceof HTMLElement
+        ? returnFocusElement
+        : document.activeElement;
     previousBodyOverflow = document.body.style.overflow;
 
     openOverlayHistory(() => {
@@ -1648,7 +1659,10 @@ export function openLogicielDevisDemo() {
    FERMER LA DÉMO
 ===================================================== */
 
-export function closeLogicielDevisDemo(fromHistory = false) {
+export function closeLogicielDevisDemo(
+  fromHistory = false,
+  restoreFocus = true,
+) {
   if (!isInitialized) {
     return;
   }
@@ -1670,7 +1684,7 @@ export function closeLogicielDevisDemo(fromHistory = false) {
     closeOverlayHistory();
   }
 
-  if (lastFocusedElement instanceof HTMLElement) {
+  if (restoreFocus && lastFocusedElement instanceof HTMLElement) {
     lastFocusedElement.focus();
   }
 }

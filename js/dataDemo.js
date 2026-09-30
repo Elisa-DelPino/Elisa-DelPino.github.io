@@ -36,7 +36,7 @@ function createLazyAnimation(exportName) {
 
 const dataDemoWeb = [
   {
-    title: "DEMO - Salon de coiffure",
+    title: "DÉMO - Salon de coiffure",
     textContent: "Démo d'un site de salon de coiffure ",
     loadImg: async () => {
       await loadStylesheet("./css/demo1.css", "demo1-styles");
@@ -47,8 +47,8 @@ const dataDemoWeb = [
     },
   },
   {
-    title: "DEMO - Site vitrine d'une patisserie",
-    textContent: "Démo d'un site vitrine d'une patisserie ",
+    title: "DÉMO - Site vitrine d'une pâtisserie",
+    textContent: "Démo d'un site vitrine d'une pâtisserie ",
     loadImg: async () => {
       await loadStylesheet("./css/demo2.css", "demo2-styles");
 
@@ -58,7 +58,7 @@ const dataDemoWeb = [
     },
   },
   {
-    title: "DEMO  - Site e-commerce de décoration d'intérieur",
+    title: "DÉMO - Site e-commerce de décoration d'intérieur",
     textContent: "Site e-commerce de décoration d'intérieur ",
     loadImg: async () => {
       await loadStylesheet("./css/demo3.css", "demo3-styles");

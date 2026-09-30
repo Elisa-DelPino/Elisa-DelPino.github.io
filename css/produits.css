@@ -142,7 +142,7 @@
   max-width:850px;
   margin:0 0 clamp(25px,2.5vw,38px);
   padding:0;
-  font-size:clamp(25px,3vw,55px);
+  font-size:clamp(25px,2.5vw,55px);
 
 }
 
@@ -177,7 +177,7 @@
   padding:0;
   display:flex;
   flex-direction:column;
-  gap:clamp(16px,1.7vw,24px);
+  gap:clamp(16px,1.5vw,24px);
   list-style:none;
 }
 
@@ -189,7 +189,7 @@
   padding-left:clamp(48px,4vw,60px);
   color:var(--text-color);
   font-family:"Montserrat",Arial,sans-serif;
-  font-size:clamp(15px,1.45vw,24px);
+  font-size:clamp(15px,1.2vw,24px);
   font-weight:400;
   line-height:1.35;
 }
@@ -207,7 +207,7 @@
   border:1px solid var(--other-color);
   border-radius:50%;
   color:var(--other-color);
-  font-size:clamp(13px,1.1vw,18px);
+  font-size:clamp(13px,0.8vw,18px);
   font-weight:500;
   line-height:1;
   transform:translateY(-50%);

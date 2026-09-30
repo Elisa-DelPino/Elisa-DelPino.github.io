@@ -223,15 +223,14 @@
 .about__eyebrow {
   color:var(--text-color);
   font-family:"Montserrat",sans-serif;
-  font-size:clamp(8px,1.05vw,14px);
+  font-size:clamp(8px,0.8vw,14px);
   font-weight:500;
   letter-spacing:.12em;
 }
 
 .about__title {
   margin:0;
-  font-size:clamp(38px,3vw,50px);
-
+  font-size:clamp(38px,2.8vw,50px);
 }
 
 /* =====================================================
@@ -273,17 +272,14 @@
   background:linear-gradient(135deg,rgba(184,184,184,.035),rgba(255,255,255,.015)),black;
   border:1px solid rgba(255,255,255,.22);
   border-radius:7px;
-  transition:border-color 250ms ease,box-shadow 250ms ease,transform 250ms ease;
 }
 
-/* =====================================================
-   HOVER
-===================================================== */
-
-.about__advantage:hover {
-  border-color:rgba(184,184,184,.75);
-  box-shadow:0 0 8px rgba(184,184,184,.2),inset 0 0 12px rgba(184,184,184,.035);
-  transform:translateY(-2px);
+.about__advantage .shared-icon,
+.about__advantage .shared-icon:hover {
+  background:rgba(184,184,184,.08);
+  box-shadow:0 0 12px rgba(184,184,184,.08);
+  transform:none;
+  transition:none;
 }
 
 /* =====================================================

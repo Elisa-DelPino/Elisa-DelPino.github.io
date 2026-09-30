@@ -9,6 +9,7 @@ let ignoreNextPopstate = false;
 
 export function openOverlayHistory(closeCallback) {
   if (activeOverlay) {
+    activeOverlay.closeCallback = closeCallback;
     return;
   }
 
