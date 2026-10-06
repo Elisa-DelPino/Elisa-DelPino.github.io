@@ -1,10 +1,4 @@
-index.html
-faq.html
-mentions-legales.html
-politique-confidentialite.html
-conditions-generales.html
-robots.txt
-sitemap.xml
-css/
-js/
-img/
+User-agent: *
+Allow: /
+
+Sitemap: https://elisa-delpino.github.io/sitemap.xml
