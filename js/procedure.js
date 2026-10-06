@@ -5,7 +5,9 @@ let procedureAnimationFrame = null;
 let procedureObserver = null;
 
 /* =====================================================
+
    INITIALISATION
+
 ===================================================== */
 
 export function initProcedure() {
@@ -20,7 +22,9 @@ export function initProcedure() {
   }
 
   const progressLine = section.querySelector(".procedure__lineProgress");
+
   const axis = section.querySelector(".procedure__axis");
+
   const steps = section.querySelectorAll(".procedure__step");
 
   if (!progressLine || !axis || steps.length === 0) {
@@ -35,7 +39,9 @@ export function initProcedure() {
 }
 
 /* =====================================================
+
    ANIMATION
+
 ===================================================== */
 
 function startProcedureAnimation(section) {
@@ -50,7 +56,9 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      ORIENTATION
+
   ===================================================== */
 
   function isVerticalProcedure() {
@@ -58,7 +66,9 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      ACCESSIBILITÉ
+
   ===================================================== */
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion:reduce)");
@@ -76,7 +86,9 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      RÉGLAGES DE L'ANIMATION
+
   ===================================================== */
 
   const fullTravelDuration = 8000;
@@ -88,38 +100,88 @@ function startProcedureAnimation(section) {
   const activeAfterMarker = 0.025;
 
   /* =====================================================
+
      CHECKPOINTS
+
   ===================================================== */
 
-  const checkpoints = steps
-    .map((step, index) => {
-      return {
-        progress: Number(step.dataset.stepProgress),
+  let checkpoints = [];
 
-        stepIndex: index,
-      };
-    })
+  let targets = [];
 
-    .filter((checkpoint) => {
-      return Number.isFinite(checkpoint.progress);
-    })
+  const stepProgressByIndex = new Map();
 
-    .sort((checkpointA, checkpointB) => {
-      return checkpointA.progress - checkpointB.progress;
+  function getStepProgress(step) {
+    const marker = step.querySelector(".procedure__marker");
+
+    const fallbackProgress = Number(step.dataset.stepProgress);
+
+    if (!marker) {
+      return fallbackProgress;
+    }
+
+    const axisRect = axis.getBoundingClientRect();
+
+    const markerRect = marker.getBoundingClientRect();
+
+    const isVertical = isVerticalProcedure();
+
+    const axisLength = isVertical ? axisRect.height : axisRect.width;
+
+    if (axisLength <= 0) {
+      return fallbackProgress;
+    }
+
+    const axisStart = isVertical ? axisRect.top : axisRect.left;
+
+    const markerCenter = isVertical
+      ? markerRect.top + markerRect.height / 2
+      : markerRect.left + markerRect.width / 2;
+
+    const markerProgress = (markerCenter - axisStart) / axisLength;
+
+    return Math.min(1, Math.max(0, markerProgress));
+  }
+
+  function refreshCheckpoints() {
+    checkpoints = steps
+      .map((step, index) => {
+        return {
+          progress: getStepProgress(step),
+
+          stepIndex: index,
+        };
+      })
+      .filter((checkpoint) => {
+        return Number.isFinite(checkpoint.progress);
+      })
+      .sort((checkpointA, checkpointB) => {
+        return checkpointA.progress - checkpointB.progress;
+      });
+
+    stepProgressByIndex.clear();
+
+    checkpoints.forEach((checkpoint) => {
+      stepProgressByIndex.set(checkpoint.stepIndex, checkpoint.progress);
     });
 
-  const targets = [
-    ...checkpoints,
+    targets = [
+      ...checkpoints,
 
-    {
-      progress: 1,
+      {
+        progress: 1,
 
-      stepIndex: null,
-    },
-  ];
+        stepIndex: null,
+      },
+    ];
+  }
+
+  refreshCheckpoints();
 
   /* =====================================================
+
      ÉTAT DE L'ANIMATION
+
   ===================================================== */
 
   let isSectionVisible = false;
@@ -147,7 +209,9 @@ function startProcedureAnimation(section) {
   let animationState = "moving";
 
   /* =====================================================
+
      EASING
+
   ===================================================== */
 
   function easeInOutCubic(value) {
@@ -159,7 +223,9 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      AFFICHAGE DE LA LIGNE
+
   ===================================================== */
 
   function updateLine() {
@@ -173,12 +239,14 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      ÉTAT VISUEL DES CARTES
+
   ===================================================== */
 
   function updateStepStates() {
     steps.forEach((step, index) => {
-      const stepProgress = Number(step.dataset.stepProgress);
+      const stepProgress = stepProgressByIndex.get(index);
 
       if (!Number.isFinite(stepProgress)) {
         return;
@@ -197,7 +265,9 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      RESET DU CYCLE
+
   ===================================================== */
 
   function resetCycle(now = performance.now()) {
@@ -223,7 +293,9 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      DÉCALAGE DES TEMPS APRÈS UNE PAUSE
+
   ===================================================== */
 
   function shiftAnimationTimes(pausedDuration) {
@@ -241,7 +313,9 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      DÉPLACEMENT
+
   ===================================================== */
 
   function updateMovement(now) {
@@ -293,7 +367,9 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      PAUSE DE 3 SECONDES
+
   ===================================================== */
 
   function updateCardPause(now) {
@@ -327,7 +403,9 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      PAUSE À LA FIN
+
   ===================================================== */
 
   function updateEndPause(now) {
@@ -349,7 +427,9 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      BOUCLE PRINCIPALE
+
   ===================================================== */
 
   function render(now) {
@@ -375,7 +455,9 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      DÉMARRAGE
+
   ===================================================== */
 
   function start() {
@@ -403,7 +485,9 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      ARRÊT
+
   ===================================================== */
 
   function stop() {
@@ -423,13 +507,40 @@ function startProcedureAnimation(section) {
   }
 
   /* =====================================================
+
      CHANGEMENT D'ORIENTATION AU RESIZE
+
   ===================================================== */
+
+  let resizeFrame = null;
 
   window.addEventListener(
     "resize",
+
     () => {
-      updateLine();
+      if (resizeFrame !== null) {
+        cancelAnimationFrame(resizeFrame);
+      }
+
+      resizeFrame = requestAnimationFrame(() => {
+        resizeFrame = null;
+
+        refreshCheckpoints();
+
+        if (pausedStepIndex !== null) {
+          const pausedProgress = stepProgressByIndex.get(pausedStepIndex);
+
+          if (Number.isFinite(pausedProgress)) {
+            progress = pausedProgress;
+
+            segmentStartProgress = pausedProgress;
+          }
+        }
+
+        updateLine();
+
+        updateStepStates();
+      });
     },
 
     {
@@ -438,7 +549,9 @@ function startProcedureAnimation(section) {
   );
 
   /* =====================================================
+
      VISIBILITÉ DE L'ONGLET
+
   ===================================================== */
 
   document.addEventListener("visibilitychange", () => {
@@ -452,7 +565,9 @@ function startProcedureAnimation(section) {
   });
 
   /* =====================================================
+
      OBSERVER
+
   ===================================================== */
 
   procedureObserver = new IntersectionObserver(

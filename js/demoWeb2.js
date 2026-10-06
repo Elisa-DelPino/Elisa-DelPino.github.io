@@ -1,7 +1,6 @@
 import { startCakeCarousel, stopCakeCarousel } from "./cakeCarousel.js";
 import { demo2Cakes } from "./dataDemo2.js";
 
-let demo2RootElement = null;
 let cakeAnimationModule = null;
 let cakeAnimationModulePromise = null;
 let cakeAnimationRequestId = 0;
@@ -46,7 +45,6 @@ async function startCakeAnimationFor(container) {
 
 function stopCakeAnimationIfLoaded() {
   cakeAnimationRequestId += 1;
-
   cakeAnimationModule?.stopCakeAnimation?.();
 }
 
@@ -65,16 +63,8 @@ if (!document.getElementById("demo2Font")) {
   document.head.appendChild(font);
 }
 
-function getDemo2Width(element = demo2RootElement) {
-  const site = element?.querySelector(".demo2__site");
-  const target = site || element;
-  const width = target?.getBoundingClientRect().width;
-
-  return width || window.innerWidth;
-}
-
-function isGallerySmartphone(element = demo2RootElement) {
-  return getDemo2Width(element) <= 600;
+function isGallerySmartphone() {
+  return window.matchMedia("(max-width: 600px)").matches;
 }
 
 function scrollDemo2ToTop(element, behavior = "auto") {
@@ -116,13 +106,9 @@ function stopDemo2Components(element) {
 
 function createHeaderHTML() {
   return `
-
     <nav class="header__demo2">
-
       <ul class="header__nav__demo2">
-
         <li class="header__nav__demo2__link">
-
           <button
             type="button"
             class="header__nav__demo2__button"
@@ -130,7 +116,6 @@ function createHeaderHTML() {
           >
             ACCUEIL
           </button>
-
         </li>
 
         <li
@@ -140,16 +125,13 @@ function createHeaderHTML() {
           tabindex="0"
           aria-label="Retour en haut de l'accueil"
         >
-
           <img
             src="./img/logoPatisserie.svg"
             alt="Logo"
           >
-
         </li>
 
         <li class="header__nav__demo2__link">
-
           <button
             type="button"
             class="header__nav__demo2__button"
@@ -157,13 +139,9 @@ function createHeaderHTML() {
           >
             GALERIE
           </button>
-
         </li>
-
       </ul>
-
     </nav>
-
   `;
 }
 
@@ -201,7 +179,6 @@ function connectHeaderNavigation(element) {
   logoButton?.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-
       goHomeTop();
     }
   });
@@ -216,8 +193,6 @@ export function addDemoWeb2(element) {
     return;
   }
 
-  demo2RootElement = element;
-
   element.style.background = "#fffdfa";
 
   createHomeHTML(element);
@@ -231,54 +206,37 @@ function createHomeHTML(element) {
   stopDemo2Components(element);
 
   element.innerHTML = `
-
     <div class="demo2__site">
-
       ${createHeaderHTML()}
 
       <main class="wrapper__demo2">
-
         <section class="demo2__hero">
-
           <div class="demo2__heroContent">
-
             <h1 class="demo2__heroTitle">
-
               DES CRÉATIONS
-
               <br>
-
               QUI ÉVEILLENT
-
               <span class="demo2__heroTitleItalic">
                 vos sens
               </span>
-
             </h1>
-
           </div>
 
           <div class="demo2__heroVisual">
-
             <img
               src="./img/heroPatisserie.png"
               alt="Création pâtissière artisanale"
             >
-
           </div>
-
         </section>
 
         <section class="demo2__benefits">
-
           <div class="demo2__benefit">
-
             <span class="demo2__benefitIcon">
               ♧
             </span>
 
             <div class="demo2__benefitText">
-
               <span class="demo2__benefitTitle">
                 INGRÉDIENTS
               </span>
@@ -286,19 +244,15 @@ function createHomeHTML(element) {
               <span class="demo2__benefitSub">
                 sélectionnés
               </span>
-
             </div>
-
           </div>
 
           <div class="demo2__benefit">
-
             <span class="demo2__benefitIcon">
               ♢
             </span>
 
             <div class="demo2__benefitText">
-
               <span class="demo2__benefitTitle">
                 FAIT MAISON
               </span>
@@ -306,19 +260,15 @@ function createHomeHTML(element) {
               <span class="demo2__benefitSub">
                 avec passion
               </span>
-
             </div>
-
           </div>
 
           <div class="demo2__benefit">
-
             <span class="demo2__benefitIcon">
               ♧
             </span>
 
             <div class="demo2__benefitText">
-
               <span class="demo2__benefitTitle">
                 LIVRAISON
               </span>
@@ -326,19 +276,15 @@ function createHomeHTML(element) {
               <span class="demo2__benefitSub">
                 rapide & soignée
               </span>
-
             </div>
-
           </div>
 
           <div class="demo2__benefit">
-
             <span class="demo2__benefitIcon">
               ♢
             </span>
 
             <div class="demo2__benefitText">
-
               <span class="demo2__benefitTitle">
                 PAIEMENT
               </span>
@@ -346,17 +292,12 @@ function createHomeHTML(element) {
               <span class="demo2__benefitSub">
                 sécurisé
               </span>
-
             </div>
-
           </div>
-
         </section>
 
         <section class="demo2__creations">
-
           <div class="demo2__sectionHeading">
-
             <h2 class="demo2__sectionTitle">
               NOS CRÉATIONS GOURMANDES
             </h2>
@@ -367,59 +308,43 @@ function createHomeHTML(element) {
             >
               <span></span>
             </div>
-
           </div>
 
           <div class="demo2__carouselArea">
             <div class="cake-carousel"></div>
           </div>
-
         </section>
 
         <section class="demo2__craft">
-
           <div class="demo2__craftContent">
-
             <p class="demo2__craftEyebrow">
               NOTRE SAVOIR-FAIRE
             </p>
 
             <h2 class="demo2__craftTitle">
-
               L'EXCELLENCE
-
               <br>
-
               À CHAQUE DÉTAIL
-
             </h2>
 
             <div class="demo2__craftSeparator"></div>
 
             <p class="demo2__craftParagraph">
-
               Chaque création est pensée comme une œuvre
               unique, pour transformer vos moments
               en souvenirs inoubliables.
-
             </p>
-
           </div>
 
           <div class="demo2__cakeArea">
-
             <div
               class="cake-animation demo2__cakeStage"
             ></div>
-
           </div>
-
         </section>
 
         <section class="demo2__universes">
-
           <div class="demo2__sectionHeading">
-
             <h2 class="demo2__sectionTitle">
               NOS COLLECTIONS
             </h2>
@@ -430,13 +355,10 @@ function createHomeHTML(element) {
             >
               <span></span>
             </div>
-
           </div>
 
           <div class="demo2__universeGrid">
-
             <article class="demo2__universe">
-
               <div
                 class="demo2__universeImage"
                 data-gallery-link
@@ -444,12 +366,10 @@ function createHomeHTML(element) {
                 tabindex="0"
                 aria-label="Voir la galerie de gâteaux"
               >
-
                 <img
                   src="./img/gateaux1.png"
                   alt="Gâteaux"
                 >
-
               </div>
 
               <h3 class="demo2__universeTitle">
@@ -459,11 +379,9 @@ function createHomeHTML(element) {
               <span class="demo2__universeLink">
                 DÉCOUVRIR
               </span>
-
             </article>
 
             <article class="demo2__universe">
-
               <div
                 class="demo2__universeImage"
                 data-gallery-link
@@ -471,12 +389,10 @@ function createHomeHTML(element) {
                 tabindex="0"
                 aria-label="Voir la galerie de pâtisseries"
               >
-
                 <img
                   src="./img/gateaux4.png"
                   alt="Pâtisserie"
                 >
-
               </div>
 
               <h3 class="demo2__universeTitle">
@@ -486,11 +402,9 @@ function createHomeHTML(element) {
               <span class="demo2__universeLink">
                 DÉCOUVRIR
               </span>
-
             </article>
 
             <article class="demo2__universe">
-
               <div
                 class="demo2__universeImage"
                 data-gallery-link
@@ -498,12 +412,10 @@ function createHomeHTML(element) {
                 tabindex="0"
                 aria-label="Voir la galerie de macarons"
               >
-
                 <img
                   src="./img/gateaux14.png"
                   alt="Macarons"
                 >
-
               </div>
 
               <h3 class="demo2__universeTitle">
@@ -513,11 +425,9 @@ function createHomeHTML(element) {
               <span class="demo2__universeLink">
                 DÉCOUVRIR
               </span>
-
             </article>
 
             <article class="demo2__universe">
-
               <div
                 class="demo2__universeImage"
                 data-gallery-link
@@ -525,12 +435,10 @@ function createHomeHTML(element) {
                 tabindex="0"
                 aria-label="Voir la galerie de cupcakes"
               >
-
                 <img
                   src="./img/gateaux5.png"
                   alt="Cupcakes"
                 >
-
               </div>
 
               <h3 class="demo2__universeTitle">
@@ -540,17 +448,11 @@ function createHomeHTML(element) {
               <span class="demo2__universeLink">
                 DÉCOUVRIR
               </span>
-
             </article>
-
           </div>
-
         </section>
-
       </main>
-
     </div>
-
   `;
 
   connectHeaderNavigation(element);
@@ -570,7 +472,6 @@ function createHomeHTML(element) {
     link.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-
         openGallery();
       }
     });
@@ -604,17 +505,12 @@ function createGalleryHTML(element) {
   stopDemo2Components(element);
 
   element.innerHTML = `
-
     <div class="demo2__site">
-
       ${createHeaderHTML()}
 
       <main class="wrapper__demo2">
-
         <section class="demo2__galleryPage">
-
           <div class="demo2__galleryHeader">
-
             <h1 class="demo2__galleryTitle">
               NOS CRÉATIONS
             </h1>
@@ -625,38 +521,30 @@ function createGalleryHTML(element) {
             >
               <span></span>
             </div>
-
           </div>
 
           <div class="demo2__galerie">
-
             <div class="demo2__galerie__item">
-
               ${demo2Cakes
                 .map(
                   (cake, index) => `
-
                     <article
                       class="demo2__imgWrapper"
                       data-cake-index="${index}"
                     >
-
                       <button
                         type="button"
                         class="demo2__galleryTrigger"
                         aria-label="Voir les informations sur ${cake.name}"
                         aria-expanded="false"
                       >
-
                         <img
                           src="${cake.img}"
                           alt="${cake.name}"
                         >
-
                       </button>
 
                       <div class="demo2__cakeInfo">
-
                         <span class="demo2__cakeInfoLabel">
                           CRÉATION SIGNATURE
                         </span>
@@ -673,40 +561,29 @@ function createGalleryHTML(element) {
                         <p class="demo2__cakeInfoDescription">
                           ${cake.description}
                         </p>
-
                       </div>
-
                     </article>
-
                   `,
                 )
                 .join("")}
-
             </div>
-
           </div>
-
         </section>
-
       </main>
-
     </div>
-
   `;
 
   connectHeaderNavigation(element);
 
   const cakeItems = element.querySelectorAll(".demo2__imgWrapper");
-
   const mobileCakePositions = new WeakMap();
 
   function moveCakeToRowStart(item) {
-    if (!item || !isGallerySmartphone(element)) {
+    if (!item || !isGallerySmartphone()) {
       return;
     }
 
     const cakeIndex = Number(item.dataset.cakeIndex);
-
     const isRightColumn = cakeIndex % 2 === 1;
 
     if (!isRightColumn) {
@@ -748,7 +625,6 @@ function createGalleryHTML(element) {
 
     if (!parent) {
       mobileCakePositions.delete(item);
-
       return;
     }
 
@@ -821,7 +697,7 @@ function createGalleryHTML(element) {
     }
 
     item.addEventListener("pointerenter", (event) => {
-      if (isGallerySmartphone(element) || event.pointerType === "touch") {
+      if (isGallerySmartphone() || event.pointerType === "touch") {
         return;
       }
 
@@ -829,7 +705,7 @@ function createGalleryHTML(element) {
     });
 
     item.addEventListener("pointerleave", (event) => {
-      if (isGallerySmartphone(element) || event.pointerType === "touch") {
+      if (isGallerySmartphone() || event.pointerType === "touch") {
         return;
       }
 

@@ -456,7 +456,7 @@
 }
 
 /* =====================================================
-   PAGE DE TROIS ANIMATIONS
+   PAGE D’ANIMATIONS
 ===================================================== */
 
 .demo-carousel__page {
@@ -688,26 +688,28 @@
   }
 
   .demo-carousel__page {
-    --animation-gap:clamp(5px,1.5vw,8px);
+    --animation-gap:clamp(8px,2.5vw,12px);
+    grid-template-columns:repeat(2,minmax(0,1fr));
   }
 
   .section__demo.animations .demo-carousel__item {
-    padding:clamp(4px,1vw,6px);
+    padding:clamp(5px,1.5vw,7px);
     border-radius:4px;
   }
 
   .demo-animation-card__media {
+    aspect-ratio:1.35/1;
     border-radius:1px;
   }
 
   .demo-animation-card__media .demo-carousel__previewText {
-    max-width:88%;
-    font-size:clamp(6px,2.3vw,11px);
+    max-width:90%;
+    font-size:clamp(9px,3vw,13px);
   }
 
   .demo-animation-card__button {
-    margin-top:clamp(4px,1.5vw,7px);
-    font-size:clamp(5px,1.2vw,8px);
+    margin-top:clamp(6px,2vw,8px);
+    font-size:clamp(8px,2.2vw,10px);
   }
 
   .demo-carousel__dots {
@@ -723,15 +725,15 @@
 
 @media screen and (max-width:380px) {
   .demo-carousel__page {
-    --animation-gap:4px;
+    --animation-gap:6px;
   }
 
   .section__demo.animations .demo-carousel__item {
-    padding:3px;
+    padding:4px;
   }
 
   .demo-animation-card__button {
-    margin-top:3px;
+    margin-top:4px;
   }
 
   .demo-carousel__dots {

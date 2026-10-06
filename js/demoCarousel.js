@@ -1,4 +1,5 @@
 import { getDataAnim } from "./dataDemo.js";
+
 import {
   cleanupVideosInside,
   initializeVideoVisibilityHandling,
@@ -94,7 +95,8 @@ const items = getDataAnim().map((item, index) => ({
   originalIndex: index,
 }));
 
-const ANIMATION_CAROUSEL_PAGE_SIZE = 3;
+const ANIMATION_CAROUSEL_DESKTOP_PAGE_SIZE = 3;
+const ANIMATION_CAROUSEL_MOBILE_PAGE_SIZE = 2;
 const ANIMATION_CAROUSEL_AUTOPLAY_DELAY = 8000;
 const ANIMATION_CAROUSEL_TRANSITION_DURATION = 650;
 const ANIMATION_CAROUSEL_EASING = "cubic-bezier(.22,1,.36,1)";
@@ -105,20 +107,29 @@ const ANIMATION_CAROUSEL_SWIPE_CLICK_BLOCK_DURATION = 450;
 
 const ANIMATION_CAROUSEL_MOBILE_QUERY = window.matchMedia("(max-width: 900px)");
 
-function buildAnimationPages(data) {
-  if (!Array.isArray(data) || data.length === 0) {
+const ANIMATION_CAROUSEL_TWO_CARD_QUERY =
+  window.matchMedia("(max-width: 650px)");
+
+function getAnimationCarouselPageSize() {
+  return ANIMATION_CAROUSEL_TWO_CARD_QUERY.matches
+    ? ANIMATION_CAROUSEL_MOBILE_PAGE_SIZE
+    : ANIMATION_CAROUSEL_DESKTOP_PAGE_SIZE;
+}
+
+function buildAnimationPages(data, pageSize) {
+  if (!Array.isArray(data) || data.length === 0 || pageSize <= 0) {
     return [];
   }
 
-  const pageCount = Math.ceil(data.length / ANIMATION_CAROUSEL_PAGE_SIZE);
+  const pageCount = Math.ceil(data.length / pageSize);
+
   const pages = [];
 
   for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
     const page = [];
 
-    for (let offset = 0; offset < ANIMATION_CAROUSEL_PAGE_SIZE; offset++) {
-      const itemIndex =
-        (pageIndex * ANIMATION_CAROUSEL_PAGE_SIZE + offset) % data.length;
+    for (let offset = 0; offset < pageSize; offset++) {
+      const itemIndex = (pageIndex * pageSize + offset) % data.length;
 
       page.push(data[itemIndex]);
     }
@@ -129,10 +140,14 @@ function buildAnimationPages(data) {
   return pages;
 }
 
-const animationPages = buildAnimationPages(items);
+let animationCarouselPageSize = getAnimationCarouselPageSize();
+
+let animationPages = buildAnimationPages(items, animationCarouselPageSize);
 
 let animationCarouselPageIndex = 0;
+
 let animationCarouselAutoInterval = null;
+
 let animationCarouselActive = false;
 
 /* =========================================================
@@ -230,6 +245,7 @@ function createAnimationCardElement(item, pageElement) {
       previewText = document.createElement("h2");
 
       previewText.className = "demo-carousel__previewText";
+
       previewText.textContent =
         item.previewText || item.textContent || "ANIMATION";
 
@@ -318,7 +334,7 @@ function createAnimationCardElement(item, pageElement) {
 }
 
 /* =========================================================
-   CRÉATION D'UNE PAGE DE TROIS ANIMATIONS
+   CRÉATION D’UNE PAGE D’ANIMATIONS
 ========================================================= */
 
 function createAnimationPageElement(pageData) {
@@ -348,6 +364,7 @@ function cleanupAnimationPage(page) {
   }
 
   cleanupAnimationIntervalsInside(page);
+
   cleanupVideosInside(page);
 
   page.remove();
@@ -378,6 +395,7 @@ function updateAnimationCarouselDots() {
     const isActive = index === animationCarouselPageIndex;
 
     dot.classList.toggle("is-active", isActive);
+
     dot.setAttribute("aria-current", isActive ? "true" : "false");
   });
 }
@@ -410,7 +428,7 @@ function createAnimationCarouselDots() {
 
     dot.setAttribute(
       "aria-label",
-      `Afficher les animations ${index * 3 + 1} à ${index * 3 + 3}`,
+      `Afficher la page d’animations ${index + 1}`,
     );
 
     dot.addEventListener("click", () => {
@@ -470,6 +488,63 @@ function restartAnimationCarouselAutoSlide() {
 }
 
 /* =========================================================
+   ADAPTATION DU NOMBRE DE CARTES PAR PAGE
+========================================================= */
+
+function getCurrentVisibleAnimationIndex() {
+  const currentCard = track?.querySelector(
+    ".demo-carousel__page .demo-carousel__item",
+  );
+
+  const currentIndex = Number(currentCard?.dataset.index);
+
+  if (Number.isFinite(currentIndex)) {
+    return currentIndex;
+  }
+
+  return animationCarouselPageIndex * animationCarouselPageSize;
+}
+
+function rebuildAnimationCarouselForViewport() {
+  const nextPageSize = getAnimationCarouselPageSize();
+
+  if (nextPageSize === animationCarouselPageSize) {
+    updateVisibleCarouselVideos();
+
+    return;
+  }
+
+  const currentVisibleIndex = getCurrentVisibleAnimationIndex();
+
+  animationCarouselPageSize = nextPageSize;
+
+  animationPages = buildAnimationPages(items, animationCarouselPageSize);
+
+  if (animationPages.length === 0) {
+    return;
+  }
+
+  animationCarouselPageIndex = Math.floor(
+    currentVisibleIndex / animationCarouselPageSize,
+  );
+
+  animationCarouselPageIndex = Math.min(
+    animationCarouselPageIndex,
+    animationPages.length - 1,
+  );
+
+  initCarousel();
+
+  if (animationCarouselActive) {
+    startAnimationCarouselAutoSlide();
+  }
+
+  requestAnimationFrame(() => {
+    updateVisibleCarouselVideos();
+  });
+}
+
+/* =========================================================
    INITIALISATION DU CARROUSEL
 ========================================================= */
 
@@ -481,7 +556,9 @@ function initCarousel() {
   setCarouselSliding(false);
 
   stopAnimationCarouselAutoSlide();
+
   clearCarouselAnimationIntervals();
+
   cleanupVideosInside(track);
 
   track.innerHTML = "";
@@ -525,9 +602,11 @@ function slideToAnimationPage(targetIndex, direction = 1) {
   ).matches;
 
   setCarouselSliding(true);
+
   pauseAllCarouselVideos();
 
   const currentPage = track.firstElementChild;
+
   const newPage = createAnimationPageElement(animationPages[normalizedIndex]);
 
   if (reducedMotion) {
@@ -552,6 +631,7 @@ function slideToAnimationPage(targetIndex, direction = 1) {
   }
 
   let slideFinished = false;
+
   let fallbackTimeout = null;
 
   function finishSlide() {
@@ -836,6 +916,7 @@ function startAnimationCarousel() {
   animationCarouselActive = true;
 
   setCarouselVideoPlaybackEnabled(true);
+
   startAnimationCarouselAutoSlide();
 
   requestAnimationFrame(() => {
@@ -853,6 +934,7 @@ function stopAnimationCarousel() {
   stopAnimationCarouselAutoSlide();
 
   setCarouselVideoPlaybackEnabled(false);
+
   pauseAllCarouselVideos();
 }
 
@@ -861,6 +943,7 @@ function stopAnimationCarousel() {
 ========================================================= */
 
 let animationCarouselInitialized = false;
+
 let animationCarouselController = null;
 
 export function initializeAnimationCarousel() {
@@ -902,7 +985,7 @@ export function initializeAnimationCarousel() {
         clearTimeout(resizeTimeout);
 
         resizeTimeout = window.setTimeout(() => {
-          updateVisibleCarouselVideos();
+          rebuildAnimationCarouselForViewport();
         }, 200);
       },
       {
@@ -911,6 +994,7 @@ export function initializeAnimationCarousel() {
     );
 
     initCarousel();
+
     initAnimationCarouselSwipe();
   }
 

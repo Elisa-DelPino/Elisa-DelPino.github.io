@@ -1,6 +1,5 @@
 /* logicielStock.css */
 
-
 /* =====================================================
    RESET LOCAL
 ===================================================== */
@@ -10,7 +9,6 @@
 .logiciel-stock-overlay *::after {
   box-sizing:border-box;
 }
-
 
 /* =====================================================
    OVERLAY
@@ -40,7 +38,6 @@
   pointer-events:auto;
   transition:opacity 250ms ease,visibility 0s;
 }
-
 
 /* =====================================================
    LOGICIEL
@@ -82,7 +79,6 @@
 .logiciel-stock-overlay.is-open .stock-demo {
   transform:translateY(0) scale(1);
 }
-
 
 /* =====================================================
    BARRE DU HAUT
@@ -145,7 +141,6 @@
   font-weight:500;
 }
 
-
 /* =====================================================
    BOUTON FERMER
 ===================================================== */
@@ -182,7 +177,6 @@
   height:20px;
 }
 
-
 /* =====================================================
    STRUCTURE PRINCIPALE
 ===================================================== */
@@ -193,7 +187,6 @@
   display:grid;
   grid-template-columns:190px minmax(0,1fr) 285px;
 }
-
 
 /* =====================================================
    SIDEBAR
@@ -276,7 +269,6 @@
   height:100%;
 }
 
-
 /* =====================================================
    BADGE ALERTES
 ===================================================== */
@@ -295,7 +287,6 @@
   font-size:10px;
   font-weight:700;
 }
-
 
 /* =====================================================
    LÉGENDE
@@ -347,7 +338,6 @@
   background:var(--stock-red);
 }
 
-
 /* =====================================================
    CONTENU CENTRAL
 ===================================================== */
@@ -386,7 +376,6 @@
   font-weight:400;
   line-height:1.45;
 }
-
 
 /* =====================================================
    FILTRE CATÉGORIE
@@ -437,7 +426,6 @@
   color:var(--stock-text);
   background:var(--stock-panel-2);
 }
-
 
 /* =====================================================
    TABLEAU
@@ -498,7 +486,6 @@
   border-bottom:0;
 }
 
-
 /* =====================================================
    LIGNES
 ===================================================== */
@@ -525,7 +512,6 @@
   font-weight:650;
 }
 
-
 /* =====================================================
    CATÉGORIE PRODUIT
 ===================================================== */
@@ -541,7 +527,6 @@
   border-radius:999px;
   white-space:nowrap;
 }
-
 
 /* =====================================================
    CONTRÔLE DU STOCK
@@ -603,7 +588,6 @@
   color:var(--stock-red);
 }
 
-
 /* =====================================================
    STATUT
 ===================================================== */
@@ -651,7 +635,6 @@
   box-shadow:0 0 8px rgba(173,98,98,.30);
 }
 
-
 /* =====================================================
    ÉTAT VIDE
 ===================================================== */
@@ -666,7 +649,6 @@
 .stock-demo__empty[hidden] {
   display:none;
 }
-
 
 /* =====================================================
    FORMULAIRE
@@ -780,7 +762,7 @@
 .stock-demo__threshold-help {
   margin:-2px 0 0;
   color:var(--stock-text-muted);
-  font-size:7.5px;
+  font-size:8.5px;
   line-height:1.4;
 }
 
@@ -799,7 +781,6 @@
 .stock-demo__form-message.is-success {
   color:#506855;
 }
-
 
 /* =====================================================
    BOUTON ENREGISTRER
@@ -840,7 +821,6 @@
   outline-offset:3px;
 }
 
-
 /* =====================================================
    SUPPRESSION PRODUIT
 ===================================================== */
@@ -874,7 +854,6 @@
   outline:2px solid #ca8585;
   outline-offset:2px;
 }
-
 
 /* =====================================================
    POPUP MODIFICATION DE STOCK
@@ -997,20 +976,20 @@
   transform:translateY(-1px);
 }
 
-
 /* =====================================================
    APERÇU VIDÉO MOBILE
 ===================================================== */
 
 .logiciel-stock-preview-overlay {
   z-index:5002;
+  padding:12px;
 }
 
 .logiciel-stock-preview {
   position:relative;
-  height:min(calc(100% - 24px),760px);
+  height:min(calc(100% - 16px),760px);
   width:auto;
-  max-width:92vw;
+  max-width:94vw;
   aspect-ratio:9/16;
   background:black;
   border:1px solid rgba(255,255,255,.18);
@@ -1031,11 +1010,11 @@
 
 .logiciel-stock-preview__close {
   position:absolute;
-  top:12px;
-  right:12px;
+  top:8px;
+  right:8px;
   z-index:3;
-  width:38px;
-  height:38px;
+  width:34px;
+  height:34px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -1052,13 +1031,11 @@
   height:20px;
 }
 
-
 /* =====================================================
    RESPONSIVE : 1250PX À 1101PX
 ===================================================== */
 
 @media screen and (max-width:1250px) and (min-width:1101px) {
-
   .logiciel-stock-overlay {
     padding:8px;
   }
@@ -1268,7 +1245,7 @@
   }
 
   .stock-demo__threshold-help {
-    font-size:7px;
+    font-size:8.5px;
   }
 
   .stock-demo__form-message {
@@ -1279,16 +1256,13 @@
     min-height:39px;
     font-size:9px;
   }
-
 }
-
 
 /* =====================================================
    RESPONSIVE : 1100PX À 901PX
 ===================================================== */
 
 @media screen and (max-width:1100px) and (min-width:901px) {
-
   .logiciel-stock-overlay {
     padding:6px;
   }
@@ -1597,7 +1571,7 @@
     grid-row:2;
     align-self:center;
     margin:0;
-    font-size:7.5px;
+    font-size:8.5px;
   }
 
   .stock-demo__form-message {
@@ -1632,56 +1606,17 @@
     padding:0 8px;
     font-size:9px;
   }
-
 }
-
-
-/* =====================================================
-   900PX ET MOINS
-===================================================== */
-
-@media screen and (max-width:900px) {
-
-  .logiciel-stock-overlay {
-    top:clamp(80px,8vw,120px);
-    right:0;
-    bottom:0;
-    left:0;
-    padding:12px;
-  }
-
-  #logiciel-stock-overlay .stock-demo {
-    display:none;
-  }
-
-  .logiciel-stock-preview {
-    height:min(calc(100% - 16px),760px);
-    width:auto;
-    max-width:94vw;
-  }
-
-  .logiciel-stock-preview__close {
-    top:8px;
-    right:8px;
-    width:34px;
-    height:34px;
-  }
-
-}
-
 
 /* =====================================================
    600PX ET MOINS
 ===================================================== */
 
 @media screen and (max-width:600px) {
-
-  .logiciel-stock-overlay {
+  .logiciel-stock-preview-overlay {
     top:72px;
   }
-
 }
-
 
 /* =====================================================
    FOCUS CLAVIER
@@ -1698,13 +1633,11 @@
   outline-offset:3px;
 }
 
-
 /* =====================================================
    RÉDUCTION DES ANIMATIONS
 ===================================================== */
 
 @media (prefers-reduced-motion:reduce) {
-
   .logiciel-stock-overlay,
   .logiciel-stock-overlay *,
   .logiciel-stock-overlay *::before,
@@ -1716,5 +1649,4 @@
     transition-duration:.01ms!important;
     transition-delay:0ms!important;
   }
-
 }

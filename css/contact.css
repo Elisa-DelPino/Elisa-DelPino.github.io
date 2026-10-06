@@ -264,7 +264,7 @@
   padding:0;
   color:rgba(255,255,255,.4);
   font-family:"Montserrat",Arial,sans-serif;
-  font-size:clamp(7px,.62vw,9px);
+  font-size:clamp(8px,.62vw,9px);
   font-weight:300;
   line-height:1.45;
 }
@@ -304,7 +304,7 @@
   padding:0;
   color:rgba(255,255,255,.5);
   font-family:"Montserrat",Arial,sans-serif;
-  font-size:clamp(7px,.72vw,10px);
+  font-size:clamp(8px,.72vw,10px);
   font-weight:300;
   line-height:1.2;
   letter-spacing:.04em;
@@ -472,6 +472,10 @@
     flex:1;
   }
 
+  .contact__info-label {
+    font-size:9px;
+  }
+
   .span__info__contact__item,
   .contact__info-link {
     max-width:100%;
@@ -539,6 +543,7 @@
   .contact__response-time {
     margin:-4px 0 0;
     padding:0;
+    font-size:9px;
   }
 }
 

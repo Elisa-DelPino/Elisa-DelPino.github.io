@@ -926,7 +926,7 @@ function createDemoHTML() {
 }
 
 /* =====================================================
-   APERÇU VIDÉO POUR ÉCRANS <= 900 PX
+   APERÇU VIDÉO POUR ÉCRANS COMPACTS
 ===================================================== */
 
 function createMobilePreviewHTML() {
@@ -983,7 +983,9 @@ function createMobilePreviewHTML() {
 ===================================================== */
 
 function isSmallStockScreen() {
-  return window.matchMedia("(max-width: 900px)").matches;
+  return window.matchMedia(
+    "(max-width: 900px), (max-width: 1000px) and (max-height: 500px)",
+  ).matches;
 }
 
 /* =====================================================

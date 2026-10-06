@@ -158,6 +158,15 @@
   font-weight:500;
 }
 
+@media screen and (max-width:800px) {
+  .faq-hero__title {
+    max-width:100%;
+    white-space:normal;
+    font-size:clamp(27px,7.5vw,42px);
+    line-height:.95;
+  }
+}
+
 @media screen and (max-width:650px) {
   .privacy-notice {
     width:var(--w-container-size);

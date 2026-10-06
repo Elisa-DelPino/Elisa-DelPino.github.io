@@ -1,7 +1,6 @@
 /* =====================================================
    LIGHTBOX
 ===================================================== */
-
 .logiciel-devis-overlay {
   position:fixed;
   top:clamp(80px,8vw,120px);
@@ -24,7 +23,6 @@
 /* =====================================================
    LOGICIEL
 ===================================================== */
-
 .devis-demo {
   position:relative;
   width:min(96vw,1320px);
@@ -51,7 +49,6 @@
 /* =====================================================
    FERMETURE
 ===================================================== */
-
 .devis-demo__close {
   position:absolute;
   top:14px;
@@ -84,7 +81,6 @@
 /* =====================================================
    PANNEAU CLIENTS
 ===================================================== */
-
 .devis-demo__clients {
   min-width:0;
   padding:25px 16px;
@@ -138,7 +134,6 @@
 /* =====================================================
    CLIENT
 ===================================================== */
-
 .devis-demo__client-item {
   position:relative;
   width:100%;
@@ -191,7 +186,6 @@
 /* =====================================================
    SUPPRESSION CLIENT
 ===================================================== */
-
 .devis-demo__delete-client {
   position:absolute;
   top:50%;
@@ -224,7 +218,6 @@
 /* =====================================================
    ESPACE DE TRAVAIL
 ===================================================== */
-
 .devis-demo__workspace {
   min-width:0;
   padding:25px;
@@ -238,7 +231,6 @@
 /* =====================================================
    CARTE CLIENT
 ===================================================== */
-
 .devis-demo__client-card {
   padding:20px;
   background:#ddd8d1;
@@ -279,7 +271,6 @@
 /* =====================================================
    AJOUT D'UN PRODUIT OU D'UNE PRESTATION
 ===================================================== */
-
 .devis-demo__service-card {
   padding:20px;
   background:#ddd8d1;
@@ -378,7 +369,6 @@
 /* =====================================================
    PRODUITS ET PRESTATIONS AJOUTÉS
 ===================================================== */
-
 .devis-demo__services-card {
   min-height:170px;
   padding:20px;
@@ -440,7 +430,6 @@
 /* =====================================================
    SUPPRESSION PRODUIT OU PRESTATION
 ===================================================== */
-
 .devis-demo__delete-service {
   width:32px;
   height:32px;
@@ -477,7 +466,6 @@
 /* =====================================================
    APERÇU DU DEVIS
 ===================================================== */
-
 .devis-demo__preview-panel {
   min-width:0;
   padding:25px 18px 12px;
@@ -542,7 +530,7 @@
   display:block;
   margin-bottom:8px;
   color:#7e888d;
-  font-size:7px;
+  font-size:8px;
   font-weight:700;
   letter-spacing:.12em;
   text-transform:uppercase;
@@ -574,7 +562,6 @@
 /* =====================================================
    TABLEAU DU DEVIS
 ===================================================== */
-
 .devis-demo__quote-table {
   width:100%;
   border-collapse:collapse;
@@ -585,7 +572,7 @@
   padding:9px 8px;
   background:#e6e9ea;
   color:#4d575c;
-  font-size:7px;
+  font-size:8px;
   font-weight:650;
   text-align:left;
 }
@@ -617,7 +604,7 @@
   padding:11px 8px;
   border-bottom:1px solid #dfe3e4;
   color:#343c40;
-  font-size:8px;
+  font-size:9px;
   line-height:1.35;
   vertical-align:middle;
   overflow-wrap:anywhere;
@@ -642,7 +629,6 @@
 /* =====================================================
    TOTAL
 ===================================================== */
-
 .devis-demo__quote-total {
   width:min(220px,70%);
   margin:25px 0 0 auto;
@@ -669,7 +655,6 @@
 /* =====================================================
    RÉINITIALISER
 ===================================================== */
-
 .devis-demo__reset {
   width:min(100%,500px);
   min-height:42px;
@@ -695,7 +680,6 @@
 /* =====================================================
    MODALE NOUVEAU CLIENT
 ===================================================== */
-
 .devis-demo__client-modal {
   position:absolute;
   inset:0;
@@ -788,7 +772,6 @@
 /* =====================================================
    RESPONSIVE : 1250PX À 1101PX
 ===================================================== */
-
 @media screen and (max-width:1250px) and (min-width:1101px) {
   .logiciel-devis-overlay {
     padding:8px;
@@ -804,7 +787,6 @@
 /* =====================================================
    RESPONSIVE : 1100PX À 901PX
 ===================================================== */
-
 @media screen and (max-width:1100px) and (min-width:901px) {
   .logiciel-devis-overlay {
     padding:6px;
@@ -820,7 +802,6 @@
 /* =====================================================
    RESPONSIVE DU CONTENU > 900PX
 ===================================================== */
-
 @media screen and (min-width:901px) and (max-width:1150px) {
   .devis-demo {
     grid-template-columns:220px minmax(0,1fr);
@@ -871,19 +852,18 @@
 /* =====================================================
    APERÇU VIDÉO MOBILE
 ===================================================== */
-
 .logiciel-devis-preview-overlay {
   align-items:center;
   justify-content:center;
-  padding:20px;
+  padding:12px;
   z-index:5001;
 }
 
 .logiciel-devis-preview {
   position:relative;
-  height:min(calc(100% - 24px),760px);
+  height:min(calc(100% - 16px),760px);
   width:auto;
-  max-width:92vw;
+  max-width:94vw;
   aspect-ratio:9/16;
   flex-shrink:0;
   background:#000;
@@ -932,38 +912,18 @@
   color:#fff;
 }
 
-@media screen and (max-width:900px) {
-  .logiciel-devis-overlay {
-    top:clamp(80px,8vw,120px);
-    right:0;
-    bottom:0;
-    left:0;
-    padding:12px;
-  }
-
-  #logiciel-devis-overlay .devis-demo {
-    display:none;
-  }
-
-  .logiciel-devis-preview-overlay {
-    align-items:center;
-    justify-content:center;
-    padding:12px;
-  }
-
-  .logiciel-devis-preview {
-    height:min(calc(100% - 16px),760px);
-    width:auto;
-    max-width:94vw;
-  }
-}
-
+/* =====================================================
+   600PX ET MOINS
+===================================================== */
 @media screen and (max-width:600px) {
-  .logiciel-devis-overlay {
+  .logiciel-devis-preview-overlay {
     top:72px;
   }
 }
 
+/* =====================================================
+   520PX ET MOINS
+===================================================== */
 @media screen and (max-width:520px) {
   .logiciel-devis-preview-overlay {
     padding:10px;
@@ -986,7 +946,6 @@
 /* =====================================================
    FOCUS CLAVIER
 ===================================================== */
-
 .devis-demo button:focus-visible,
 .devis-demo input:focus-visible,
 .devis-demo textarea:focus-visible {
@@ -1003,7 +962,6 @@
 /* =====================================================
    RÉDUCTION DES ANIMATIONS
 ===================================================== */
-
 @media (prefers-reduced-motion:reduce) {
   .logiciel-devis-overlay,
   .logiciel-devis-overlay *,

@@ -468,7 +468,7 @@
   margin:0;
   color:#fff;
   font-family:"Cormorant Garamond",Georgia,serif;
-  font-size:clamp(42px,4vw,68px);
+  font-size:clamp(30px,4vw,45px);
   font-weight:500;
   line-height:.88;
   text-transform:uppercase;
@@ -606,7 +606,7 @@
   }
 
   .terms-section__eyebrow {
-    font-size:7px;
+    font-size:8px;
     letter-spacing:.26em;
   }
 
@@ -631,7 +631,7 @@
   }
 
   .terms-info strong {
-    font-size:7px;
+    font-size:8px;
   }
 
   .terms-info span {
@@ -659,7 +659,7 @@
   }
 
   .terms-version span {
-    font-size:7px;
+    font-size:8px;
   }
 
   .terms-form {
@@ -677,7 +677,7 @@
   }
 
   .terms-contact__content h2 {
-    font-size:clamp(37px,11vw,52px);
+     font-size:clamp(30px,4vw,45px);
   }
 
   .terms-contact__content > p:last-child {

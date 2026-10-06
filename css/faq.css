@@ -355,7 +355,7 @@
   margin:0;
   color:#fff;
   font-family:"Cormorant Garamond",Georgia,serif;
-  font-size:clamp(42px,4vw,68px);
+   font-size:clamp(30px,4vw,45px);
   font-weight:500;
   line-height:.88;
   text-transform:uppercase;
@@ -437,7 +437,9 @@
 
   .faq-hero__title {
     font-size:clamp(27px,9vw,48px);
-    white-space:nowrap;
+    white-space:normal;
+    line-height:.95;
+    max-width:100%;
   }
 
   .faq-hero__description {
@@ -473,7 +475,7 @@
   }
 
   .faq-group__eyebrow {
-    font-size:7px;
+    font-size:8px;
     letter-spacing:.26em;
   }
 
@@ -519,10 +521,6 @@
     margin-top:80px;
     padding:34px 18px;
     gap:30px;
-  }
-
-  .faq-contact__content h2 {
-    font-size:clamp(37px,11vw,52px);
   }
 
   .faq-contact__content > p:last-child {

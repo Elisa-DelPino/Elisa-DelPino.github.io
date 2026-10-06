@@ -105,7 +105,7 @@
   height:100%;
   object-fit:cover;
   z-index:1;
-  cursor: pointer;
+  cursor:pointer;
 }
 
 .divTextService__demo1 {
@@ -148,7 +148,7 @@
 
 .subtitleSuite {
   margin:0;
-  font-size:clamp(7px,.85cqw,13px);
+  font-size:clamp(8px,.85cqw,13px);
   font-weight:600;
   letter-spacing:clamp(2px,.35cqw,5px);
   color:#b08968;
@@ -178,7 +178,7 @@
   border:none;
   background:#3d312c;
   color:white;
-  font-size:clamp(6px,.75cqw,11px);
+  font-size:clamp(9px,.75cqw,11px);
   letter-spacing:clamp(1px,.2cqw,3px);
   cursor:pointer;
   transition:background .3s ease,transform .3s ease;
@@ -287,7 +287,7 @@
   padding:clamp(9px,1cqw,13px) clamp(20px,2cqw,30px);
   border-radius:6px;
   letter-spacing:.18em;
-  font-size:clamp(8px,1cqw,10px);
+  font-size:clamp(9px,1cqw,10px);
   font-weight:600;
   transition:.35s;
 }
@@ -350,7 +350,7 @@
 
 .prestationSubtitle__demo1 {
   color:#b08968;
-  font-size:clamp(7px,.8cqw,12px);
+  font-size:clamp(8px,.8cqw,12px);
   font-weight:600;
   letter-spacing:clamp(2px,.35cqw,5px);
 }
@@ -378,7 +378,7 @@
   border:none;
   background:#3d312c;
   color:#fff;
-  font-size:clamp(7px,.8cqw,11px);
+  font-size:clamp(9px,.8cqw,11px);
   font-weight:600;
   letter-spacing:clamp(1px,.22cqw,3px);
   cursor:pointer;
@@ -484,7 +484,7 @@
   border-radius:6px;
   background:#3d312c;
   color:#fff;
-  font-size:clamp(8px,.9cqw,12px);
+  font-size:clamp(9px,.9cqw,12px);
   font-weight:600;
   letter-spacing:clamp(1px,.2cqw,3px);
   cursor:pointer;
@@ -567,7 +567,7 @@
 
 .responseEyebrow {
   color:#b08968;
-  font-size:clamp(7px,.75cqw,10px);
+  font-size:clamp(8px,.75cqw,10px);
   font-weight:600;
   letter-spacing:clamp(1.5px,.25cqw,3.5px);
 }
@@ -609,7 +609,7 @@
 
 .responseDetailLabel {
   color:#b08968;
-  font-size:clamp(6px,.7cqw,9px);
+  font-size:clamp(8px,.7cqw,9px);
   font-weight:600;
   letter-spacing:clamp(1px,.18cqw,2.5px);
 }
@@ -731,7 +731,7 @@
 .divWeek span {
   text-align:center;
   color:#5f5049;
-  font-size:clamp(7px,.8cqw,11px);
+  font-size:clamp(8px,.8cqw,11px);
   font-weight:600;
   letter-spacing:.5px;
 }
@@ -922,6 +922,10 @@
     padding:20px 12px;
   }
 
+  .divWeek span {
+    font-size:8px;
+  }
+
   .contentHours {
     grid-template-columns:repeat(2,1fr);
   }
@@ -1096,10 +1100,10 @@
 
   .rdv-button {
     padding:10px 18px;
-    font-size:clamp(8px,2.5cqw,10px);
+    font-size:clamp(9px,2.5cqw,10px);
   }
 
-    .contentSuite__demo1 {
+  .contentSuite__demo1 {
     width:100%;
     min-height:0;
     display:block;
@@ -1300,33 +1304,43 @@
   }
 
   .divCalendar__demo1 {
-    padding:16px 8px;
+    padding:14px 6px;
   }
 
   .divMonth {
-    grid-template-columns:34px minmax(0,1fr) 34px;
+    grid-template-columns:36px minmax(0,1fr) 36px;
   }
 
   .divMonth > span {
+    min-width:0;
     font-size:clamp(17px,5.5cqw,22px);
+    white-space:nowrap;
   }
 
   .arrowCalendar {
-    width:30px;
-    height:30px;
+    width:32px;
+    height:32px;
+  }
+
+  .divWeek {
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:3px;
   }
 
   .divWeek span {
-    font-size:7px;
+    min-width:0;
+    font-size:8px;
   }
 
   .divDay {
-    gap:2px;
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:3px;
   }
 
   .dayCalendar {
-    width:26px;
-    height:26px;
+    width:min(30px,100%);
+    height:auto;
+    aspect-ratio:1/1;
     font-size:10px;
   }
 
