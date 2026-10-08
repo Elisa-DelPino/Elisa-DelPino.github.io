@@ -421,7 +421,15 @@ RESPONSIVE <= 600PX
   }
 
   .header__nav__menu__link a {
+    min-height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     font-size:clamp(9px,2.5vw,12px);
+  }
+
+  .header__nav__menu__link a::after {
+    bottom:8px;
   }
 
   .header__nav__menu__reseaux {
@@ -567,13 +575,19 @@ RESPONSIVE <= 360PX
 
   .header__nav__menu__link a {
     width:auto;
-    min-height:0;
-    display:block;
+    min-height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     padding:0;
     font-size:10px;
     line-height:1;
     text-align:center;
     white-space:nowrap;
+  }
+
+  .header__nav__menu__link a::after {
+    bottom:8px;
   }
 
   .header__nav__menu__reseaux {

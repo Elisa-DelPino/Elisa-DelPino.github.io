@@ -4,15 +4,15 @@ LIGHTBOX
 
 .overlay {
   position:fixed;
-  top:clamp(80px,8vw,120px);
-  right:0;
-  bottom:0;
-  left:0;
-  z-index:9998;
+  top:15px;
+  right:15px;
+  bottom:15px;
+  left:15px;
+  z-index:10000;
   display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:clamp(18px,3vw,46px);
+  align-items:stretch;
+  justify-content:stretch;
+  padding:0;
   background:rgba(0,0,0,.96);
   backdrop-filter:blur(7px);
   -webkit-backdrop-filter:blur(7px);
@@ -20,8 +20,10 @@ LIGHTBOX
 
 .lightbox__frame {
   position:relative;
-  width:min(94vw,1500px);
-  height:min(82vh,800px);
+  width:100%;
+  max-width:none;
+  height:100%;
+  max-height:none;
   display:flex;
   flex-direction:column;
   padding:clamp(20px,2.5vw,38px) clamp(18px,2.8vw,44px) clamp(70px,5vw,75px);
@@ -30,6 +32,7 @@ LIGHTBOX
   border-radius:6px;
   box-shadow:0 0 30px rgba(0,0,0,.9),inset 0 0 32px rgba(255,255,255,.012);
   overflow:hidden;
+  box-sizing:border-box;
 }
 
 .lightbox__topbar {
@@ -222,13 +225,13 @@ LIGHTBOX
 
 @media screen and (max-width:1000px) {
   .containerLigthBox {
-    width:80%;
+    width:100%;
   }
 }
 
 @media screen and (max-width:800px) {
   .overlay--web {
-    padding:5px;
+    padding:0;
   }
 
   .overlay--web .lightbox__frame {
@@ -274,17 +277,25 @@ LIGHTBOX
 
 @media screen and (max-width:600px) {
   .overlay {
-    top:72px;
+    top:6px;
+    right:6px;
+    bottom:6px;
+    left:6px;
+    padding:0;
   }
 }
 
 @media screen and (max-width:360px) {
   .overlay {
-    top:88px;
+    top:6px;
+    right:6px;
+    bottom:6px;
+    left:6px;
+    padding:0;
   }
 
   .overlay--web {
-    padding:5px;
+    padding:0;
   }
 
   .overlay--web .lightbox__frame {
@@ -303,6 +314,7 @@ LIGHTBOX
   }
 }
 
+
 /* =========================================================
 LIGHTBOX DES ANIMATIONS
 ========================================================= */
@@ -312,8 +324,10 @@ LIGHTBOX DES ANIMATIONS
 }
 
 .overlay--animation .lightbox__frame {
-  width:min(94vw,1500px);
-  height:min(83vh,800px);
+  width:100%;
+  max-width:none;
+  height:100%;
+  max-height:none;
   display:flex;
   flex-direction:column;
   padding:clamp(20px,2.5vw,38px) clamp(18px,2.8vw,44px) clamp(22px,2.5vw,36px);
@@ -342,12 +356,12 @@ LIGHTBOX DES ANIMATIONS
   box-sizing:border-box;
 }
 
-.overlay--animation .arrow.left {
+.overlay--animation .arrow\.left {
   grid-area:left;
   align-self:center;
 }
 
-.overlay--animation .arrow.right {
+.overlay--animation .arrow\.right {
   grid-area:right;
   align-self:center;
 }
@@ -383,6 +397,7 @@ LIGHTBOX DES ANIMATIONS
 .overlay--web .divTexte {
   display:none!important;
 }
+
 
 /* ---------------------------------------------------------
 PRÉVISUALISATION
@@ -447,6 +462,7 @@ PRÉVISUALISATION
     background-position:72px 92px,-72px 142px,214px 140px;
   }
 }
+
 
 /* ---------------------------------------------------------
 PANNEAU DE PERSONNALISATION
@@ -569,6 +585,7 @@ PANNEAU DE PERSONNALISATION
   box-shadow:0 0 9px color-mix(in srgb,var(--animation-accent) 52%,transparent);
 }
 
+
 /* =========================================================
 ÉCRANS LARGES PEU HAUTS
 ========================================================= */
@@ -604,21 +621,30 @@ PANNEAU DE PERSONNALISATION
   }
 }
 
+
 /* =========================================================
 MOBILE ANIMATIONS
 ========================================================= */
 
 @media screen and (max-width:850px) {
+  .overlay {
+    top:6px;
+    right:6px;
+    bottom:6px;
+    left:6px;
+    padding:0;
+  }
+
   .overlay--animation {
-    padding:6px;
+    padding:0;
   }
 
   .overlay--animation .lightbox__frame {
     width:100%;
-    height:auto;
+    height:100%;
     max-height:none;
     padding:10px 7px 8px;
-    overflow:visible;
+    overflow:auto;
   }
 
   .overlay--animation .lightbox__topbar {
@@ -670,12 +696,12 @@ MOBILE ANIMATIONS
     overflow:hidden;
   }
 
-  .overlay--animation .arrow.left {
+  .overlay--animation .arrow\.left {
     grid-area:left;
     align-self:center;
   }
 
-  .overlay--animation .arrow.right {
+  .overlay--animation .arrow\.right {
     grid-area:right;
     align-self:center;
   }
@@ -782,13 +808,14 @@ MOBILE ANIMATIONS
   }
 }
 
+
 /* =========================================================
 TRÈS PETITS ÉCRANS
 ========================================================= */
 
 @media screen and (max-width:380px) {
   .overlay--animation {
-    padding:5px;
+    padding:0;
   }
 
   .overlay--animation .lightbox__frame {
@@ -851,6 +878,7 @@ TRÈS PETITS ÉCRANS
   }
 }
 
+
 /* =========================================================
 TÉLÉPHONE PAYSAGE
 ========================================================= */
@@ -909,12 +937,12 @@ TÉLÉPHONE PAYSAGE
     overflow:hidden;
   }
 
-  .overlay--animation .arrow.left {
+  .overlay--animation .arrow\.left {
     grid-area:left;
     align-self:center;
   }
 
-  .overlay--animation .arrow.right {
+  .overlay--animation .arrow\.right {
     grid-area:right;
     align-self:center;
   }
@@ -1073,6 +1101,85 @@ TÉLÉPHONE PAYSAGE
     font-size:9px;
   }
 }
+
+/* =========================================================
+   MOBILE PORTRAIT AVEC HAUTEUR SUFFISANTE
+========================================================= */
+
+@media screen and (orientation:portrait) and (max-width:650px) and (min-height:650px) {
+  .overlay--animation .containerLigthBox {
+    flex:1 1 auto!important;
+    align-content:safe center!important;
+  }
+
+  .overlay--animation .divImg.animation-preview {
+    aspect-ratio:1.3/1;
+  }
+
+  .overlay--animation .animation-preview__title {
+    font-size:clamp(22px,8vw,40px);
+  }
+
+  .overlay--animation .divTexte.animation-controls {
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto auto;
+    gap:12px;
+  }
+
+  .overlay--animation .animation-controls > .animation-control-group:first-child {
+    grid-column:1;
+    grid-row:1;
+    width:100%;
+    align-self:start;
+  }
+
+  .overlay--animation .animation-controls > .animation-control-group:nth-child(2) {
+    grid-column:1;
+    grid-row:2;
+    width:100%;
+    display:grid;
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto auto;
+    align-items:center;
+    justify-items:center;
+    row-gap:10px;
+  }
+
+  .overlay--animation .animation-controls > .animation-control-group:nth-child(2) > .animation-control-label {
+    grid-column:1;
+    grid-row:1;
+    width:100%;
+    text-align:center;
+  }
+
+  .overlay--animation .animation-controls > .animation-control-group:nth-child(2) #colorPicker {
+    grid-column:1;
+    grid-row:2;
+    width:100%!important;
+    max-width:145px;
+    margin:0 auto;
+    justify-self:center;
+  }
+
+  .overlay--animation .animation-controls > .animation-control-group:nth-child(2) .animation-color-value {
+    grid-column:1;
+    grid-row:3;
+    width:min(100%,230px);
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:32px minmax(0,1fr);
+    align-items:center;
+    gap:10px;
+  }
+
+  .overlay--animation .animation-reset-button {
+    grid-column:1;
+    grid-row:3;
+    width:100%;
+    margin:10px 0 12px;
+  }
+}
+
 
 /* =========================================================
 RÉDUCTION DES MOUVEMENTS

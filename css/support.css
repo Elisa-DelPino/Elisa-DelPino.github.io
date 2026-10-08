@@ -41,7 +41,6 @@
   width:100%;
   margin:0;
   font-size:clamp(38px,3vw,60px);
-
 }
 
 .support__heading span {
@@ -221,7 +220,6 @@
 ===================================================== */
 
 @media screen and (max-width:1000px) {
-
   .section__support {
     min-height:0;
     grid-template-columns:1fr;
@@ -234,7 +232,7 @@
   }
 
   .support__heading {
-    font-size:clamp(45px,7vw,68px);
+    font-size:clamp(38px,4vw,40px);
   }
 
   .support__description {
@@ -260,7 +258,6 @@
   .support__question {
     font-size:clamp(20px,2.7vw,26px);
   }
-
 }
 
 /* =====================================================
@@ -268,14 +265,13 @@
 ===================================================== */
 
 @media screen and (max-width:650px) {
-
   .section__support {
     gap:34px;
     padding:34px 16px 24px;
   }
 
   .support__heading {
-    font-size:clamp(25px,7vw,52px);
+    font-size:clamp(25px,6vw,38px);
     line-height:.94;
   }
 
@@ -338,7 +334,6 @@
     font-size:11px;
     line-height:1.65;
   }
-
 }
 
 /* =====================================================
@@ -346,13 +341,12 @@
 ===================================================== */
 
 @media screen and (max-width:380px) {
-
   .section__support {
     padding:30px 12px 20px;
   }
 
   .support__heading {
-    font-size:clamp(25px,8vw,44px);
+    font-size:clamp(25px,6vw,28px);
   }
 
   .support__summary {
@@ -373,7 +367,6 @@
   .support__answer {
     padding:0 10px 18px 47px;
   }
-
 }
 
 /* =====================================================
@@ -381,11 +374,9 @@
 ===================================================== */
 
 @media (prefers-reduced-motion:reduce) {
-
   .section__support *,
   .section__support *::before,
   .section__support *::after {
     transition:none!important;
   }
-
 }

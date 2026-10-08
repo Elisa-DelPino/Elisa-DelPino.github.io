@@ -304,7 +304,7 @@ function createAnimationCardElement(item, pageElement) {
 
   actionButton.innerHTML = `
       <span>
-        VOIR L'ANIMATION
+        PERSONNALISER
       </span>
 
       <svg
