@@ -209,7 +209,22 @@ function initCakeScene(container) {
   ===================================================== */
 
   const textureLoader = new THREE.TextureLoader();
-  const spongeTexture = textureLoader.load("./img/cakeTexture.png");
+  const spongeTexture = textureLoader.load(
+    "./img/cakeTexture.png",
+    (texture) => {
+      if (sceneVersion !== cakeSceneVersion) {
+        texture.dispose();
+        return;
+      }
+
+      spongeMaterial.map = texture;
+      spongeMaterial.needsUpdate = true;
+    },
+    undefined,
+    (error) => {
+      console.error("Erreur pendant le chargement de cakeTexture.png :", error);
+    },
+  );
 
   spongeTexture.colorSpace = THREE.SRGBColorSpace;
   spongeTexture.wrapS = THREE.RepeatWrapping;
@@ -222,7 +237,6 @@ function initCakeScene(container) {
   ===================================================== */
 
   const spongeMaterial = new THREE.MeshBasicMaterial({
-    map: spongeTexture,
     color: 0xf9dbbd,
     toneMapped: false,
   });
