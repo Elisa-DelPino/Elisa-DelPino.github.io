@@ -74,7 +74,7 @@
   height:100%;
   display:block;
   object-fit:cover;
-  object-position:center;
+  object-position:center 20%;
   filter:brightness(.72) contrast(1.08) saturate(.72);
   z-index:1;
 }
