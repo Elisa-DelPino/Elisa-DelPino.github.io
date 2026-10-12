@@ -22,7 +22,7 @@ const softwareDemoSources = [
 const webDemoCardsData = [
   {
     title: "Coiffure",
-    image: "./img/siteCoiffure.png",
+    image: "./img/siteCoiffure.webp",
     alt: "Démonstration d'un site web pour un salon de coiffure",
     features: [
       {
@@ -37,7 +37,7 @@ const webDemoCardsData = [
   },
   {
     title: "Pâtisserie",
-    image: "./img/sitePatisserie.png",
+    image: "./img/sitePatisserie.webp",
     alt: "Démonstration d'un site web pour une pâtisserie",
     features: [
       {
@@ -52,7 +52,7 @@ const webDemoCardsData = [
   },
   {
     title: "E-Commerce",
-    image: "./img/siteDeco.png",
+    image: "./img/siteDeco.webp",
     alt: "Démonstration d'un site e-commerce de décoration",
     features: [
       {

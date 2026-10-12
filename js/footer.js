@@ -1,5 +1,3 @@
-// footer.js
-
 import { initSectionNavigation } from "./navigation.js";
 
 const FOOTER_HTML = `
@@ -114,7 +112,7 @@ const FOOTER_HTML = `
         <ul class="site-footer__links">
           <li>
             <a
-              href="./faq.html#top"
+              href="/faq#top"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -124,7 +122,7 @@ const FOOTER_HTML = `
 
           <li>
             <a
-              href="./mentions-legales.html#top"
+              href="/mentions-legales#top"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -134,7 +132,7 @@ const FOOTER_HTML = `
 
           <li>
             <a
-              href="./conditions-generales.html#top"
+              href="/conditions-generales#top"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -144,7 +142,7 @@ const FOOTER_HTML = `
 
           <li>
             <a
-              href="./politique-confidentialite.html#top"
+              href="/politique-confidentialite#top"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -364,7 +362,7 @@ const FOOTER_HTML = `
             aria-hidden="true"
           >
             <path
-              d="M6.5 8.1H3.2V21h3.3V8.1ZM4.8 3A1.9 1.9 0 1 0 4.8 6.8 1.9 1.9 0 0 0 4.8 3ZM21 13.6c0-3.9-2.1-5.8-4.9-5.8-2.3 0-3.3 1.3-3.9 2.1V8.1H9V21h3.3v-6.4c0-1.7.3-3.3 2.4-3.3 2.1 0 2.1 1.9 2.1 3.4V21H20v-7.4Z"
+              d="M6.5 8.1H3.2V21h3.3V8.1ZM4.8 3A1.9 1.9 0 1 0 4.8 6.8 1.9 1.9 0 0 0 4.8 3ZM21 13.6c0-3.9-2.1-5.8-4.9-5.8-2.3 0-3.3 1.3-3.9 2.1V8.1H9V21h3.3v-6.4c0-1.7.3-3.3 2.4-3.3 2.1 0 2.1 3.4V21H20v-7.4Z"
             ></path>
           </svg>
         </a>
@@ -486,7 +484,7 @@ const FOOTER_HTML = `
             aria-hidden="true"
           >
             <path
-              d="M6.5 8.1H3.2V21h3.3V8.1ZM4.8 3A1.9 1.9 0 1 0 4.8 6.8 1.9 1.9 0 0 0 4.8 3ZM21 13.6c0-3.9-2.1-5.8-4.9-5.8-2.3 0-3.3 1.3-3.9 2.1V8.1H9V21h3.3v-6.4c0-1.7.3-3.3 2.4-3.3 2.1 0 2.1 1.9 2.1 3.4V21H20v-7.4Z"
+              d="M6.5 8.1H3.2V21h3.3V8.1ZM4.8 3A1.9 1.9 0 1 0 4.8 6.8 1.9 1.9 0 0 0 4.8 3ZM21 13.6c0-3.9-2.1-5.8-4.9-5.8-2.3 0-3.3 1.3-3.9 2.1V8.1H9V21h3.3v-6.4c0-1.7.3-3.3 2.4-3.3 2.1 3.4V21H20v-7.4Z"
             ></path>
           </svg>
         </a>
@@ -554,25 +552,25 @@ const FOOTER_HTML = `
 
         <ul class="site-footer__mobile-links">
           <li>
-            <a href="./faq.html">
+            <a href="/faq">
               FAQ
             </a>
           </li>
 
           <li>
-            <a href="./mentions-legales.html">
+            <a href="/mentions-legales">
               Mentions légales
             </a>
           </li>
 
           <li>
-            <a href="./conditions-generales.html">
+            <a href="/conditions-generales">
               Conditions générales
             </a>
           </li>
 
           <li>
-            <a href="./politique-confidentialite.html">
+            <a href="/politique-confidentialite">
               Politique de confidentialité
             </a>
           </li>

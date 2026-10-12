@@ -210,7 +210,7 @@ function initCakeScene(container) {
 
   const textureLoader = new THREE.TextureLoader();
   const spongeTexture = textureLoader.load(
-    "./img/cakeTexture.png",
+    "./img/cakeTexture.webp",
     (texture) => {
       if (sceneVersion !== cakeSceneVersion) {
         texture.dispose();
@@ -222,7 +222,10 @@ function initCakeScene(container) {
     },
     undefined,
     (error) => {
-      console.error("Erreur pendant le chargement de cakeTexture.png :", error);
+      console.error(
+        "Erreur pendant le chargement de cakeTexture.webp :",
+        error,
+      );
     },
   );
 

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+
+    <base href="/" />
+
+    <title>Page introuvable (404) | Elisa-Dev</title>
+
+    <meta
+      name="description"
+      content="La page demandée est introuvable. Retrouvez les services de création de sites web et logiciels sur mesure d'Elisa-Dev."
+    />
+
+    <meta name="robots" content="noindex,follow" />
+
+    <link rel="icon" type="image/png" href="./img/faviconB.png" />
+    <link rel="apple-touch-icon" href="./img/apple-touch-icon.png" />
+
+    <meta name="theme-color" content="#000000" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="./css/headerFooterLegal.css" />
+    <link rel="stylesheet" href="./css/cookieConsent.css" />
+
+    <style>
+      /* PAGE 404 */
+
+      .error-body {
+        min-height: 100vh;
+        background: #000;
+        color: #fff;
+      }
+      .error-page {
+        position: relative;
+        min-height: 85vh;
+        width: min(90%, 1100px);
+        margin: auto;
+        padding: clamp(160px, 14vw, 220px) 0 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      .error-page::before {
+        content: "";
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        width: min(70vw, 550px);
+        height: 350px;
+        background: radial-gradient(
+          ellipse,
+          rgba(255, 203, 119, 0.06),
+          transparent 70%
+        );
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+      }
+      .error-eyebrow {
+        margin-bottom: 18px;
+        color: #ffcb77;
+        font-family: "Montserrat", sans-serif;
+        font-size: 11px;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+      }
+      .error-number {
+        color: #fff;
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(130px, 22vw, 260px);
+        font-weight: 500;
+        line-height: 0.8;
+        letter-spacing: -0.06em;
+      }
+      .error-number span {
+        color: #ffcb77;
+      }
+      .error-line {
+        width: 90px;
+        height: 1px;
+        margin: 40px auto;
+        background: linear-gradient(
+          to right,
+          transparent,
+          #ffcb77,
+          transparent
+        );
+      }
+      .error-title {
+        color: #fff;
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(36px, 5vw, 65px);
+        font-weight: 500;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+      .error-title span {
+        color: #ffcb77;
+      }
+      .error-description {
+        max-width: 550px;
+        margin: 25px auto 0;
+        color: rgba(255, 255, 255, 0.58);
+        font-family: "Montserrat", sans-serif;
+        font-size: clamp(12px, 1.2vw, 15px);
+        font-weight: 300;
+        line-height: 1.9;
+      }
+      .error-actions {
+        width: 100%;
+        max-width: 280px;
+        margin-top: 48px;
+      }
+      .error-button {
+        min-height: 55px;
+        justify-content: center;
+        transition:
+          background 0.3s,
+          color 0.3s;
+      }
+      .error-button:hover {
+        background: rgba(255, 203, 119, 0.12);
+        color: #fff;
+      }
+      .error-button svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      /* RESPONSIVE */
+
+      @media screen and (max-width: 650px) {
+        .error-page {
+          width: 90%;
+          min-height: 75vh;
+          padding: 140px 0 75px;
+        }
+        .error-eyebrow {
+          font-size: 9px;
+          letter-spacing: 3px;
+        }
+        .error-number {
+          font-size: clamp(110px, 30vw, 180px);
+        }
+        .error-line {
+          margin: 30px auto;
+        }
+        .error-description {
+          max-width: 340px;
+          margin-top: 20px;
+          font-size: 12px;
+        }
+        .error-actions {
+          max-width: 270px;
+          margin-top: 35px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .error-button {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body id="top" class="error-body">
+    <div id="overlay__menu__mobile"></div>
+
+    <!-- =====================================================
+         HEADER
+    ===================================================== -->
+
+    <header id="legal-header"></header>
+
+    <!-- =====================================================
+         PAGE 404
+    ===================================================== -->
+
+    <main class="error-page">
+      <p class="error-eyebrow">UNE PETITE ERREUR DE PARCOURS</p>
+
+      <h1 class="error-number">4<span>0</span>4</h1>
+
+      <div class="error-line" aria-hidden="true"></div>
+
+      <h2 class="error-title">PAGE <span>INTROUVABLE</span></h2>
+
+      <p class="error-description">
+        Il semblerait que cette page n'existe pas ou qu'elle ait été déplacée.
+        Pas d'inquiétude, vous pouvez toujours retrouver votre chemin vers
+        l'accueil d'Elisa-Dev.
+      </p>
+
+      <div class="error-actions">
+        <a href="/" class="error-button shared-button">
+          <span>RETOUR À L'ACCUEIL</span>
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M19 12H5"></path>
+            <path d="m12 19-7-7 7-7"></path>
+          </svg>
+        </a>
+      </div>
+    </main>
+
+    <!-- =====================================================
+         FOOTER
+    ===================================================== -->
+
+    <footer id="legal-footer"></footer>
+
+    <script src="./js/headerFooterLegal.js" defer></script>
+    <script src="./js/analytics.js"></script>
+    <script src="./js/cookieConsent.js"></script>
+  </body>
+</html>

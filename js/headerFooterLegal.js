@@ -1,7 +1,7 @@
 const LEGAL_HEADER_HTML = `
   <div class="header__left">
     <div class="header__logo">
-      <a href="./index.html" aria-label="Retourner à l'accueil">
+      <a href="/" aria-label="Retourner à l'accueil">
         <img src="./img/Logo.png" alt="Logo Elisa.dev">
       </a>
     </div>
@@ -15,23 +15,23 @@ const LEGAL_HEADER_HTML = `
   <nav class="header__nav" aria-label="Navigation principale">
     <ul class="header__nav__menu">
       <li class="header__nav__menu__link">
-        <a href="./index.html">Accueil</a>
+        <a href="/">Accueil</a>
       </li>
 
       <li class="header__nav__menu__link">
-        <a href="./index.html#demos">Démos</a>
+        <a href="/#demos">Démos</a>
       </li>
 
       <li class="header__nav__menu__link">
-        <a href="./index.html#services">Services</a>
+        <a href="/#services">Services</a>
       </li>
 
       <li class="header__nav__menu__link">
-        <a href="./index.html#about">À propos</a>
+        <a href="/#about">À propos</a>
       </li>
 
       <li class="header__nav__menu__link">
-        <a href="./index.html#contact">Contact</a>
+        <a href="/#contact">Contact</a>
       </li>
 
       <li class="header__nav__menu__reseaux">
@@ -124,7 +124,7 @@ const LEGAL_FOOTER_HTML = `
       <div class="site-footer__brand">
         <a
           class="site-footer__logo-link"
-          href="./index.html#home"
+          href="/#home"
           aria-label="Retourner à l'accueil"
         >
           <img
@@ -152,23 +152,23 @@ const LEGAL_FOOTER_HTML = `
 
         <ul class="site-footer__links">
           <li>
-            <a href="./index.html">Accueil</a>
+            <a href="/">Accueil</a>
           </li>
 
           <li>
-            <a href="./index.html#demos">Démos</a>
+            <a href="/#demos">Démos</a>
           </li>
 
           <li>
-            <a href="./index.html#services">Services</a>
+            <a href="/#services">Services</a>
           </li>
 
           <li>
-            <a href="./index.html#about">À propos</a>
+            <a href="/#about">À propos</a>
           </li>
 
           <li>
-            <a href="./index.html#contact">Contact</a>
+            <a href="/#contact">Contact</a>
           </li>
         </ul>
       </nav>
@@ -183,14 +183,14 @@ const LEGAL_FOOTER_HTML = `
 
         <ul class="site-footer__links">
           <li>
-            <a href="./faq.html#top" data-legal-page="faq.html">
+            <a href="/faq#top" data-legal-page="faq.html">
               FAQ
             </a>
           </li>
 
           <li>
             <a
-              href="./mentions-legales.html#top"
+              href="/mentions-legales#top"
               data-legal-page="mentions-legales.html"
             >
               Mentions légales
@@ -199,7 +199,7 @@ const LEGAL_FOOTER_HTML = `
 
           <li>
             <a
-              href="./conditions-generales.html#top"
+              href="/conditions-generales#top"
               data-legal-page="conditions-generales.html"
             >
               Conditions générales
@@ -208,7 +208,7 @@ const LEGAL_FOOTER_HTML = `
 
           <li>
             <a
-              href="./politique-confidentialite.html#top"
+              href="/politique-confidentialite#top"
               data-legal-page="politique-confidentialite.html"
             >
               Politique de confidentialité
@@ -230,7 +230,7 @@ const LEGAL_FOOTER_HTML = `
         <div class="site-footer__contact-actions">
           <a
             class="site-footer__contact-button"
-            href="mailto:delpino.elisa@gmail.com"
+            href="mailto:contact.elisadev@gmail.com"
           >
             <svg
               class="site-footer__contact-icon"
@@ -386,7 +386,7 @@ const LEGAL_FOOTER_HTML = `
     <div class="site-footer__mobile-brand">
       <a
         class="site-footer__logo-link"
-        href="./index.html#home"
+        href="/#home"
         aria-label="Retourner à l'accueil"
       >
         <img
@@ -476,23 +476,23 @@ const LEGAL_FOOTER_HTML = `
 
         <ul class="site-footer__mobile-links">
           <li>
-            <a href="./index.html">Accueil</a>
+            <a href="/">Accueil</a>
           </li>
 
           <li>
-            <a href="./index.html#demos">Démos</a>
+            <a href="/#demos">Démos</a>
           </li>
 
           <li>
-            <a href="./index.html#services">Services</a>
+            <a href="/#services">Services</a>
           </li>
 
           <li>
-            <a href="./index.html#about">À propos</a>
+            <a href="/#about">À propos</a>
           </li>
 
           <li>
-            <a href="./index.html#contact">Contact</a>
+            <a href="/#contact">Contact</a>
           </li>
         </ul>
       </details>
@@ -502,14 +502,14 @@ const LEGAL_FOOTER_HTML = `
 
         <ul class="site-footer__mobile-links">
           <li>
-            <a href="./faq.html#top" data-legal-page="faq.html">
+            <a href="/faq#top" data-legal-page="faq.html">
               FAQ
             </a>
           </li>
 
           <li>
             <a
-              href="./mentions-legales.html#top"
+              href="/mentions-legales#top"
               data-legal-page="mentions-legales.html"
             >
               Mentions légales
@@ -518,7 +518,7 @@ const LEGAL_FOOTER_HTML = `
 
           <li>
             <a
-              href="./conditions-generales.html#top"
+              href="/conditions-generales#top"
               data-legal-page="conditions-generales.html"
             >
               Conditions générales
@@ -527,7 +527,7 @@ const LEGAL_FOOTER_HTML = `
 
           <li>
             <a
-              href="./politique-confidentialite.html#top"
+              href="/politique-confidentialite#top"
               data-legal-page="politique-confidentialite.html"
             >
               Politique de confidentialité
@@ -555,7 +555,7 @@ const LEGAL_FOOTER_HTML = `
       <div class="site-footer__contact-actions">
         <a
           class="site-footer__contact-button"
-          href="mailto:delpino.elisa@gmail.com"
+          href="mailto:contact.elisadev@gmail.com"
         >
           <svg
             class="site-footer__contact-icon"
@@ -646,12 +646,16 @@ const LEGAL_FOOTER_HTML = `
 `;
 
 function setCurrentLegalPage() {
-  const currentPage = window.location.pathname.split("/").pop() || "index.html";
+  const currentPage = (
+    window.location.pathname.split("/").pop() || "index"
+  ).replace(/\.html$/, "");
 
   const legalLinks = document.querySelectorAll("[data-legal-page]");
 
   legalLinks.forEach((link) => {
-    if (link.dataset.legalPage === currentPage) {
+    const linkedPage = link.dataset.legalPage.replace(/\.html$/, "");
+
+    if (linkedPage === currentPage) {
       link.setAttribute("aria-current", "page");
     } else {
       link.removeAttribute("aria-current");

@@ -4,7 +4,7 @@ const REDUCED_MOTION_QUERY = window.matchMedia(
   "(prefers-reduced-motion:reduce)",
 );
 
-const MAIN_PAGE_PATH = "./index.html";
+const MAIN_PAGE_PATH = "/";
 
 const TRACKED_SECTIONS = ["demos", "services", "about", "contact"];
 

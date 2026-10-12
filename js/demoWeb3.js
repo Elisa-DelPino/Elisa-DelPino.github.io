@@ -334,7 +334,7 @@ function createHomeHTML(element) {
 
         <img
           class="demo3__hero__img"
-          src="./img/heroDeco.png"
+          src="./img/heroDeco.webp"
           alt="Décoration intérieure naturelle"
         >
 
@@ -523,7 +523,7 @@ function createHomeHTML(element) {
 
         <div class="demo3__featureImage">
           <img
-            src="./img/decoNouveaute.png"
+            src="./img/decoNouveaute.webp"
             alt="Vase vert et décoration naturelle"
           >
         </div>

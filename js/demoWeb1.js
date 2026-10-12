@@ -95,8 +95,8 @@ function createHomeHTML(element) {
       <div class="wrapper__demo1">
 
         <div class="hero__demo1">
-          <img class="img__hero" src="./img/hero-coiffure.png" alt="Intérieur du salon de coiffure">
-          <img class="logo__hero__demo1" src="./img/logoSalonCoiffure.png" alt="UMA Salon de coiffure">
+          <img class="img__hero" src="./img/hero-coiffure.webp" alt="Intérieur du salon de coiffure">
+          <img class="logo__hero__demo1" src="./img/logoSalonCoiffure.webp" alt="UMA Salon de coiffure">
         </div>
 
         <div class="contentService__demo1">
@@ -259,8 +259,8 @@ function createPrestationHTML(element) {
 
   wrapper.innerHTML = `
     <div class="hero__demo1">
-      <img class="img__hero" src="./img/hero-coiffure.png" alt="Intérieur du salon de coiffure">
-      <img class="logo__hero__demo1" src="./img/logoSalonCoiffure.png" alt="UMA Salon de coiffure">
+      <img class="img__hero" src="./img/hero-coiffure.webp" alt="Intérieur du salon de coiffure">
+      <img class="logo__hero__demo1" src="./img/logoSalonCoiffure.webp" alt="UMA Salon de coiffure">
     </div>
 
     <div class="contentPrestation__demo1">
@@ -443,8 +443,8 @@ function createRdvHTML(element) {
 
   wrapper.innerHTML = `
     <div class="hero__demo1">
-      <img class="img__hero" src="./img/hero-coiffure.png" alt="Intérieur du salon de coiffure">
-      <img class="logo__hero__demo1" src="./img/logoSalonCoiffure.png" alt="UMA Salon de coiffure">
+      <img class="img__hero" src="./img/hero-coiffure.webp" alt="Intérieur du salon de coiffure">
+      <img class="logo__hero__demo1" src="./img/logoSalonCoiffure.webp" alt="UMA Salon de coiffure">
     </div>
 
     <div class="contentRdv__demo1">
