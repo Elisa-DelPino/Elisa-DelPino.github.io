@@ -30,14 +30,6 @@
       rel="preload"
       as="image"
       href="/img/heroSite.webp"
-      media="(min-width: 701px)"
-      fetchpriority="high"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="/img/heroSite-mobile.webp"
-      media="(max-width: 700px)"
       fetchpriority="high"
     />
 
@@ -177,19 +169,13 @@
 
       <section id="home" class="section__home">
         <div class="hero__media">
-          <picture class="hero__picture">
-            <source
-              media="(max-width: 700px)"
-              srcset="./img/heroSite-mobile.webp"
-            />
-            <img
-              class="hero__background"
-              src="./img/heroSite.webp"
-              alt=""
-              fetchpriority="high"
-              decoding="async"
-            />
-          </picture>
+          <img
+            class="hero__background"
+            src="./img/heroSite.webp"
+            alt=""
+            fetchpriority="high"
+            decoding="async"
+          />
         </div>
 
         <div class="content-flow">
