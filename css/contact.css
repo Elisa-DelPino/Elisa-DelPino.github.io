@@ -16,7 +16,7 @@
 
 .section__contact {
   position:relative;
-  width:calc(100% - 400px);
+  width:calc(100% - clamp(48px,calc(100vw - 900px),400px));
   height:clamp(590px,46vw,635px);
   margin:0 auto;
   background:transparent;

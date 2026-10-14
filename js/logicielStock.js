@@ -200,13 +200,7 @@ const ICONS = {
       stroke-linejoin="round"
       aria-hidden="true"
     >
-      <path d="m21 8-9 5-9-5"></path>
-
-      <path
-        d="m3 8 9-5 9 5v8l-9 5-9-5Z"
-      ></path>
-
-      <path d="M12 13v8"></path>
+      <use href="/img/icons.svg#box"></use>
     </svg>
   `,
 
@@ -220,13 +214,7 @@ const ICONS = {
       stroke-linejoin="round"
       aria-hidden="true"
     >
-      <path d="m21 8-9 5-9-5"></path>
-
-      <path
-        d="m3 8 9-5 9 5v8l-9 5-9-5Z"
-      ></path>
-
-      <path d="M12 13v8"></path>
+      <use href="/img/icons.svg#box"></use>
     </svg>
   `,
 
@@ -282,13 +270,7 @@ const ICONS = {
       stroke-linejoin="round"
       aria-hidden="true"
     >
-      <path
-        d="M6 6l12 12"
-      ></path>
-
-      <path
-        d="M18 6 6 18"
-      ></path>
+      <use href="/img/icons.svg#close"></use>
     </svg>
   `,
 };

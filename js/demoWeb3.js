@@ -221,8 +221,7 @@ function createHeader(element) {
             aria-label="Fermer le panier"
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M5 5L19 19"></path>
-              <path d="M19 5L5 19"></path>
+              <use href="/img/icons.svg#close"></use>
             </svg>
           </button>
 
@@ -377,10 +376,7 @@ function createHomeHTML(element) {
 
           <span class="demo3__benefitIcon">
             <svg viewBox="0 0 24 24">
-              <path d="M3 7h11v10H3z"></path>
-              <path d="M14 10h4l3 3v4h-7z"></path>
-              <circle cx="7" cy="18" r="2"></circle>
-              <circle cx="18" cy="18" r="2"></circle>
+              <use href="/img/icons.svg#delivery"></use>
             </svg>
           </span>
 
@@ -395,8 +391,7 @@ function createHomeHTML(element) {
 
           <span class="demo3__benefitIcon">
             <svg viewBox="0 0 24 24">
-              <rect x="5" y="10" width="14" height="10" rx="1"></rect>
-              <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+              <use href="/img/icons.svg#secure"></use>
             </svg>
           </span>
 
@@ -411,14 +406,13 @@ function createHomeHTML(element) {
 
           <span class="demo3__benefitIcon">
             <svg viewBox="0 0 24 24">
-              <path d="M5 7v5h5"></path>
-              <path d="M6 12a7 7 0 1 0 2-5"></path>
+              <use href="/img/icons.svg#returns"></use>
             </svg>
           </span>
 
           <span class="demo3__benefitText">
             <strong>RETOURS FACILES</strong>
-            <span>14 jours pour changer d’avis</span>
+            <span>30 jours pour changer d’avis</span>
           </span>
 
         </div>
@@ -892,10 +886,7 @@ function createPageShop(objet) {
         <div class="demo3__productReassuranceItem">
 
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 7h11v10H3z"></path>
-            <path d="M14 10h4l3 3v4h-7z"></path>
-            <circle cx="7" cy="18" r="2"></circle>
-            <circle cx="18" cy="18" r="2"></circle>
+            <use href="/img/icons.svg#delivery"></use>
           </svg>
 
           <div>
@@ -908,8 +899,7 @@ function createPageShop(objet) {
         <div class="demo3__productReassuranceItem">
 
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M5 7v5h5"></path>
-            <path d="M6 12a7 7 0 1 0 2-5"></path>
+            <use href="/img/icons.svg#returns"></use>
           </svg>
 
           <div>
@@ -922,17 +912,7 @@ function createPageShop(objet) {
         <div class="demo3__productReassuranceItem">
 
           <svg viewBox="0 0 24 24" aria-hidden="true">
-
-            <rect
-              x="5"
-              y="9"
-              width="14"
-              height="11"
-              rx="1"
-            ></rect>
-
-            <path d="M8 9V6a4 4 0 0 1 8 0v3"></path>
-
+            <use href="/img/icons.svg#secure"></use>
           </svg>
 
           <div>
@@ -1538,10 +1518,7 @@ function resetEmptyCart() {
         <div class="demo3__emptyCartGuarantee">
 
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 7h11v10H3z"></path>
-            <path d="M14 10h4l3 3v4h-7z"></path>
-            <circle cx="7" cy="18" r="2"></circle>
-            <circle cx="18" cy="18" r="2"></circle>
+            <use href="/img/icons.svg#delivery"></use>
           </svg>
 
           <strong>LIVRAISON OFFERTE</strong>
@@ -1553,8 +1530,7 @@ function resetEmptyCart() {
         <div class="demo3__emptyCartGuarantee">
 
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M5 7v5h5"></path>
-            <path d="M6 12a7 7 0 1 0 2-5"></path>
+            <use href="/img/icons.svg#returns"></use>
           </svg>
 
           <strong>RETOURS GRATUITS</strong>
@@ -1566,17 +1542,7 @@ function resetEmptyCart() {
         <div class="demo3__emptyCartGuarantee">
 
           <svg viewBox="0 0 24 24" aria-hidden="true">
-
-            <rect
-              x="5"
-              y="9"
-              width="14"
-              height="11"
-              rx="1"
-            ></rect>
-
-            <path d="M8 9V6a4 4 0 0 1 8 0v3"></path>
-
+            <use href="/img/icons.svg#secure"></use>
           </svg>
 
           <strong>PAIEMENT SÉCURISÉ</strong>

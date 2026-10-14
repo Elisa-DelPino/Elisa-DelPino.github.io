@@ -170,9 +170,7 @@ function getWebDemoFeatureIcon(icon) {
         stroke-linejoin="round"
         aria-hidden="true"
       >
-        <rect x="3" y="4" width="18" height="16" rx="2"></rect>
-        <circle cx="9" cy="9" r="1.5"></circle>
-        <path d="m4 17 5-5 4 4 2-2 5 5"></path>
+        <use href="/img/icons.svg#gallery"></use>
       </svg>
     `;
   }
@@ -188,12 +186,7 @@ function getWebDemoFeatureIcon(icon) {
         stroke-linejoin="round"
         aria-hidden="true"
       >
-        <path
-          d="M3 4h2l2.3 10.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.5L21 7H6"
-        ></path>
-
-        <circle cx="10" cy="20" r="1"></circle>
-        <circle cx="18" cy="20" r="1"></circle>
+        <use href="/img/icons.svg#cart"></use>
       </svg>
     `;
   }
@@ -233,9 +226,7 @@ function getWebDemoFeatureIcon(icon) {
         stroke-linejoin="round"
         aria-hidden="true"
       >
-        <path d="m21 8-9 5-9-5"></path>
-        <path d="m3 8 9-5 9 5v8l-9 5-9-5Z"></path>
-        <path d="M12 13v8"></path>
+        <use href="/img/icons.svg#box"></use>
       </svg>
     `;
   }
@@ -385,8 +376,7 @@ function createShowcaseMarkup(
             stroke-linejoin="round"
             aria-hidden="true"
           >
-            <path d="M5 12h13"></path>
-            <path d="m13 5 7 7-7 7"></path>
+            <use href="/img/icons.svg#arrow-right"></use>
           </svg>
         </button>
       </div>

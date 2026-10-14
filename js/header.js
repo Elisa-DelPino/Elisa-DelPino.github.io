@@ -1,5 +1,3 @@
-// header.js
-
 import { initPageNavigation } from "./navigation.js";
 
 const HEADER_HTML = `
@@ -104,26 +102,7 @@ const HEADER_HTML = `
               viewBox="0 0 24 24"
               aria-hidden="true"
             >
-              <rect
-                x="3"
-                y="3"
-                width="18"
-                height="18"
-                rx="5"
-              ></rect>
-
-              <circle
-                cx="12"
-                cy="12"
-                r="4"
-              ></circle>
-
-              <circle
-                cx="17.5"
-                cy="6.5"
-                r="1"
-                class="header__reseauxIconDot"
-              ></circle>
+              <use href="/img/icons.svg#instagram"></use>
             </svg>
           </a>
 
@@ -139,9 +118,7 @@ const HEADER_HTML = `
               viewBox="0 0 24 24"
               aria-hidden="true"
             >
-              <path
-                d="M13.8 8H17V4.5c-.5-.1-2.1-.2-4-.2-3.9 0-6.6 2.4-6.6 6.9V15H2v4h4.4v5h5.1v-5h4.2l.7-4h-4.9v-3.4c0-1.2.4-3.6 2.3-3.6Z"
-              ></path>
+              <use href="/img/icons.svg#facebook"></use>
             </svg>
           </a>
 
@@ -157,9 +134,7 @@ const HEADER_HTML = `
               viewBox="0 0 24 24"
               aria-hidden="true"
             >
-              <path
-                d="M5.3 3.5A2.3 2.3 0 1 1 5.3 8a2.3 2.3 0 0 1 0-4.5ZM3.3 9.5h4V21h-4V9.5ZM9.5 9.5h3.8v1.6h.1c.5-1 1.8-2.1 3.8-2.1 4 0 4.8 2.7 4.8 6.1V21h-4v-5.2c0-1.2 0-2.9-1.8-2.9s-2.1 1.4-2.1 2.8V21h-4V9.5Z"
-              ></path>
+              <use href="/img/icons.svg#linkedin"></use>
             </svg>
           </a>
         </div>

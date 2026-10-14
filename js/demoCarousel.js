@@ -317,13 +317,7 @@ function createAnimationCardElement(item, pageElement) {
         stroke-linejoin="round"
         aria-hidden="true"
       >
-        <path
-          d="M5 12h13"
-        ></path>
-
-        <path
-          d="m13 5 7 7-7 7"
-        ></path>
+        <use href="/img/icons.svg#arrow-right"></use>
       </svg>
     `;
 

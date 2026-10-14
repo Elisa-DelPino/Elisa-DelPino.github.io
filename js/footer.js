@@ -193,17 +193,7 @@ const FOOTER_HTML = `
               stroke-linejoin="round"
               aria-hidden="true"
             >
-              <rect
-                x="3"
-                y="5"
-                width="18"
-                height="14"
-                rx="2"
-              ></rect>
-
-              <path
-                d="m3 7 9 6 9-6"
-              ></path>
+              <use href="/img/icons.svg#email"></use>
             </svg>
 
             <span>
@@ -221,8 +211,7 @@ const FOOTER_HTML = `
               stroke-linejoin="round"
               aria-hidden="true"
             >
-              <path d="M5 12h13"></path>
-              <path d="m13 5 7 7-7 7"></path>
+              <use href="/img/icons.svg#arrow-right"></use>
             </svg>
           </a>
 
@@ -241,9 +230,7 @@ const FOOTER_HTML = `
               stroke-linejoin="round"
               aria-hidden="true"
             >
-              <path
-                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.12.89.33 1.76.63 2.6a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.48-1.15a2 2 0 0 1 2.11-.45c.84.3 1.71.51 2.6.63A2 2 0 0 1 22 16.92z"
-              ></path>
+              <use href="/img/icons.svg#phone"></use>
             </svg>
 
             <span>
@@ -261,8 +248,7 @@ const FOOTER_HTML = `
               stroke-linejoin="round"
               aria-hidden="true"
             >
-              <path d="M5 12h13"></path>
-              <path d="m13 5 7 7-7 7"></path>
+              <use href="/img/icons.svg#arrow-right"></use>
             </svg>
           </a>
         </div>
@@ -303,25 +289,7 @@ const FOOTER_HTML = `
             stroke-linejoin="round"
             aria-hidden="true"
           >
-            <rect
-              x="3"
-              y="3"
-              width="18"
-              height="18"
-              rx="5"
-            ></rect>
-
-            <circle
-              cx="12"
-              cy="12"
-              r="4"
-            ></circle>
-
-            <circle
-              cx="17.5"
-              cy="6.5"
-              r="1"
-            ></circle>
+            <use href="/img/icons.svg#instagram"></use>
           </svg>
         </a>
 
@@ -340,9 +308,7 @@ const FOOTER_HTML = `
             fill="currentColor"
             aria-hidden="true"
           >
-            <path
-              d="M13.7 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.3-1.5 1.6-1.5H17V4.6c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.3H8V14h2.6v8h3.1Z"
-            ></path>
+            <use href="/img/icons.svg#facebook"></use>
           </svg>
         </a>
 
@@ -361,14 +327,13 @@ const FOOTER_HTML = `
             fill="currentColor"
             aria-hidden="true"
           >
-            <path
-              d="M6.5 8.1H3.2V21h3.3V8.1ZM4.8 3A1.9 1.9 0 1 0 4.8 6.8 1.9 1.9 0 0 0 4.8 3ZM21 13.6c0-3.9-2.1-5.8-4.9-5.8-2.3 0-3.3 1.3-3.9 2.1V8.1H9V21h3.3v-6.4c0-1.7.3-3.3 2.4-3.3 2.1 0 2.1 3.4V21H20v-7.4Z"
-            ></path>
+            <use href="/img/icons.svg#linkedin"></use>
           </svg>
         </a>
       </div>
     </div>
   </div>
+
 
   <div class="site-footer__mobile">
     <div class="site-footer__mobile-brand">
@@ -425,25 +390,7 @@ const FOOTER_HTML = `
             stroke-linejoin="round"
             aria-hidden="true"
           >
-            <rect
-              x="3"
-              y="3"
-              width="18"
-              height="18"
-              rx="5"
-            ></rect>
-
-            <circle
-              cx="12"
-              cy="12"
-              r="4"
-            ></circle>
-
-            <circle
-              cx="17.5"
-              cy="6.5"
-              r="1"
-            ></circle>
+            <use href="/img/icons.svg#instagram"></use>
           </svg>
         </a>
 
@@ -462,9 +409,7 @@ const FOOTER_HTML = `
             fill="currentColor"
             aria-hidden="true"
           >
-            <path
-              d="M13.7 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.3-1.5 1.6-1.5H17V4.6c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.3H8V14h2.6v8h3.1Z"
-            ></path>
+            <use href="/img/icons.svg#facebook"></use>
           </svg>
         </a>
 
@@ -483,9 +428,7 @@ const FOOTER_HTML = `
             fill="currentColor"
             aria-hidden="true"
           >
-            <path
-              d="M6.5 8.1H3.2V21h3.3V8.1ZM4.8 3A1.9 1.9 0 1 0 4.8 6.8 1.9 1.9 0 0 0 4.8 3ZM21 13.6c0-3.9-2.1-5.8-4.9-5.8-2.3 0-3.3 1.3-3.9 2.1V8.1H9V21h3.3v-6.4c0-1.7.3-3.3 2.4-3.3 2.1 3.4V21H20v-7.4Z"
-            ></path>
+            <use href="/img/icons.svg#linkedin"></use>
           </svg>
         </a>
       </div>
@@ -619,17 +562,7 @@ const FOOTER_HTML = `
             stroke-linejoin="round"
             aria-hidden="true"
           >
-            <rect
-              x="3"
-              y="5"
-              width="18"
-              height="14"
-              rx="2"
-            ></rect>
-
-            <path
-              d="m3 7 9 6 9-6"
-            ></path>
+            <use href="/img/icons.svg#email"></use>
           </svg>
 
           <span>
@@ -647,8 +580,7 @@ const FOOTER_HTML = `
             stroke-linejoin="round"
             aria-hidden="true"
           >
-            <path d="M5 12h13"></path>
-            <path d="m13 5 7 7-7 7"></path>
+            <use href="/img/icons.svg#arrow-right"></use>
           </svg>
         </a>
 
@@ -667,9 +599,7 @@ const FOOTER_HTML = `
             stroke-linejoin="round"
             aria-hidden="true"
           >
-            <path
-              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.12.89.33 1.76.63 2.6a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.48-1.15a2 2 0 0 1 2.11-.45c.84.3 1.71.51 2.6.63A2 2 0 0 1 22 16.92z"
-            ></path>
+            <use href="/img/icons.svg#phone"></use>
           </svg>
 
           <span>
@@ -687,8 +617,7 @@ const FOOTER_HTML = `
             stroke-linejoin="round"
             aria-hidden="true"
           >
-            <path d="M5 12h13"></path>
-            <path d="m13 5 7 7-7 7"></path>
+            <use href="/img/icons.svg#arrow-right"></use>
           </svg>
         </a>
       </div>

@@ -1,5 +1,3 @@
-// cookieConsent.js
-
 const CONSENT_KEY = "elisaDevAnalyticsConsent";
 const CLARITY_PROJECT_ID = "ynv7op2b6c";
 
@@ -10,29 +8,27 @@ let clarityLoaded = false;
 ===================================================== */
 
 function loadClarity() {
-  if (clarityLoaded || window.clarity) {
-    return;
-  }
+  if (!clarityLoaded && !window.clarity) {
+    clarityLoaded = true;
 
-  clarityLoaded = true;
-
-  window.clarity =
-    window.clarity ||
-    function () {
+    window.clarity = function () {
       (window.clarity.q = window.clarity.q || []).push(arguments);
     };
 
-  const script = document.createElement("script");
+    const script = document.createElement("script");
 
-  script.async = true;
-  script.src = `https://www.clarity.ms/tag/${CLARITY_PROJECT_ID}`;
+    script.async = true;
+    script.src = `https://www.clarity.ms/tag/${CLARITY_PROJECT_ID}`;
 
-  document.head.appendChild(script);
+    document.head.appendChild(script);
+  }
 
-  window.clarity("consentv2", {
-    ad_Storage: "denied",
-    analytics_Storage: "granted",
-  });
+  if (typeof window.clarity === "function") {
+    window.clarity("consentv2", {
+      ad_Storage: "denied",
+      analytics_Storage: "granted",
+    });
+  }
 }
 
 /* =====================================================
@@ -54,13 +50,16 @@ function acceptAnalytics() {
 function refuseAnalytics() {
   saveConsent("refused");
 
-  if (window.clarity) {
+  if (typeof window.clarity === "function") {
     window.clarity("consentv2", {
       ad_Storage: "denied",
       analytics_Storage: "denied",
     });
 
     window.clarity("consent", false);
+
+    window.location.reload();
+    return;
   }
 
   closeCookieBanner();
@@ -135,6 +134,18 @@ function createCookieBanner() {
 function openCookieSettings() {
   localStorage.removeItem(CONSENT_KEY);
 
+  if (typeof window.clarity === "function") {
+    window.clarity("consentv2", {
+      ad_Storage: "denied",
+      analytics_Storage: "denied",
+    });
+
+    window.clarity("consent", false);
+
+    window.location.reload();
+    return;
+  }
+
   createCookieBanner();
 }
 
@@ -159,7 +170,6 @@ function initCookieConsent() {
 
   if (consent === "accepted") {
     loadClarity();
-
     return;
   }
 
