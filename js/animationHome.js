@@ -110,7 +110,7 @@ export function initTextRotator(selector, interval = 1500) {
     white-space: nowrap;
   }
 
-  .text-rotator > span.active {
+    .text-rotator > span.active {
     opacity: 1;
     visibility: visible;
 
@@ -120,6 +120,13 @@ export function initTextRotator(selector, interval = 1500) {
       transform 0.5s ease,
       opacity 0.5s ease,
       visibility 0s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .text-rotator > span,
+    .text-rotator > span.active {
+      transition: none;
+    }
   }
 `;
 
@@ -151,6 +158,10 @@ export function initTextRotator(selector, interval = 1500) {
     });
 
     items[index].classList.add("active");
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
 
     window.setInterval(() => {
       items[index].classList.remove("active");

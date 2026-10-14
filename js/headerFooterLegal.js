@@ -203,6 +203,11 @@ const LEGAL_FOOTER_HTML = `
               Politique de confidentialité
             </a>
           </li>
+          <li>
+            <a href="#" data-cookie-settings>
+              Gérer mes cookies
+            </a>
+          </li>
         </ul>
       </nav>
 
@@ -289,8 +294,7 @@ const LEGAL_FOOTER_HTML = `
         </div>
       </div>
     </div>
-
-<CodeBlock language="javascript" editable>
+    
     <div class="site-footer__bottom">
       <p class="site-footer__copyright">
         © 2026 elisa-dev. Tous droits réservés.
@@ -506,6 +510,11 @@ const LEGAL_FOOTER_HTML = `
               Politique de confidentialité
             </a>
           </li>
+           <li>
+            <a href="#" data-cookie-settings>
+              Gérer mes cookies
+            </a>
+          </li>
         </ul>
       </details>
     </div>
@@ -688,7 +697,7 @@ function initLegalPageNavigation() {
 
     event.preventDefault();
 
-    window.location.replace(link.href);
+    window.location.assign(link.href);
   });
 }
 
