@@ -45,6 +45,25 @@
   line-height:1.6;
 }
 
+.cookie-banner__link {
+  display:inline-block;
+  margin-top:10px;
+  color:var(--other-color);
+  font-family:"Montserrat",Arial,sans-serif;
+  font-size:12px;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+
+.cookie-banner__link:hover {
+  color:#fff;
+}
+
+.cookie-banner__link:focus-visible {
+  outline:1px solid var(--other-color);
+  outline-offset:4px;
+}
+
 .cookie-banner__actions {
   display:flex;
   align-items:center;

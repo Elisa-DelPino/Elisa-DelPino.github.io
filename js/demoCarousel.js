@@ -191,9 +191,6 @@ function createAnimationCardElement(item, pageElement) {
 
   itemDiv.className = "demo-carousel__item demo-animation-card";
   itemDiv.dataset.index = String(item.originalIndex);
-  itemDiv.tabIndex = 0;
-
-  itemDiv.setAttribute("aria-label", "Voir cette animation interactive");
 
   const mediaContainer = document.createElement("div");
 
@@ -300,7 +297,7 @@ function createAnimationCardElement(item, pageElement) {
 
   actionButton.type = "button";
 
-  actionButton.setAttribute("aria-label", "Ouvrir cette animation");
+  actionButton.setAttribute("aria-label", `Personnaliser ${item.title}`);
 
   actionButton.innerHTML = `
       <span>
@@ -391,6 +388,7 @@ function updateAnimationCarouselDots() {
     dot.classList.toggle("is-active", isActive);
 
     dot.setAttribute("aria-current", isActive ? "true" : "false");
+    dot.tabIndex = isActive ? 0 : -1;
   });
 }
 
@@ -419,6 +417,7 @@ function createAnimationCarouselDots() {
     dot.className = "demo-carousel__dot";
     dot.type = "button";
     dot.dataset.pageIndex = String(index);
+    dot.tabIndex = index === animationCarouselPageIndex ? 0 : -1;
 
     dot.setAttribute(
       "aria-label",
@@ -427,6 +426,44 @@ function createAnimationCarouselDots() {
 
     dot.addEventListener("click", () => {
       goToAnimationPage(index);
+
+      restartAnimationCarouselAutoSlide();
+    });
+
+    dot.addEventListener("keydown", (event) => {
+      let nextIndex;
+
+      switch (event.key) {
+        case "ArrowLeft":
+          nextIndex =
+            (index - 1 + animationPages.length) % animationPages.length;
+          break;
+
+        case "ArrowRight":
+          nextIndex = (index + 1) % animationPages.length;
+          break;
+
+        case "Home":
+          nextIndex = 0;
+          break;
+
+        case "End":
+          nextIndex = animationPages.length - 1;
+          break;
+
+        default:
+          return;
+      }
+
+      event.preventDefault();
+
+      if (isCarouselSliding()) {
+        return;
+      }
+
+      dotsContainer.children[nextIndex]?.focus();
+
+      goToAnimationPage(nextIndex);
 
       restartAnimationCarouselAutoSlide();
     });
@@ -460,7 +497,11 @@ function stopAnimationCarouselAutoSlide() {
 function startAnimationCarouselAutoSlide() {
   stopAnimationCarouselAutoSlide();
 
-  if (!animationCarouselActive || animationPages.length <= 1) {
+  if (
+    !animationCarouselActive ||
+    animationPages.length <= 1 ||
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
     return;
   }
 
@@ -468,7 +509,8 @@ function startAnimationCarouselAutoSlide() {
     if (
       document.hidden ||
       document.querySelector(".overlay") ||
-      isCarouselSliding()
+      isCarouselSliding() ||
+      getAnimationCarouselSection()?.querySelector(":focus-visible")
     ) {
       return;
     }

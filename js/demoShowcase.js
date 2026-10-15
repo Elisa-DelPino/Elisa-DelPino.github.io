@@ -395,6 +395,7 @@ function createShowcaseMarkup(
               type="button"
               role="tab"
               aria-selected="${index === 0 ? "true" : "false"}"
+              tabindex="${index === 0 ? "0" : "-1"}"
               aria-label="Voir ${slide.title}"
               data-index="${index}"
             ></button>
@@ -411,6 +412,7 @@ function updateShowcaseDots(dots, index) {
 
     dot.classList.toggle("is-active", isActive);
     dot.setAttribute("aria-selected", isActive ? "true" : "false");
+    dot.tabIndex = isActive ? 0 : -1;
   });
 }
 
@@ -651,7 +653,11 @@ function initializeShowcase({
   function startAutoSlide() {
     stopAutoSlide();
 
-    if (!isRunning || slides.length <= 1) {
+    if (
+      !isRunning ||
+      slides.length <= 1 ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
       return;
     }
 
@@ -797,6 +803,46 @@ function initializeShowcase({
       }
 
       goToSlide(index);
+
+      if (isRunning) {
+        startAutoSlide();
+      }
+    });
+
+    dot.addEventListener("keydown", (event) => {
+      const index = Number(dot.dataset.index);
+
+      if (!Number.isFinite(index)) {
+        return;
+      }
+
+      let nextIndex;
+
+      switch (event.key) {
+        case "ArrowLeft":
+          nextIndex = (index - 1 + dots.length) % dots.length;
+          break;
+
+        case "ArrowRight":
+          nextIndex = (index + 1) % dots.length;
+          break;
+
+        case "Home":
+          nextIndex = 0;
+          break;
+
+        case "End":
+          nextIndex = dots.length - 1;
+          break;
+
+        default:
+          return;
+      }
+
+      event.preventDefault();
+
+      dots[nextIndex].focus();
+      goToSlide(nextIndex);
 
       if (isRunning) {
         startAutoSlide();

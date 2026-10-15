@@ -94,6 +94,10 @@ function createCookieBanner() {
           améliorer l’ergonomie et détecter d’éventuels problèmes.
           Vous pouvez accepter ou refuser ces traceurs.
         </p>
+
+        <a href="/politique-confidentialite" class="cookie-banner__link">
+          En savoir plus
+        </a>
       </div>
 
       <div class="cookie-banner__actions">
