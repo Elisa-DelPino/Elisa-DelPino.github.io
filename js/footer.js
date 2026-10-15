@@ -273,7 +273,7 @@ const FOOTER_HTML = `
         <!-- INSTAGRAM -->
 
         <a
-          href="#"
+          href="https://www.instagram.com/elisadev.fr?exln=MXd6Y3FrdXFuZ2wybA=="
           class="shared-icon site-footer__social-link"
           target="_blank"
           rel="noopener noreferrer"
@@ -296,7 +296,7 @@ const FOOTER_HTML = `
         <!-- FACEBOOK -->
 
         <a
-          href="#"
+          href="https://www.facebook.com/elisadev"
           class="shared-icon site-footer__social-link"
           target="_blank"
           rel="noopener noreferrer"
@@ -315,7 +315,7 @@ const FOOTER_HTML = `
         <!-- LINKEDIN -->
 
         <a
-          href="#"
+          href="https://www.linkedin.com/in/elisadelpino"
           class="shared-icon site-footer__social-link"
           target="_blank"
           rel="noopener noreferrer"
@@ -374,7 +374,7 @@ const FOOTER_HTML = `
         <!-- INSTAGRAM -->
 
         <a
-          href="#"
+          href="https://www.instagram.com/elisadev.fr?exln=MXd6Y3FrdXFuZ2wybA=="
           class="shared-icon site-footer__social-link"
           target="_blank"
           rel="noopener noreferrer"
@@ -397,7 +397,7 @@ const FOOTER_HTML = `
         <!-- FACEBOOK -->
 
         <a
-          href="#"
+          href="https://www.facebook.com/elisadev"
           class="shared-icon site-footer__social-link"
           target="_blank"
           rel="noopener noreferrer"
@@ -416,7 +416,7 @@ const FOOTER_HTML = `
         <!-- LINKEDIN -->
 
         <a
-          href="#"
+          href="https://www.linkedin.com/in/elisadelpino"
           class="shared-icon site-footer__social-link"
           target="_blank"
           rel="noopener noreferrer"

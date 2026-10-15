@@ -55,7 +55,7 @@ const LEGAL_HEADER_HTML = `
           aria-hidden="true"
         >
           <a
-            href="#"
+            href="https://www.instagram.com/elisadev.fr?exln=MXd6Y3FrdXFuZ2wybA=="
             class="header__reseauxPopupLink"
             target="_blank"
             rel="noopener noreferrer"
@@ -71,7 +71,7 @@ const LEGAL_HEADER_HTML = `
           </a>
 
           <a
-            href="#"
+            href="https://www.facebook.com/elisadev"
             class="header__reseauxPopupLink"
             target="_blank"
             rel="noopener noreferrer"
@@ -87,7 +87,7 @@ const LEGAL_HEADER_HTML = `
           </a>
 
           <a
-            href="#"
+            href="https://www.linkedin.com/in/elisadelpino"
             class="header__reseauxPopupLink"
             target="_blank"
             rel="noopener noreferrer"
@@ -308,7 +308,7 @@ const LEGAL_FOOTER_HTML = `
 
       <div class="site-footer__socials" aria-label="Réseaux sociaux">
         <a
-          href="#"
+          href="https://www.instagram.com/elisadev.fr?exln=MXd6Y3FrdXFuZ2wybA=="
           class="shared-icon site-footer__social-link"
           target="_blank"
           rel="noopener noreferrer"
@@ -329,7 +329,7 @@ const LEGAL_FOOTER_HTML = `
         </a>
 
         <a
-          href="#"
+          href="https://www.facebook.com/elisadev"
           class="shared-icon site-footer__social-link"
           target="_blank"
           rel="noopener noreferrer"
@@ -346,7 +346,7 @@ const LEGAL_FOOTER_HTML = `
         </a>
 
         <a
-          href="#"
+          href="https://www.linkedin.com/in/elisadelpino"
           class="shared-icon site-footer__social-link"
           target="_blank"
           rel="noopener noreferrer"
@@ -391,7 +391,7 @@ const LEGAL_FOOTER_HTML = `
 
       <div class="site-footer__socials" aria-label="Réseaux sociaux">
         <a
-          href="#"
+          href="https://www.instagram.com/elisadev.fr?exln=MXd6Y3FrdXFuZ2wybA=="
           class="shared-icon site-footer__social-link"
           target="_blank"
           rel="noopener noreferrer"
@@ -412,7 +412,7 @@ const LEGAL_FOOTER_HTML = `
         </a>
 
         <a
-          href="#"
+          href="https://www.facebook.com/elisadev"
           class="shared-icon site-footer__social-link"
           target="_blank"
           rel="noopener noreferrer"
@@ -429,7 +429,7 @@ const LEGAL_FOOTER_HTML = `
         </a>
 
         <a
-          href="#"
+          href="https://www.linkedin.com/in/elisadelpino"
           class="shared-icon site-footer__social-link"
           target="_blank"
           rel="noopener noreferrer"

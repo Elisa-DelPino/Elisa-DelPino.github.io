@@ -93,7 +93,8 @@ const HEADER_HTML = `
           <!-- INSTAGRAM -->
 
           <a
-            href="#"
+            href="https://www.instagram.com/elisadev.fr?exln=MXd6Y3FrdXFuZ2wybA=="
+            target="_blank"
             class="header__reseauxPopupLink"
             aria-label="Instagram Elisa.Dev"
           >
@@ -109,7 +110,8 @@ const HEADER_HTML = `
           <!-- FACEBOOK -->
 
           <a
-            href="#"
+            href="https://www.facebook.com/elisadev"
+            target="_blank"
             class="header__reseauxPopupLink"
             aria-label="Facebook Elisa.Dev"
           >
@@ -125,7 +127,8 @@ const HEADER_HTML = `
           <!-- LINKEDIN -->
 
           <a
-            href="#"
+            href="https://www.linkedin.com/in/elisadelpino"
+            target="_blank"
             class="header__reseauxPopupLink"
             aria-label="LinkedIn Elisa.Dev"
           >
