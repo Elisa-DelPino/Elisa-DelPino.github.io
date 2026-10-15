@@ -95,6 +95,7 @@ const HEADER_HTML = `
           <a
             href="https://www.instagram.com/elisadev.fr?exln=MXd6Y3FrdXFuZ2wybA=="
             target="_blank"
+            rel="noopener noreferrer"
             class="header__reseauxPopupLink"
             aria-label="Instagram Elisa.Dev"
           >
@@ -112,6 +113,7 @@ const HEADER_HTML = `
           <a
             href="https://www.facebook.com/elisadev"
             target="_blank"
+            rel="noopener noreferrer"
             class="header__reseauxPopupLink"
             aria-label="Facebook Elisa.Dev"
           >
@@ -129,6 +131,7 @@ const HEADER_HTML = `
           <a
             href="https://www.linkedin.com/in/elisadelpino"
             target="_blank"
+            rel="noopener noreferrer"
             class="header__reseauxPopupLink"
             aria-label="LinkedIn Elisa.Dev"
           >
