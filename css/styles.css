@@ -176,7 +176,7 @@ body {
   .demo-animation-card__button {
     min-height:44px;
     padding:0 clamp(8px,2.5vw,16px);
-    font-size:clamp(8px,2.3vw,11px);
+    font-size:13px;
     letter-spacing:clamp(.8px,.3vw,1.5px);
   }
 
@@ -194,7 +194,7 @@ body {
   .demo-animation-card__button {
     min-height:42px;
     padding:0 7px;
-    font-size:clamp(9px,2.5vw,10px);
+    font-size:13px;
     letter-spacing:.7px;
   }
 }

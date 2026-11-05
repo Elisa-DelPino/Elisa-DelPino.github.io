@@ -213,6 +213,50 @@
 }
 
 /* =====================================================
+   LIEN VERS LA PAGE DÉDIÉE
+===================================================== */
+
+.products-card__link {
+  margin-top:clamp(38px,3.8vw,56px);
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  color:var(--other-color);
+  font-family:"Montserrat",Arial,sans-serif;
+  font-size:clamp(10px,.75vw,12px);
+  font-weight:500;
+  letter-spacing:.16em;
+  text-decoration:none;
+  text-transform:uppercase;
+}
+
+.products-card__link span {
+  padding-bottom:5px;
+  border-bottom:1px solid rgba(255,203,119,.55);
+  transition:border-color .2s;
+}
+
+.products-card__link svg {
+  width:16px;
+  height:16px;
+  flex:0 0 auto;
+  transition:transform .2s;
+}
+
+.products-card__link:hover span {
+  border-color:var(--other-color);
+}
+
+.products-card__link:hover svg {
+  transform:translateX(5px);
+}
+
+.products-card__link:focus-visible {
+  outline:1px solid #fff;
+  outline-offset:5px;
+}
+
+/* =====================================================
    RESPONSIVE TABLETTE
 ===================================================== */
 
@@ -287,7 +331,7 @@
   .products-card__label {
     top:22px;
     right:22px;
-    font-size:8px;
+    font-size:10px;
     letter-spacing:3px;
   }
 
@@ -327,6 +371,30 @@
     width:22px;
     height:22px;
     font-size:11px;
+  }
+
+  .products-card__link {
+    margin-top:36px;
+    gap:10px;
+    font-size:10px;
+    letter-spacing:.1em;
+  }
+}
+
+@media screen and (max-width:360px) {
+  .products-card__link {
+    gap:8px;
+    font-size:9.5px;
+    letter-spacing:.06em;
+  }
+
+  .products-card__link span {
+    text-wrap:balance;
+  }
+
+  .products-card__link svg {
+    width:14px;
+    height:14px;
   }
 }
 

@@ -277,7 +277,7 @@
 
   .support__description {
     margin-top:24px;
-    font-size:12px;
+    font-size:13px;
     line-height:1.65;
   }
 
@@ -291,7 +291,7 @@
   }
 
   .support__statement p {
-    font-size:7px;
+    font-size:10px;
     letter-spacing:.28em;
   }
 
@@ -313,7 +313,7 @@
 
   .support__number {
     height:42%;
-    font-size:9px;
+    font-size:10px;
   }
 
   .support__question {
@@ -331,7 +331,7 @@
   }
 
   .support__answer p {
-    font-size:11px;
+    font-size:13px;
     line-height:1.65;
   }
 }

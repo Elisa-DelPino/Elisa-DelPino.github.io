@@ -331,73 +331,9 @@
   display:none;
 }
 /* =====================================================
-   TABLETTE
-===================================================== */
-@media screen and (max-width:1100px) and (min-width:701px) {
-  .site-footer__desktop {
-    width:min(920px,90%);
-    padding:55px 0 24px;
-  }
-  .site-footer__main {
-    grid-template-columns:1fr 1fr;
-    gap:42px 52px;
-  }
-  .site-footer__brand {
-    min-height:250px;
-    justify-content:center;
-    padding:0 26px 0 0;
-    transform:none;
-  }
-  .site-footer__column {
-    min-height:250px;
-    padding-left:34px;
-  }
-  .site-footer__column:nth-child(3) {
-    padding-left:0;
-    border-left:0;
-  }
-  .site-footer__column:nth-child(4) {
-    border-left:1px solid rgba(255,255,255,.14);
-  }
-  .site-footer__logo {
-    width:125px;
-  }
-  .site-footer__title {
-    font-size:29px;
-  }
-  .site-footer__links a {
-    font-size:13px;
-  }
-  .site-footer__contact-actions {
-    max-width:340px;
-  }
-  .site-footer__bottom {
-    grid-template-columns:1fr 1fr;
-    row-gap:18px;
-    margin-top:40px;
-  }
-  .site-footer__copyright {
-    grid-column:1;
-    grid-row:1;
-  }
-  .site-footer__signature {
-    grid-column:1/-1;
-    grid-row:2;
-    justify-content:flex-start;
-  }
-  .site-footer__socials {
-    grid-column:2;
-    grid-row:1;
-  }
-  .site-footer__socials .site-footer__social-link {
-    width:clamp(28px,4vw,36px);
-    height:clamp(28px,4vw,36px);
-  }
-}
-/* =====================================================
    TÉLÉPHONE
 ===================================================== */
-@media screen and (max-width:700px) {
+@media screen and (max-width:1100px) {
   .site-footer {
     margin-top:70px;
   }

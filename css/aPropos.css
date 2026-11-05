@@ -369,7 +369,7 @@
 
   .about__description {
     margin-top:clamp(20px,3vw,30px);
-    font-size:clamp(8px,1.45vw,12px);
+    font-size:13px;
     line-height:1.6;
   }
 
@@ -384,7 +384,7 @@
   }
 
   .about__advantage-text h3 {
-    font-size:8px;
+    font-size:12px;
   }
 }
 
@@ -443,7 +443,7 @@
 
   .about__description {
     margin-top:25px;
-    font-size:clamp(10px,3.1vw,13px);
+    font-size:13px;
     line-height:1.65;
   }
 
@@ -458,11 +458,11 @@
   }
 
   .about__advantage-text h3 {
-    font-size:10px;
+    font-size:12px;
   }
 
   .about__advantage-text p {
-    font-size:9px;
+    font-size:11px;
   }
 }
 

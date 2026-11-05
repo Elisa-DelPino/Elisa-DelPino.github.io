@@ -951,7 +951,7 @@ export async function addLigthBox(item, index) {
 
     restoreScroll();
 
-    if (!fromHistory) {
+    if (fromHistory !== true) {
       closeOverlayHistory();
     }
 
@@ -964,7 +964,7 @@ export async function addLigthBox(item, index) {
     });
   }
 
-  closeButton.addEventListener("click", closeLightbox);
+  closeButton.addEventListener("click", () => closeLightbox());
 
   overlay.addEventListener("click", (event) => {
     if (event.target === overlay) {

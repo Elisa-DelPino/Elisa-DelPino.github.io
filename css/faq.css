@@ -444,7 +444,7 @@
 
   .faq-hero__description {
     margin-top:26px;
-    font-size:11px;
+    font-size:13px;
     line-height:1.7;
   }
 
@@ -475,7 +475,7 @@
   }
 
   .faq-group__eyebrow {
-    font-size:8px;
+    font-size:10px;
     letter-spacing:.26em;
   }
 
@@ -495,7 +495,7 @@
   }
 
   .faq-item__number {
-    font-size:8px;
+    font-size:10px;
   }
 
   .faq-item summary h3 {
@@ -513,7 +513,7 @@
   }
 
   .faq-item__answer p {
-    font-size:11px;
+    font-size:13px;
     line-height:1.7;
   }
 
@@ -524,7 +524,7 @@
   }
 
   .faq-contact__content > p:last-child {
-    font-size:11px;
+    font-size:13px;
   }
 
   .faq-contact__button {

@@ -12,7 +12,19 @@ const LEGAL_HEADER_HTML = `
     </div>
   </div>
 
-  <nav class="header__nav" aria-label="Navigation principale">
+  <button
+    type="button"
+    class="header__burger"
+    aria-label="Ouvrir le menu"
+    aria-expanded="false"
+    aria-controls="headerNavPanel"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <nav class="header__nav" id="headerNavPanel" aria-label="Navigation principale">
     <ul class="header__nav__menu">
       <li class="header__nav__menu__link">
         <a href="/">Accueil</a>
@@ -32,6 +44,44 @@ const LEGAL_HEADER_HTML = `
 
       <li class="header__nav__menu__link">
         <a href="/#contact">Contact</a>
+      </li>
+
+      <li class="header__nav__social">
+        <a
+          href="https://www.instagram.com/elisadev.fr?exln=MXd6Y3FrdXFuZ2wybA=="
+          target="_blank"
+          rel="noopener noreferrer"
+          class="header__socialLink"
+          aria-label="Instagram Elisa.Dev"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <use href="/img/icons.svg#instagram"></use>
+          </svg>
+        </a>
+
+        <a
+          href="https://www.facebook.com/elisadev"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="header__socialLink"
+          aria-label="Facebook Elisa.Dev"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <use href="/img/icons.svg#facebook"></use>
+          </svg>
+        </a>
+
+        <a
+          href="https://www.linkedin.com/in/elisadelpino"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="header__socialLink"
+          aria-label="LinkedIn Elisa.Dev"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <use href="/img/icons.svg#linkedin"></use>
+          </svg>
+        </a>
       </li>
 
       <li class="header__nav__menu__reseaux">
@@ -224,7 +274,7 @@ const LEGAL_FOOTER_HTML = `
         <div class="site-footer__contact-actions">
           <a
             class="site-footer__contact-button"
-            href="mailto:contact.elisadev@gmail.com"
+            href="/#contact"
           >
             <svg
               class="site-footer__contact-icon"
@@ -538,7 +588,7 @@ const LEGAL_FOOTER_HTML = `
       <div class="site-footer__contact-actions">
         <a
           class="site-footer__contact-button"
-          href="mailto:contact.elisadev@gmail.com"
+          href="/#contact"
         >
           <svg
             class="site-footer__contact-icon"
@@ -683,6 +733,70 @@ function initLegalHeaderSocial() {
   });
 }
 
+function initLegalBurgerMenu(header) {
+  const burgerButton = header.querySelector(".header__burger");
+
+  const mobileQuery = window.matchMedia("(max-width:600px)");
+
+  function setBurgerMenuOpen(isOpen) {
+    header.classList.toggle("is-menu-open", isOpen);
+
+    burgerButton?.setAttribute("aria-expanded", String(isOpen));
+
+    burgerButton?.setAttribute(
+      "aria-label",
+      isOpen ? "Fermer le menu" : "Ouvrir le menu",
+    );
+  }
+
+  burgerButton?.addEventListener("click", (event) => {
+    event.stopPropagation();
+
+    setBurgerMenuOpen(!header.classList.contains("is-menu-open"));
+  });
+
+  header
+    .querySelectorAll(".header__nav a, .header__logo a")
+    .forEach((link) => {
+      link.addEventListener("click", () => setBurgerMenuOpen(false));
+    });
+
+  document.addEventListener("click", (event) => {
+    if (
+      header.classList.contains("is-menu-open") &&
+      !header.contains(event.target)
+    ) {
+      setBurgerMenuOpen(false);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && header.classList.contains("is-menu-open")) {
+      setBurgerMenuOpen(false);
+
+      burgerButton?.focus();
+    }
+  });
+
+  header.addEventListener("focusout", (event) => {
+    if (event.relatedTarget && !header.contains(event.relatedTarget)) {
+      setBurgerMenuOpen(false);
+    }
+  });
+
+  window.addEventListener(
+    "resize",
+    () => {
+      if (!mobileQuery.matches) {
+        setBurgerMenuOpen(false);
+      }
+    },
+    {
+      passive: true,
+    },
+  );
+}
+
 function initLegalPageNavigation() {
   document.addEventListener("click", (event) => {
     const link = event.target.closest("[data-legal-page]");
@@ -725,6 +839,8 @@ function initHeaderFooterLegal() {
   setCurrentLegalPage();
 
   initLegalHeaderSocial();
+
+  initLegalBurgerMenu(header);
 
   initLegalPageNavigation();
 }

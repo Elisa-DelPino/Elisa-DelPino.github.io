@@ -883,11 +883,21 @@ function initializeShowcase({
     openCurrentSlide();
   });
 
+  function openSlide(index) {
+    if (document.querySelector(".overlay")) {
+      return;
+    }
+
+    goToSlide(index, false);
+    openCurrentSlide();
+  }
+
   renderSlide(0, false);
 
   return {
     start,
     stop,
+    openSlide,
   };
 }
 

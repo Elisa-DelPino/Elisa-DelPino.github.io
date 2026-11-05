@@ -22,7 +22,19 @@ const HEADER_HTML = `
     </div>
   </div>
 
-  <nav class="header__nav">
+  <button
+    type="button"
+    class="header__burger"
+    aria-label="Ouvrir le menu"
+    aria-expanded="false"
+    aria-controls="headerNavPanel"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <nav class="header__nav" id="headerNavPanel">
     <ul class="header__nav__menu">
       <li class="header__nav__menu__link">
         <a
@@ -67,6 +79,44 @@ const HEADER_HTML = `
           data-section="contact"
         >
           Contact
+        </a>
+      </li>
+
+      <li class="header__nav__social">
+        <a
+          href="https://www.instagram.com/elisadev.fr?exln=MXd6Y3FrdXFuZ2wybA=="
+          target="_blank"
+          rel="noopener noreferrer"
+          class="header__socialLink"
+          aria-label="Instagram Elisa.Dev"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <use href="/img/icons.svg#instagram"></use>
+          </svg>
+        </a>
+
+        <a
+          href="https://www.facebook.com/elisadev"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="header__socialLink"
+          aria-label="Facebook Elisa.Dev"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <use href="/img/icons.svg#facebook"></use>
+          </svg>
+        </a>
+
+        <a
+          href="https://www.linkedin.com/in/elisadelpino"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="header__socialLink"
+          aria-label="LinkedIn Elisa.Dev"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <use href="/img/icons.svg#linkedin"></use>
+          </svg>
         </a>
       </li>
 
@@ -340,6 +390,70 @@ export function loadHeaderScriptDirect() {
     () => {
       if (!usesTouchSocialMenu()) {
         closeDesktopPopup(false);
+      }
+    },
+    {
+      passive: true,
+    },
+  );
+
+  /* ---------------------------------------------------------------------------
+     MENU BURGER MOBILE
+  --------------------------------------------------------------------------- */
+
+  const burgerButton = header.querySelector(".header__burger");
+
+  function setBurgerMenuOpen(isOpen) {
+    header.classList.toggle("is-menu-open", isOpen);
+
+    burgerButton?.setAttribute("aria-expanded", String(isOpen));
+
+    burgerButton?.setAttribute(
+      "aria-label",
+      isOpen ? "Fermer le menu" : "Ouvrir le menu",
+    );
+  }
+
+  burgerButton?.addEventListener("click", (event) => {
+    event.stopPropagation();
+
+    setBurgerMenuOpen(!header.classList.contains("is-menu-open"));
+  });
+
+  header
+    .querySelectorAll(".header__nav a, .header__logo a")
+    .forEach((link) => {
+      link.addEventListener("click", () => setBurgerMenuOpen(false));
+    });
+
+  document.addEventListener("click", (event) => {
+    if (
+      header.classList.contains("is-menu-open") &&
+      !header.contains(event.target)
+    ) {
+      setBurgerMenuOpen(false);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && header.classList.contains("is-menu-open")) {
+      setBurgerMenuOpen(false);
+
+      burgerButton?.focus();
+    }
+  });
+
+  header.addEventListener("focusout", (event) => {
+    if (event.relatedTarget && !header.contains(event.relatedTarget)) {
+      setBurgerMenuOpen(false);
+    }
+  });
+
+  window.addEventListener(
+    "resize",
+    () => {
+      if (!MOBILE_SOCIAL_QUERY.matches) {
+        setBurgerMenuOpen(false);
       }
     },
     {

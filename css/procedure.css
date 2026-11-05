@@ -1302,6 +1302,175 @@
 
 
 /* =====================================================
+   TABLETTE : TEXTES PLUS LISIBLES
+   701PX À 1000PX
+===================================================== */
+
+@media screen and (min-width:701px) and (max-width:1000px) {
+  .procedure__timeline {
+    height:clamp(1040px,145vw,1300px);
+  }
+
+  .procedure__cardText {
+    font-size:13px;
+  }
+
+  .procedure__delay {
+    font-size:12px;
+  }
+
+  .procedure__delaySecondary {
+    font-size:11px;
+  }
+}
+
+/* =====================================================
+   MOBILE : FRISE VERTICALE CENTRÉE
+   700PX ET MOINS
+===================================================== */
+
+@media screen and (max-width:700px) {
+  .procedure__timeline {
+    height:auto;
+    padding:22px 0 44px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:34px;
+  }
+
+  .procedure__axis {
+    top:0;
+    height:100%;
+  }
+
+  .procedure__timeline > :nth-child(2) {
+    order:1;
+  }
+
+  .procedure__timeline > :nth-child(6) {
+    order:2;
+  }
+
+  .procedure__timeline > :nth-child(3) {
+    order:3;
+  }
+
+  .procedure__timeline > :nth-child(7) {
+    order:4;
+  }
+
+  .procedure__timeline > :nth-child(4) {
+    order:5;
+  }
+
+  .procedure__timeline > :nth-child(8) {
+    order:6;
+  }
+
+  .procedure__timeline > :nth-child(5) {
+    order:7;
+  }
+
+  .procedure__step,
+  .procedure__step--top,
+  .procedure__step--bottom {
+    position:relative;
+    top:auto;
+    right:auto;
+    bottom:auto;
+    left:auto;
+    width:min(100%,460px);
+    margin:0;
+    transform:none;
+    z-index:3;
+  }
+
+  .procedure__step.is-active,
+  .procedure__step:hover {
+    transform:scale(1.02);
+    transform-origin:center;
+  }
+
+  .procedure__card {
+    height:auto;
+    padding:20px 16px 18px;
+    align-items:center;
+    text-align:center;
+  }
+
+  .procedure__cardHeader {
+    flex-direction:row;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    margin-bottom:10px;
+  }
+
+  .procedure__icon {
+    width:36px;
+    height:36px;
+    flex:0 0 auto;
+  }
+
+  .procedure__cardTitle {
+    width:auto;
+    font-size:15px;
+    line-height:1.25;
+    text-align:left;
+  }
+
+  .procedure__cardText {
+    font-size:13px;
+    line-height:1.55;
+    text-align:center;
+  }
+
+  .procedure__connector,
+  .procedure__step--top .procedure__connector,
+  .procedure__step--bottom .procedure__connector {
+    display:none;
+  }
+
+  .procedure__marker,
+  .procedure__step--top .procedure__marker,
+  .procedure__step--bottom .procedure__marker {
+    top:0;
+    right:auto;
+    bottom:auto;
+    left:50%;
+    transform:translate(-50%,-50%);
+    z-index:4;
+  }
+
+  .procedure__step.is-active .procedure__marker,
+  .procedure__step--top.is-active .procedure__marker,
+  .procedure__step--bottom.is-active .procedure__marker {
+    transform:translate(-50%,-50%) scale(1.15);
+  }
+
+  .procedure__delay,
+  .procedure__delay--large {
+    position:relative;
+    top:auto;
+    left:auto;
+    width:auto;
+    max-width:100%;
+    margin:0;
+    padding:6px 14px;
+    align-self:center;
+    transform:none;
+    font-size:12px;
+    text-align:center;
+  }
+
+  .procedure__delaySecondary {
+    font-size:11px;
+    text-wrap:balance;
+  }
+}
+
+/* =====================================================
 
    RÉDUCTION DES ANIMATIONS
 

@@ -215,6 +215,85 @@ export function cancelNavigationScroll() {
 }
 
 /* ---------------------------------------------------------------------------
+   STABILISATION DU SCROLL VERS UNE SECTION
+--------------------------------------------------------------------------- */
+
+const SETTLE_QUIET_DELAY = 700;
+const SETTLE_MAX_DURATION = 6000;
+const SETTLE_USER_EVENTS = ["wheel", "touchstart", "pointerdown", "keydown"];
+
+let stopSettling = null;
+
+function cancelScrollSettling() {
+  if (stopSettling) {
+    stopSettling();
+  }
+}
+
+function settleScrollOnSection(sectionName, behavior) {
+  cancelScrollSettling();
+
+  if (typeof ResizeObserver === "undefined") {
+    return;
+  }
+
+  const root = document.documentElement;
+
+  let lastHeight = root.scrollHeight;
+  let quietTimer = 0;
+  let maxTimer = 0;
+
+  const stop = () => {
+    window.clearTimeout(quietTimer);
+    window.clearTimeout(maxTimer);
+
+    observer.disconnect();
+
+    SETTLE_USER_EVENTS.forEach((eventName) => {
+      window.removeEventListener(eventName, stop);
+    });
+
+    if (stopSettling === stop) {
+      stopSettling = null;
+    }
+  };
+
+  const observer = new ResizeObserver(() => {
+    const height = root.scrollHeight;
+
+    if (height === lastHeight) {
+      return;
+    }
+
+    lastHeight = height;
+
+    window.clearTimeout(quietTimer);
+
+    quietTimer = window.setTimeout(stop, SETTLE_QUIET_DELAY);
+
+    const targetPosition = getSectionTargetPosition(sectionName);
+
+    if (targetPosition === null) {
+      return;
+    }
+
+    window.scrollTo({ top: targetPosition, left: 0, behavior });
+  });
+
+  observer.observe(root);
+  observer.observe(document.body);
+
+  SETTLE_USER_EVENTS.forEach((eventName) => {
+    window.addEventListener(eventName, stop, { passive: true, once: true });
+  });
+
+  quietTimer = window.setTimeout(stop, SETTLE_QUIET_DELAY);
+  maxTimer = window.setTimeout(stop, SETTLE_MAX_DURATION);
+
+  stopSettling = stop;
+}
+
+/* ---------------------------------------------------------------------------
    SCROLL VERS UNE SECTION
 --------------------------------------------------------------------------- */
 
@@ -227,11 +306,15 @@ export function scrollToSection(sectionName) {
 
   setActiveSection(sectionName);
 
+  const behavior = REDUCED_MOTION_QUERY.matches ? "auto" : "smooth";
+
   window.scrollTo({
     top: targetPosition,
     left: 0,
-    behavior: REDUCED_MOTION_QUERY.matches ? "auto" : "smooth",
+    behavior,
   });
+
+  settleScrollOnSection(sectionName, behavior);
 
   return true;
 }
@@ -430,18 +513,18 @@ function initHashNavigation() {
 
   const sectionName = decodeURIComponent(hash);
 
-  const target = getSectionTargetPosition(sectionName);
-
-  if (target === null) {
+  if (getSectionTargetPosition(sectionName) === null) {
     return;
   }
 
   requestAnimationFrame(() => {
     window.scrollTo({
-      top: target,
+      top: getSectionTargetPosition(sectionName) ?? 0,
       left: 0,
       behavior: "auto",
     });
+
+    settleScrollOnSection(sectionName, "auto");
 
     setActiveSection(sectionName);
     updateBackToTopVisibility();
